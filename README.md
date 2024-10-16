@@ -1,2 +1,1 @@
-# QuanticGP
-QuanticGP: événement de Formule 1 Monaco.
+# PROJET UNIVERSITAIRE : DÉVELOPPEMENT FULLSTACK D'UN SITE ÉVÉNEMENTIELLE 

@@ -23,7 +23,7 @@ Nous avons décidé de mettre en place un événement fictif de Formule 1, nomm�
 Un événement de F1 était un choix pertinent pour nous, car cela permettait de mettre en place une billeterie pour accéder à la course, tout en proposant des activités externes variées à faire directement sur place.
 
 &nbsp;
-### 🗺️ Carte de l'événement 
+### 🗺️ Carte de l'événement  
 
 ![CarteEvenementAvecStands](https://github.com/user-attachments/assets/7e610cdf-44a1-46a4-8b44-bcc0a742e174)
 

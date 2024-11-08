@@ -1,4 +1,4 @@
-## PROJET UNIVERSITAIRE : DÉVELOPPEMENT D'UN SITE ÉVÉNEMENTIELLE 
+## PROJET UNIVERSITAIRE : BUT-2
 &nbsp;
 ### 📋 Attendus du projet
 

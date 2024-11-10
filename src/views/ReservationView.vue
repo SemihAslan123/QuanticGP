@@ -43,29 +43,33 @@
         <input type="checkbox" v-model="isVIP" @change="calculateTotal" />
       </div>
 
-      <!-- Sélecteur pour choisir un hôtel -->
-      <div>
-        <label for="hotel">Choisir un hôtel:</label>
-        <select v-model="selectedHotel" @change="selectHotel">
-          <option value="">-- Choisir un hôtel --</option>
-          <option v-for="hotel in hotels" :key="hotel.id" :value="hotel">{{ hotel.nom }}</option>
-        </select>
-      </div>
+      <!-- Affichage des hôtels sous forme de cartes -->
+      <h2>Choisissez un hôtel :</h2>
+      <div class="hotel-cards">
+        <div v-for="hotel in hotels" :key="hotel.id"
+             class="hotel-card"
+             @click="selectHotel(hotel)"
+             :class="{'selected': selectedHotel && selectedHotel.id === hotel.id}">
+          <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
+          <h3>{{ hotel.nom }}</h3>
+          <p>Emplacement : {{ hotel.emplacement }}</p>
 
-      <!-- Sélecteur pour choisir une chambre, affiché uniquement si un hôtel est sélectionné -->
-      <div v-if="selectedHotel">
-        <label for="chambre">Choisir une chambre:</label>
-        <select v-model="chambre" @change="calculateTotal" required>
-          <option value="">-- Choisir une chambre --</option>
-          <option v-for="room in selectedHotel.chambres" :key="room.id" :value="room">
-            {{ room.numero }} - {{ room.prix }}€
-          </option>
-        </select>
+          <!-- Sélecteur de chambre uniquement si l'hôtel est sélectionné -->
+          <div v-if="selectedHotel && selectedHotel.id === hotel.id">
+            <label for="chambre">Choisir une chambre :</label>
+            <select v-model="chambre" @change="calculateTotal" required>
+              <option value="">-- Choisir une chambre --</option>
+              <option v-for="room in hotel.chambres" :key="room.id" :value="room">
+                {{ room.numero }} - {{ room.prix }}€
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <!-- Affichage du prix total -->
       <div>
-        <h2>Prix Total: {{ totalPrice }}€</h2> <!-- Affichage du prix total calculé -->
+        <h2>Prix Total: {{ totalPrice }}€</h2>
       </div>
 
       <!-- Bouton pour soumettre le formulaire -->
@@ -75,108 +79,219 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'ReservationView',
   data() {
     return {
-      prenom: '', // Prénom de l'utilisateur
-      nom: '',    // Nom de l'utilisateur
-      email: '',  // Email de l'utilisateur
-      parking: false, // Indicateur pour savoir si la place de parking est réservée
-      selectedHotel: null, // Stocke l'hôtel sélectionné
-      selectedCourse: null, // Stocke la course sélectionnée
-      chambre: null, // Stocke la chambre sélectionnée
-      hotels: [], // Liste des hôtels disponibles
-      courses: [], // Liste des courses disponibles
-      totalPrice: 0, // Prix total calculé
-      isVIP: false, // Indicateur pour savoir si le billet est VIP
+      prenom: '',
+      nom: '',
+      email: '',
+      parking: false,
+      selectedHotel: null,
+      selectedCourse: null,
+      chambre: null,
+      /* eslint-disable no-undef */
+      hotels: [
+        {
+          id: 1,
+          nom: 'Riviera Marriott',
+          emplacement: 'Ouest',
+          image: require('@/assets/hotels/hotel1.jpeg'), // eslint-disable-line no-undef
+          chambres: [
+            { id: 1, numero: '101', prix: 100 },
+            { id: 2, numero: '102', prix: 150 },
+            { id: 3, numero: '103', prix: 120 },
+            { id: 4, numero: '104', prix: 200 },
+            { id: 5, numero: '105', prix: 175 },
+            { id: 6, numero: '106', prix: 130 },
+            { id: 7, numero: '107', prix: 160 },
+            { id: 8, numero: '108', prix: 180 },
+            { id: 9, numero: '109', prix: 110 },
+            { id: 10, numero: '110', prix: 140 }
+          ]
+        },
+        {
+          id: 2,
+          nom: 'Aparthotel Adagio',
+          emplacement: 'Est',
+          image: require('@/assets/hotels/hotel2.jpg'), // eslint-disable-line no-undef
+          chambres: [
+            { id: 3, numero: '201', prix: 200 },
+            { id: 4, numero: '202', prix: 220 },
+            { id: 5, numero: '203', prix: 180 },
+            { id: 6, numero: '204', prix: 250 },
+            { id: 7, numero: '205', prix: 210 },
+            { id: 8, numero: '206', prix: 190 },
+            { id: 9, numero: '207', prix: 230 },
+            { id: 10, numero: '208', prix: 240 },
+            { id: 11, numero: '209', prix: 210 },
+            { id: 12, numero: '210', prix: 260 }
+          ]
+        }
+      ],
+      /* eslint-enable no-undef */
+      courses: [
+        { id: 1, nom: 'Course 1', prix: 50 },
+        { id: 2, nom: 'Course 2', prix: 75 },
+        { id: 3, nom: 'Course 3', prix: 100 }
+      ],
+      totalPrice: 0,
+      isVIP: false,
     };
   },
+
   methods: {
-    // Fonction pour traiter la soumission du formulaire
     submitReservation() {
-      // Vérifie si une course est sélectionnée avant de procéder
-      if (!this.selectedCourse) {
-        alert('Veuillez sélectionner une course.'); // Alerte si aucune course sélectionnée
-        return; // Sort de la fonction si aucune course n'est sélectionnée
-      }
-
-      // Affiche une alerte confirmant la réservation
-      alert(`Réservation effectuée pour ${this.prenom} ${this.nom} avec la course ${this.selectedCourse.nom}`);
-
-      // Réinitialise tous les champs du formulaire après soumission
-      this.resetForm();
+      this.$router.push({
+        name: 'Paiement',
+        params: {
+          prenom: this.prenom,
+          nom: this.nom,
+          email: this.email,
+          selectedCourse: this.selectedCourse,
+          selectedHotel: this.selectedHotel,
+          chambre: this.chambre,
+          parking: this.parking,
+          isVIP: this.isVIP,
+          totalPrice: this.totalPrice,
+        },
+      });
     },
-
-    // Fonction pour gérer la sélection d'un hôtel
-    selectHotel() {
-      // Réinitialise la chambre sélectionnée lorsque l'hôtel change
-      if (!this.selectedHotel) {
-        this.chambre = null; // Réinitialise la chambre si l'utilisateur choisit "Choisir un hôtel"
+    selectHotel(hotel) {
+      // Si l'hôtel sélectionné est le même qu'avant, ne pas réinitialiser la chambre
+      if (this.selectedHotel && this.selectedHotel.id === hotel.id) {
+        return;
       }
-      this.calculateTotal(); // Recalcule le prix total
+      this.selectedHotel = hotel;
+      this.chambre = null; // Réinitialiser la chambre lorsque l'hôtel change
+      this.calculateTotal();
     },
-
-    // Fonction pour calculer le prix total
     calculateTotal() {
-      // Réinitialise le prix total
       let price = 0;
-
-      // Ajoute le prix de la course sélectionnée
-      if (this.selectedCourse) {
-        price += this.selectedCourse.prix;
-      }
-
-      // Ajoute le prix de la chambre sélectionnée
-      if (this.chambre) {
-        price += this.chambre.prix;
-      }
-
-      // Ajoute le coût du parking si sélectionné
-      if (this.parking) {
-        price += 50; // Coût de la place de parking
-      }
-
-      // Ajoute le coût du billet VIP si sélectionné
-      if (this.isVIP) {
-        price += 100; // Coût du billet VIP
-      }
-
-      // Met à jour le prix total
+      if (this.selectedCourse) price += this.selectedCourse.prix;
+      if (this.chambre) price += this.chambre.prix; // Si une chambre est sélectionnée, ajouter son prix
+      if (this.parking) price += 50;
+      if (this.isVIP) price += 100;
       this.totalPrice = price;
-    },
-
-    // Fonction pour réinitialiser les champs du formulaire
-    resetForm() {
-      this.prenom = ''; // Réinitialise le prénom
-      this.nom = ''; // Réinitialise le nom
-      this.email = ''; // Réinitialise l'email
-      this.parking = false; // Réinitialise l'indicateur de parking
-      this.isVIP = false; // Réinitialise l'indicateur VIP
-      this.selectedHotel = null; // Réinitialise l'hôtel sélectionné
-      this.selectedCourse = null; // Réinitialise la course sélectionnée
-      this.chambre = null; // Réinitialise la chambre sélectionnée
-      this.totalPrice = 0; // Réinitialise le prix total
     }
-  },
-  mounted() {
-    // Chargement des données initiales lors du montage du composant
-    this.hotels = [
-      // Exemple d'hôtels, ces données peuvent venir d'une API ou d'un fichier local
-      {id: 1, nom: 'Hôtel A', chambres: [{id: 1, numero: '101', prix: 100}, {id: 2, numero: '102', prix: 150}]},
-      {id: 2, nom: 'Hôtel B', chambres: [{id: 3, numero: '201', prix: 200}]},
-    ];
-
-    // Exemple de courses, ces données peuvent venir d'une API ou d'un fichier local
-    this.courses = [
-      {id: 1, nom: 'Course 1', prix: 50},
-      {id: 2, nom: 'Course 2', prix: 75},
-      {id: 3, nom: 'Course 3', prix: 100},
-    ];
-  },
+  }
 };
 </script>
 
+
 <style scoped>
-/* Styles basiques pour le formulaire */
+/* Organisation générale */
+.hotel-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.hotel-card {
+  border: 2px solid #e74c3c; /* Bordure rouge */
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.hotel-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: #ffe5e5; /* Légère teinte rouge au survol */
+}
+
+.hotel-card.selected {
+  border: 2px solid #27ae60; /* Une bordure verte pour indiquer la sélection */
+}
+
+.hotel-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  text-align: center;
+  color: #e74c3c; /* Titre rouge */
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #e74c3c;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 30px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+select,
+input[type="text"],
+input[type="checkbox"] {
+  width: 80%; /* Réduit la taille des champs de texte */
+  max-width: 300px; /* Limite la taille maximale */
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  text-align: center;
+}
+
+button[type="submit"] {
+  background-color: #e74c3c; /* Rouge pour le bouton */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: 10em;
+}
+
+button[type="submit"]:hover {
+  background-color: #c0392b; /* Rouge foncé au survol */
+}
+
+form div {
+  margin-bottom: 20px;
+}
+
+.hotel-card h3 {
+  color: #e74c3c;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+
+.hotel-card p {
+  color: #555;
+  font-size: 0.9em;
+}
+
+.price-total {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  text-align: center;
+  margin-top: 15px;
+}
+
 </style>

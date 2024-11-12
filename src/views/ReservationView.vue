@@ -59,7 +59,7 @@
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
           <p>Emplacement : {{ hotel.emplacement }}</p>
-          <p> Prix : {{ hotel.prix}}</p>
+          <p> Prix : {{ hotel.prix}}€</p>
         </div>
       </div>
       <!-- Bouton pour annuler la sélection de l'hôtel -->

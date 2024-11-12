@@ -8,9 +8,8 @@
       <p><strong>Prénom:</strong> {{ prenom }}</p>
       <p><strong>Nom:</strong> {{ nom }}</p>
       <p><strong>Email:</strong> {{ email }}</p>
-      <p v-if="selectedHotel"><strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }}</p>
+      <p v-if="selectedHotel"><strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }} - {{ selectedHotel.prix }}€</p>
       <p><strong>Course choisie:</strong> {{ selectedCourse.nom }} - {{ selectedCourse.prix }}€</p>
-      <p v-if="chambre"><strong>Chambre choisie:</strong> {{ chambre.numero }} - {{ chambre.prix }}€</p>
       <p v-if="parking">Place de parking (+50€)</p>
       <p v-if="isVIP">Billet VIP (+100€)</p>
       <h3>Prix Total: {{ totalPrice }}€</h3>
@@ -83,7 +82,6 @@ export default {
       email: '',
       selectedHotel: null,
       selectedCourse: null,
-      chambre: null,
       parking: false,
       isVIP: false,
       totalPrice: 0,
@@ -95,13 +93,12 @@ export default {
   },
   created() {
     // Récupérer les données passées depuis la page de réservation
-    const { prenom, nom, email, selectedCourse, selectedHotel, chambre, parking, isVIP, totalPrice } = this.$route.params;
+    const { prenom, nom, email, selectedCourse, selectedHotel, parking, isVIP, totalPrice } = this.$route.params;
     this.prenom = prenom;
     this.nom = nom;
     this.email = email;
     this.selectedCourse = selectedCourse;
     this.selectedHotel = selectedHotel;
-    this.chambre = chambre;
     this.parking = parking;
     this.isVIP = isVIP;
     this.totalPrice = totalPrice;

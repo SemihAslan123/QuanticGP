@@ -31,17 +31,23 @@
         </select>
       </div>
 
+
       <!-- Case à cocher pour une place de parking -->
-      <div>
-        <label for="parking">Prendre une place de parking (+50€):</label>
-        <input type="checkbox" v-model="parking" @change="calculateTotal" />
+      <div class="checkbox-group">
+        <label for="parking" class="checkbox-label">
+          <input type="checkbox" v-model="parking" @change="calculateTotal" id="parking" />
+          <span class="checkbox-custom"></span> Prendre une place de parking (+50€)
+        </label>
       </div>
 
       <!-- Case à cocher pour un billet VIP -->
-      <div>
-        <label for="vip">Billet VIP (+100€):</label>
-        <input type="checkbox" v-model="isVIP" @change="calculateTotal" />
+      <div class="checkbox-group">
+        <label for="vip" class="checkbox-label">
+          <input type="checkbox" v-model="isVIP" @change="calculateTotal" id="vip" />
+          <span class="checkbox-custom"></span> Billet VIP (+100€)
+        </label>
       </div>
+
 
       <!-- Affichage des hôtels sous forme de cartes -->
       <h2>Choisissez un hôtel :</h2>
@@ -53,18 +59,12 @@
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
           <p>Emplacement : {{ hotel.emplacement }}</p>
-
-          <!-- Sélecteur de chambre uniquement si l'hôtel est sélectionné -->
-          <div v-if="selectedHotel && selectedHotel.id === hotel.id">
-            <label for="chambre">Choisir une chambre :</label>
-            <select v-model="chambre" @change="calculateTotal" required>
-              <option value="">-- Choisir une chambre --</option>
-              <option v-for="room in hotel.chambres" :key="room.id" :value="room">
-                {{ room.numero }} - {{ room.prix }}€
-              </option>
-            </select>
-          </div>
+          <p> Prix : {{ hotel.prix}}</p>
         </div>
+      </div>
+      <!-- Bouton pour annuler la sélection de l'hôtel -->
+      <div v-if="selectedHotel">
+        <button type="button" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
       </div>
 
       <!-- Affichage du prix total -->
@@ -79,8 +79,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: 'ReservationView',
   data() {
@@ -89,9 +87,8 @@ export default {
       nom: '',
       email: '',
       parking: false,
-      selectedHotel: null,
-      selectedCourse: null,
-      chambre: null,
+      selectedHotel: '',
+      selectedCourse: '',
       /* eslint-disable no-undef */
       hotels: [
         {
@@ -99,43 +96,21 @@ export default {
           nom: 'Riviera Marriott',
           emplacement: 'Ouest',
           image: require('@/assets/hotels/hotel1.jpeg'), // eslint-disable-line no-undef
-          chambres: [
-            { id: 1, numero: '101', prix: 100 },
-            { id: 2, numero: '102', prix: 150 },
-            { id: 3, numero: '103', prix: 120 },
-            { id: 4, numero: '104', prix: 200 },
-            { id: 5, numero: '105', prix: 175 },
-            { id: 6, numero: '106', prix: 130 },
-            { id: 7, numero: '107', prix: 160 },
-            { id: 8, numero: '108', prix: 180 },
-            { id: 9, numero: '109', prix: 110 },
-            { id: 10, numero: '110', prix: 140 }
-          ]
+          prix : 200,
         },
         {
           id: 2,
           nom: 'Aparthotel Adagio',
           emplacement: 'Est',
           image: require('@/assets/hotels/hotel2.jpg'), // eslint-disable-line no-undef
-          chambres: [
-            { id: 3, numero: '201', prix: 200 },
-            { id: 4, numero: '202', prix: 220 },
-            { id: 5, numero: '203', prix: 180 },
-            { id: 6, numero: '204', prix: 250 },
-            { id: 7, numero: '205', prix: 210 },
-            { id: 8, numero: '206', prix: 190 },
-            { id: 9, numero: '207', prix: 230 },
-            { id: 10, numero: '208', prix: 240 },
-            { id: 11, numero: '209', prix: 210 },
-            { id: 12, numero: '210', prix: 260 }
-          ]
+          prix : 350,
         }
       ],
       /* eslint-enable no-undef */
       courses: [
-        { id: 1, nom: 'Course 1', prix: 50 },
-        { id: 2, nom: 'Course 2', prix: 75 },
-        { id: 3, nom: 'Course 3', prix: 100 }
+        {id: 1, nom: 'Course 1', prix: 50},
+        {id: 2, nom: 'Course 2', prix: 75},
+        {id: 3, nom: 'Course 3', prix: 100}
       ],
       totalPrice: 0,
       isVIP: false,
@@ -152,7 +127,6 @@ export default {
           email: this.email,
           selectedCourse: this.selectedCourse,
           selectedHotel: this.selectedHotel,
-          chambre: this.chambre,
           parking: this.parking,
           isVIP: this.isVIP,
           totalPrice: this.totalPrice,
@@ -160,26 +134,38 @@ export default {
       });
     },
     selectHotel(hotel) {
-      // Si l'hôtel sélectionné est le même qu'avant, ne pas réinitialiser la chambre
+      // Si l'hôtel sélectionné est le même qu'avant, ne pas réinitialiser
       if (this.selectedHotel && this.selectedHotel.id === hotel.id) {
         return;
       }
       this.selectedHotel = hotel;
-      this.chambre = null; // Réinitialiser la chambre lorsque l'hôtel change
+      this.calculateTotal();
+    },
+    cancelHotelSelection() {
+      this.selectedHotel = null;
       this.calculateTotal();
     },
     calculateTotal() {
       let price = 0;
+
+      // Ajout du prix de la course
       if (this.selectedCourse) price += this.selectedCourse.prix;
-      if (this.chambre) price += this.chambre.prix; // Si une chambre est sélectionnée, ajouter son prix
+
+      // Ajout du prix de l'hôtel (fixé à 200€ pour Riviera Marriott et 350€ pour Aparthotel Adagio)
+      if (this.selectedHotel) {
+        price += this.selectedHotel.prix;
+      }
+
+      // Ajout du prix du parking et du billet VIP
       if (this.parking) price += 50;
       if (this.isVIP) price += 100;
+
+      // Mise à jour du prix total
       this.totalPrice = price;
     }
   }
 };
 </script>
-
 
 <style scoped>
 /* Organisation générale */
@@ -286,12 +272,98 @@ form div {
   font-size: 0.9em;
 }
 
-.price-total {
-  font-weight: bold;
-  font-size: 1.2em;
-  color: #333;
+/* Style du bouton d'annulation */
+button[type="button"] {
+  background-color: #f39c12;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 10px;
+  width: auto;
+  display: inline-block;
   text-align: center;
-  margin-top: 15px;
+}
+
+button[type="button"]:hover {
+  background-color: #e67e22; /* Orange foncé au survol */
+  transform: scale(1.05); /* Légère augmentation de la taille au survol */
+}
+
+button[type="button"]:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.7); /* Lueur orange autour du bouton lorsqu'il est sélectionné */
+}
+
+button[type="button"]:active {
+  background-color: #d35400; /* Changer la couleur au clic */
+  transform: scale(1); /* Réduire l'effet de survol au clic */
+}
+
+/* Style du texte du bouton */
+button[type="button"] {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+form {
+  margin-bottom: 10em; /* Ajoute une marge de 50px en bas du formulaire */
+}
+
+/* Centrer les cases à cocher et leur texte, mais la case doit être à droite du texte */
+.checkbox-group {
+  display: flex;
+  justify-content: center; /* Centre les éléments horizontalement */
+  align-items: center; /* Centre verticalement */
+  margin-top: 20px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+  color: #333;
+  cursor: pointer;
+  flex-direction: row-reverse; /* Mettre la case à cocher à droite du texte */
+}
+
+.checkbox-label input {
+  display: none; /* Cacher l'élément input natif */
+}
+
+.checkbox-custom {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #e74c3c;
+  border-radius: 5px;
+  margin-left: 10px; /* Ajoute un espacement entre la case et le texte */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  position: relative;
+}
+
+.checkbox-label input:checked + .checkbox-custom {
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.checkbox-custom::after {
+  content: '✔';
+  color: white;
+  position: absolute;
+  left: 2px;
+  bottom: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  transform: scale(0);
+  transition: transform 0.3s ease;
+}
+
+.checkbox-label input:checked + .checkbox-custom::after {
+  transform: scale(180%);
 }
 
 </style>

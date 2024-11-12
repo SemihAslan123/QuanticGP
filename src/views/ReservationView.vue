@@ -89,24 +89,22 @@ export default {
       parking: false,
       selectedHotel: '',
       selectedCourse: '',
-      /* eslint-disable no-undef */
       hotels: [
         {
           id: 1,
           nom: 'Riviera Marriott',
           emplacement: 'Ouest',
-          image: require('@/assets/hotels/hotel1.jpeg'), // eslint-disable-line no-undef
+          image: require('@/assets/hotels/hotel1.jpeg'),
           prix : 200,
         },
         {
           id: 2,
           nom: 'Aparthotel Adagio',
           emplacement: 'Est',
-          image: require('@/assets/hotels/hotel2.jpg'), // eslint-disable-line no-undef
+          image: require('@/assets/hotels/hotel2.jpg'),
           prix : 350,
         }
       ],
-      /* eslint-enable no-undef */
       courses: [
         {id: 1, nom: 'Course 1', prix: 50},
         {id: 2, nom: 'Course 2', prix: 75},

@@ -36,7 +36,7 @@
       <div class="checkbox-group">
         <label for="parking" class="checkbox-label">
           <input type="checkbox" v-model="parking" @change="calculateTotal" id="parking" />
-          <span class="checkbox-custom"></span>Prendre une place de parking (+50€)
+          <span class="checkbox-custom"></span> Prendre une place de parking (+50€)
         </label>
       </div>
 

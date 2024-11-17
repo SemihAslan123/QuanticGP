@@ -17,6 +17,8 @@
         <div v-else>
           <p>Aucun événement trouvé.</p>
         </div>
+
+        <button @click="goBackToCreateEvent">Retour à la création d'événement</button>
       </div>
 
       <!-- Section pour modifier l'événement -->
@@ -47,7 +49,7 @@
       </div>
 
       <!-- Bouton pour afficher les événements -->
-      <button @click="showEvents">Afficher les événements</button>
+      <button v-if="currentSection !== 'events'" @click="showEvents">Afficher les événements</button>
     </div>
   </div>
 </template>
@@ -102,6 +104,18 @@ export default {
         console.error("Erreur lors de la récupération des événements :", error);
         alert("Erreur lors de la récupération des événements.");
       }
+    },
+    goBackToCreateEvent(){
+      this.currentSection = 'event';
+      this.resetQuillEditor();
+    },
+    resetQuillEditor() {
+      if (this.quillEditor) {
+        this.quillEditor.root.innerHTML = '';
+      }
+      this.courseName = '';
+      this.eventDate = '';
+      this.eventImage = null;
     },
     async saveEvent() {
       if (!this.courseName || !this.eventDate || !this.quillEditor.getText().trim() || !this.eventImage) {

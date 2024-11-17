@@ -11,6 +11,10 @@ app.use(cors({
     origin: 'http://localhost:8080'
 }));
 
+// Augmenter la taille maximale de la requête
+app.use(bodyParser.json({ limit: '50mb' })); // Augmenter la limite à 50 Mo
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 // Middleware pour analyser les données JSON dans les requêtes
 app.use(bodyParser.json());
 

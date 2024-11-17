@@ -38,7 +38,7 @@
         </div>
 
         <div>
-          <label for="eventImage">Image de l'événement :</label>
+          <label for="eventImage">Image de l'événement : ( 50 mo Max ) </label>
           <input type="file" @change="handleFileUpload" />
           <img v-if="eventImage" :src="eventImage" alt="Image de l'événement" />
         </div>

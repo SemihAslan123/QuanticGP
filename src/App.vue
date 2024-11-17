@@ -4,6 +4,7 @@
       <router-link to="/" exact-active-class="active-link">Home</router-link>
       <router-link to="/reservation" exact-active-class="active-link">Reservez votre billet</router-link>
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
+      <router-link to="/organisation" exact-active-class="active-link">Organisation</router-link>
     </nav>
     <div class="content">
       <router-view/>

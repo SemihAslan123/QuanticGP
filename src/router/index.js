@@ -4,6 +4,7 @@ import Home from '../views/HomeView.vue';
 import Reservation from '../views/ReservationView.vue';
 import FAQ from '../views/FAQView.vue';
 import Paiement from '../views/PaiementView.vue';
+import Organisation from '../views/OrganisationView.vue'
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
       name: 'Paiement',
       component: Paiement,
       props: true,
+    },
+    {
+      path : "/organisation",
+      name : "Organisation",
+      component : Organisation,
     },
   ],
 });

@@ -11,19 +11,7 @@
     <!-- =========================================================================================================================-->
 
 
-     <!--<div class="section" id="section1">-->
-
-        <!--<h1>Bienvenue chez Quantic GP</h1>-->
-
-         <router-link to="/reservation">
-            <button>Réserver un Billet</button>
-         </router-link>
-
-         <router-link to="/faq">
-            <button>FAQ</button>
-         </router-link>
-
-      <!--</div>-->
+      <div class="section" id="section1">Section 1</div>
 
 
     <!-- =========================================================================================================================-->
@@ -31,39 +19,10 @@
     <!-- =========================================================================================================================-->
 
 
-     <div class="section" id="section2">
-       <div class="content-container">
-         <h2>Le Quantic Grand Prix</h2>
-         <p class="intro-text">
-           Le Quantic GP se compose cette année de plusieurs pilotes légendaires, un circuit mythique et un format inédit.
-         </p>
-
-         <div class="info-block">
-           <h3>Un circuit légendaire</h3>
-           <p>
-             Chaque pilote de Formule 1 rêve de gagner sur le circuit mythique de Monaco, le plus lent et le plus difficile du Championnat du Monde de Formule 1. Celui qui s’impose au Quantic GP le mérite, car même une petite erreur dans les rues de la principauté est fatale. Les qualifications jouent un rôle crucial, car les dépassements sont presque impossibles. Toutefois, avec de nombreux abandons, une conduite maîtrisée peut offrir l’opportunité de marquer des points.
-           </p>
-         </div>
-
-         <div class="info-block">
-           <h3>Histoire du circuit</h3>
-           <p>
-             Le Circuit de Monaco, créé en 1929 par Antony Noghès avec le soutien du Prince Louis II, est l'un des circuits les plus emblématiques de la Formule 1. Introduit au championnat en 1950, il a conservé son tracé de 3,34 km presque intact. Technique et exigeant, il met en valeur le talent des pilotes, comme Ayrton Senna, qui y a triomphé six fois. Ses virages légendaires, de Sainte Dévote au virage Fairmont, en passant par le tunnel et la Rascasse, en font une épreuve mythique où chaque erreur peut être fatale.
-           </p>
-         </div>
-
-         <div class="info-block">
-           <h3>Assister au Quantic Grand Prix</h3>
-           <p>
-             Venir au Quantic Grand Prix à Monaco est un moment inoubliable qui doit être anticipé et préparé. À travers ce site, nous vous proposons des informations utiles et une équipe de professionnels chargée de vous assister dans l’organisation de votre séjour : hôtel, billets, terrasse, yacht, limousine, restaurant.
-           </p>
-         </div>
-       </div>
-     </div>
+      <div class="section" id="section2">Section 2</div>
 
 
-
-     <!-- =============================================================================================================================-->
+    <!-- =============================================================================================================================-->
     <!-- ======================================= TROISIÈME CONTAINER : CARTE DE L'EVENEMENT ========================================= -->
     <!-- =============================================================================================================================-->
 
@@ -179,7 +138,7 @@
       <!-- =========================================================================================================================-->
 
 
-      <div class="section" id="section4"></div>
+      <div class="section" id="section4">Section 4</div>
 
 
    </div>

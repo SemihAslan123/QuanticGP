@@ -8,8 +8,12 @@ body, html {
   }
 
 /* ========================= La carte ========================= */ 
+
 svg {
     width: 100%;
+    height: auto;
+    border-radius: 200px;
+    border: 30px solid rgba(25, 45, 64, 255); /* Bordure sur le conteneur */
 }
 
 
@@ -90,16 +94,21 @@ svg {
   
   /* Ajoutons des couleurs pour différencier les sections */
   #section1 {
-    background-color: rgb(20, 15, 41);
+    background-color: rgba(0,22,43,255);
   }
+
   #section2 {
-    background-color: rgb(9, 11, 12);
+    background-color: rgba(0,22,43,255);
   }
+
   #section3 {
-    background-color: rgb(1, 2, 1);
+    background-color: rgba(0,22,43,255);
+    margin-left: -30px;
+    margin-right: -30px;
   }
+
   #section4 {
-    background-color: rgb(6, 3, 8);
+    background-color: rgba(0,22,43,255);
   }
 
 
@@ -144,8 +153,8 @@ svg {
     transition: background-color 0.3s, transform 0.2s; /* Animation pour l'effet de survol */
     position: absolute;
 
-    margin-left: 70%;
-    margin-top: 40%;
+    margin-left: 30%;
+    margin-top: 50%;
   }
 
   .buttonSwitchStands:hover {
@@ -162,58 +171,3 @@ svg {
     height: auto; /* Taille de l'icône */
     object-fit: contain; /* Assure que l'icône garde ses proportions */
   }
-/* ========================= Section 2 Styles ========================= */
-
-#section2 {
-    background-color: #131313;
-    color: #f5f5f5;
-    padding: 50px 20px;
-    font-family: 'Host Grotesk', sans-serif;
-    text-align: center;
-}
-
-.content-container {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 20px;
-    color: #f03265;
-}
-
-.intro-text {
-    font-size: 1.2rem;
-    font-weight: 300;
-    margin-bottom: 40px;
-    color: #d4d4d4;
-    line-height: 1.8;
-}
-
-.info-block {
-    margin-bottom: 30px;
-    text-align: left;
-}
-
-.info-block h3 {
-    font-size: 1.8rem;
-    color: #f5f5f5;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.info-block p {
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 1.6;
-    color: #c9c9c9;
-}
-
-/* Ajout d'une animation subtile */
-.info-block:hover h3 {
-    color: #f03265;
-    transition: color 0.3s;
-}
-

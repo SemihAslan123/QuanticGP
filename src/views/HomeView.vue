@@ -34,7 +34,7 @@
          </button>
 
 
-         <svg
+         <svg class="svgCarte"
          version="1.1"
          id="svg1"
          width="2341"

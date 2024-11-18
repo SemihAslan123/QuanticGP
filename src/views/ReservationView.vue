@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Réservation de Billet</h1>
+    <h1>Réservation de billet</h1>
     <form @submit.prevent="submitReservation">
       <!-- Champ pour le prénom -->
       <div>
@@ -20,15 +20,25 @@
         <input type="text" v-model="email" required />
       </div>
 
-      <!-- Sélecteur pour choisir une course -->
+      <!-- Choisir une course -->
       <div>
-        <label for="course">Choisir une course:</label>
-        <select v-model="selectedCourse" @change="calculateTotal" required>
-          <option value="">-- Choisir une course --</option>
-          <option v-for="course in courses" :key="course.id" :value="course">
-            {{ course.nom }} - {{ course.prix }}€
-          </option>
-        </select>
+        <div class="course-selection">
+          <button type="button" @click="previousCourse">&#8592;</button> <!-- Flèche gauche -->
+          <div class="course-info">
+            <!-- Afficher un message si aucune course n'est sélectionnée -->
+            <template v-if="selectedCourseIndex === -1">
+              <p>Choisir une course :</p>
+            </template>
+            <!-- Afficher les détails de la course si une course est sélectionnée -->
+            <template v-else>
+              <img :src="selectedCourse.image" alt="Image de la course" class="course-image" />
+              <h3>{{ selectedCourse.nom }}</h3>
+              <p>{{ selectedCourse.description }}</p>
+              <p>{{ selectedCourse.prix }}€</p>
+            </template>
+          </div>
+          <button type="button" @click="nextCourse">&#8594;</button> <!-- Flèche droite -->
+        </div>
       </div>
 
 
@@ -64,7 +74,7 @@
       </div>
       <!-- Bouton pour annuler la sélection de l'hôtel -->
       <div v-if="selectedHotel">
-        <button type="button" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
+        <button id="annulation" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
       </div>
 
       <!-- Affichage du prix total -->
@@ -87,8 +97,8 @@ export default {
       nom: '',
       email: '',
       parking: false,
-      selectedHotel: '',
-      selectedCourse: '',
+      selectedHotel: '', // Sélection d'hôtel vide par défaut
+      selectedCourseIndex: -1, // Indice de la course sélectionnée, -1 signifie aucune sélection
       hotels: [
         {
           id: 1,
@@ -106,16 +116,80 @@ export default {
         }
       ],
       courses: [
-        {id: 1, nom: 'Course 1', prix: 50},
-        {id: 2, nom: 'Course 2', prix: 75},
-        {id: 3, nom: 'Course 3', prix: 100}
+        {
+          id: 1,
+          nom: 'Course 1',
+          prix: 50,
+          description: 'Une course amusante à travers la ville.',
+          image: '/assets/courses/course1.jpeg',
+        },
+        {
+          id: 2,
+          nom: 'Course 2',
+          prix: 75,
+          description: 'Course de vitesse sur un circuit.',
+          image: '/assets/courses/course2.png',
+        },
+        {
+          id: 3,
+          nom: 'Course 3',
+          prix: 100,
+          description: 'Un défi d’endurance pour les plus courageux.',
+          image: '/assets/courses/course3.png',
+        }
       ],
-      totalPrice: 0,
-      isVIP: false,
+      totalPrice: 0, // Prix total calculé
+      isVIP: false, // Billet VIP activé ou non
     };
   },
-
+  computed: {
+    selectedCourse() {
+      return this.selectedCourseIndex !== -1 ? this.courses[this.selectedCourseIndex] : null;
+    }
+  },
   methods: {
+    nextCourse() {
+      if (this.selectedCourseIndex < this.courses.length - 1) {
+        this.selectedCourseIndex++;
+      } else {
+        this.selectedCourseIndex = 0; // Retour au début
+      }
+      this.calculateTotal();
+    },
+    previousCourse() {
+      if (this.selectedCourseIndex > 0) {
+        this.selectedCourseIndex--;
+      } else {
+        this.selectedCourseIndex = this.courses.length - 1; // Retour à la fin
+      }
+      this.calculateTotal();
+    },
+    calculateTotal() {
+      let price = 0;
+
+      // Ajout du prix de la course
+      if (this.selectedCourse) price += this.selectedCourse.prix;
+
+      // Ajout du prix du parking
+      if (this.parking) price += 50;
+
+      // Ajout du prix du billet VIP
+      if (this.isVIP) price += 100;
+
+      // Ajout du prix de l'hôtel (si un hôtel est sélectionné)
+      if (this.selectedHotel) price += this.selectedHotel.prix;
+
+      // Mise à jour du prix total
+      this.totalPrice = price;
+    },
+    selectHotel(hotel) {
+      this.selectedHotel = hotel; // Met à jour l'hôtel sélectionné
+      this.calculateTotal(); // Recalcule le prix total après la sélection
+    },
+    cancelHotelSelection() {
+      this.selectedHotel = null; // Annule la sélection de l'hôtel
+      this.calculateTotal(); // Recalcule le prix total après l'annulation
+    },
     submitReservation() {
       this.$router.push({
         name: 'Paiement',
@@ -130,40 +204,12 @@ export default {
           totalPrice: this.totalPrice,
         },
       });
-    },
-    selectHotel(hotel) {
-      // Si l'hôtel sélectionné est le même qu'avant, ne pas réinitialiser
-      if (this.selectedHotel && this.selectedHotel.id === hotel.id) {
-        return;
-      }
-      this.selectedHotel = hotel;
-      this.calculateTotal();
-    },
-    cancelHotelSelection() {
-      this.selectedHotel = null;
-      this.calculateTotal();
-    },
-    calculateTotal() {
-      let price = 0;
-
-      // Ajout du prix de la course
-      if (this.selectedCourse) price += this.selectedCourse.prix;
-
-      // Ajout du prix de l'hôtel (fixé à 200€ pour Riviera Marriott et 350€ pour Aparthotel Adagio)
-      if (this.selectedHotel) {
-        price += this.selectedHotel.prix;
-      }
-
-      // Ajout du prix du parking et du billet VIP
-      if (this.parking) price += 50;
-      if (this.isVIP) price += 100;
-
-      // Mise à jour du prix total
-      this.totalPrice = price;
     }
   }
 };
 </script>
+
+
 
 <style scoped>
 /* Organisation générale */
@@ -271,7 +317,7 @@ form div {
 }
 
 /* Style du bouton d'annulation */
-button[type="button"] {
+#annulation {
   background-color: #f39c12;
   color: #fff;
   border: none;
@@ -286,7 +332,7 @@ button[type="button"] {
   text-align: center;
 }
 
-button[type="button"]:hover {
+#annulation:hover {
   background-color: #e67e22; /* Orange foncé au survol */
   transform: scale(1.05); /* Légère augmentation de la taille au survol */
 }
@@ -363,5 +409,69 @@ form {
 .checkbox-label input:checked + .checkbox-custom::after {
   transform: scale(180%);
 }
+
+
+/* Conteneur pour la sélection de la course */
+.course-selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Conteneur d'information de la course */
+.course-info {
+  text-align: center;
+  max-width: 300px; /* Limite la largeur pour éviter que l'image et le texte soient trop larges */
+}
+
+/* Style de l'image de la course */
+.course-image {
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: -18px;
+  border: 4px solid black; /* Ajoute une bordure rouge fine autour de l'image */
+}
+
+/* Style des boutons de navigation (flèches) */
+button[type="button"] {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 2em;
+}
+
+button[type="button"]:hover {
+  background-color: #c0392b;
+}
+
+button[type="button"]:focus {
+  outline: none;
+}
+
+button[type="button"]:active {
+  background-color: #d35400;
+}
+
+/* Style du texte de la course */
+.course-info h3 {
+  font-size: 1.5em;
+  color: #e74c3c;
+  margin-bottom: 0;
+}
+
+.course-info p {
+  color: #555;
+  font-size: 22px;
+  margin: 5px 0;
+}
+
+
 
 </style>

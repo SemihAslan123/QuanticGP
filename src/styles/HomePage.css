@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+/* ========================= La carte ========================= */ 
+svg {
+    width: 100%;
+}
+
+
+.map-container {
+    position: relative;
+}
+  
+  
+/* ========================= Info-bulle =========================*/
+.tooltip {
+    position: absolute;
+    padding: 30px;
+    background-color: rgba(19, 16, 46, 0.945);
+    color: #fff;
+    border-radius: 15px;
+    pointer-events: none; /* Permet de ne pas interférer avec les clics ou survols */
+    font-size: 20px;
+    font-family: "Host Grotesk", sans-serif;
+    white-space: nowrap;
+    z-index: 10; /* S'assure que le tooltip soit au-dessus du SVG */
+    white-space: pre-line;
+}
+
+.tooltip div {
+    margin-bottom: 5px; /* Espacement entre les lignes */
+}
+
+.toolTipName {
+  margin-top: 20px;
+  font-weight: 800;
+  font-size: 22px;
+}
+
+.infosContainer {
+  padding: 10px 0 10px 20px;
+  border-left: #ffffffd3 4px solid;
+  background-color: rgba(243, 38, 93, 0.363);
+  border-radius: 8px;
+  margin-top: 30px;
+  text-align: left;
+  font-size: 19px;
+  color: #d4d4d4;
+}
+
+.toolTipTextTitle {
+  font-weight: 700;
+  font-size: 20px;
+  color: #ececec;
+}
+
+.toolTipDetails {
+    margin-top: 30px;
+}
+
+.toolTipImage {
+    margin-top: 30px;
+}
+
+.imageInTooltip {
+  border-radius: 12px;
+}
+
+
+/* ========================= Les sections =========================*/
+
+.page-container {
+    height: 100vh;
+  }
+  
+  .section {
+    height: 100vh; /* Chaque section prend toute la hauteur de l'écran */
+    scroll-snap-align: start; /* S’aligne au début de chaque section */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+  }
+  
+  /* Ajoutons des couleurs pour différencier les sections */
+  #section1 {
+    background-color: rgb(20, 15, 41);
+  }
+  #section2 {
+    background-color: rgb(9, 11, 12);
+  }
+  #section3 {
+    background-color: rgb(1, 2, 1);
+  }
+  #section4 {
+    background-color: rgb(6, 3, 8);
+  }
+
+
+  /* ========================= La scrollbar =========================*/
+
+
+  /* Largeur de la scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  /* Track de la scrollbar */
+  ::-webkit-scrollbar-track {
+    background: #08070f; /* Couleur de fond de la piste */
+  }
+  
+  /* Couleur et style du "thumb" (la partie défilante) */
+  ::-webkit-scrollbar-thumb {
+    background-color: #37363d; /* Couleur du thumb */
+    border-radius: 10px;    /* Coins arrondis */
+  }
+  
+  /* Changement de couleur au survol */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+
+  /* ========================= Les boutons de la carte =========================*/
+
+
+  .buttonSwitchStands {
+    width: 90px; /* Largeur du bouton */
+    height: 90px; /* Hauteur du bouton */
+    background-color: #8d3434; /* Couleur de fond (bleu ici) */
+    border: none; /* Retirer les bordures */
+    border-radius: 8px; /* Coins légèrement arrondis */
+    display: flex; /* Utiliser flexbox pour centrer l'icône */
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement */
+    cursor: pointer; /* Change le curseur au survol */
+    transition: background-color 0.3s, transform 0.2s; /* Animation pour l'effet de survol */
+    position: absolute;
+
+    margin-left: 70%;
+    margin-top: 40%;
+  }
+
+  .buttonSwitchStands:hover {
+    background-color: #8d3030; /* Couleur de fond au survol */
+    transform: scale(1.1); /* Agrandissement au survol */
+  }
+
+  .buttonSwitchStands:active {
+    transform: scale(0.95); /* Effet au clic pour une petite réduction */
+  }
+
+  .iconButtonSwitchStands {
+    width: 130px; /* Taille de l'icône */
+    height: auto; /* Taille de l'icône */
+    object-fit: contain; /* Assure que l'icône garde ses proportions */
+  }

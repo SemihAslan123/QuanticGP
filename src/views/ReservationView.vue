@@ -109,7 +109,7 @@ export default {
         },
         {
           id: 2,
-          nom: 'Aparthotel Adagio',
+          nom: 'Fairmont Monte Carlo',
           emplacement: 'Est',
           image: '/assets/hotels/hotel2.jpg',
           prix : 350,

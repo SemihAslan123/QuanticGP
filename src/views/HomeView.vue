@@ -11,19 +11,7 @@
     <!-- =========================================================================================================================-->
 
 
-      <div class="section" id="section1">
-
-         <h1>Bienvenue chez Quantic GP</h1>
-
-         <router-link to="/reservation">
-            <button>Réserver un Billet</button>
-         </router-link>
-
-         <router-link to="/faq">
-            <button>FAQ</button>
-         </router-link>
-
-      </div>
+      <div class="section" id="section1">Section 1</div>
 
 
     <!-- =========================================================================================================================-->
@@ -150,7 +138,7 @@
       <!-- =========================================================================================================================-->
 
 
-      <div class="section" id="section4"></div>
+      <div class="section" id="section4">Section 4</div>
 
 
    </div>

@@ -9,7 +9,7 @@ body, html {
 
 /* ========================= La carte ========================= */ 
 
-svg {
+.svgCarte {
     width: 100%;
     height: auto;
     border-radius: 200px;

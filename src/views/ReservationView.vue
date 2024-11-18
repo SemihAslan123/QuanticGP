@@ -94,14 +94,14 @@ export default {
           id: 1,
           nom: 'Riviera Marriott',
           emplacement: 'Ouest',
-          image: require('@/assets/hotels/hotel1.jpeg'),
+          image: require('../../public/assets/hotels/hotel1.jpeg'),
           prix : 200,
         },
         {
           id: 2,
           nom: 'Aparthotel Adagio',
           emplacement: 'Est',
-          image: require('@/assets/hotels/hotel2.jpg'),
+          image: require('../../public/assets/hotels/hotel2.jpg'),
           prix : 350,
         }
       ],

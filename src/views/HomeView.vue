@@ -15,13 +15,6 @@
 
          <h1>Bienvenue chez Quantic GP</h1>
 
-         <router-link to="/reservation">
-            <button>Réserver un Billet</button>
-         </router-link>
-
-         <router-link to="/faq">
-            <button>FAQ</button>
-         </router-link>
 
       </div>
 

@@ -51,11 +51,6 @@ nav a.active-link {
   border-bottom: 2px solid #e74c3c;
   padding-bottom: 3px;
 }
-
-.content {
-  margin-top: 80px;
-  padding: 20px;
-}
 </style>
 <script setup>
 </script>

@@ -268,7 +268,7 @@ label {
   display: block;
   margin-top: 15px;
   font-weight: bold;
-  color: #333;
+  color: #fff;
 }
 
 select,
@@ -312,7 +312,7 @@ form div {
 }
 
 .hotel-card p {
-  color: #555;
+  color: #fff;
   font-size: 0.9em;
 }
 
@@ -369,7 +369,7 @@ form {
   display: flex;
   align-items: center;
   font-size: 1.1em;
-  color: #333;
+  color: #fff;
   cursor: pointer;
   flex-direction: row-reverse; /* Mettre la case à cocher à droite du texte */
 }
@@ -467,7 +467,7 @@ button[type="button"]:active {
 }
 
 .course-info p {
-  color: #555;
+  color: #fff;
   font-size: 22px;
   margin: 5px 0;
 }

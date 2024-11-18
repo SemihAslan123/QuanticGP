@@ -28,7 +28,8 @@ nav {
   left: 0;
   width: 100%;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: rgba(248, 249, 250, 0); /* Transparence légère */
+  backdrop-filter: blur(5px); /* Effet flou */
   border-bottom: 2px solid #e74c3c;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -38,7 +39,7 @@ nav a {
   margin: 0 15px;
   text-decoration: none;
   font-weight: 600;
-  color: #2c3e50;
+  color: #c8d1d9;
   transition: color 0.3s ease, transform 0.2s ease;
 }
 

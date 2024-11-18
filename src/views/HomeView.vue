@@ -35,7 +35,7 @@
 
 
          <button class="buttonSwitchStands" @click="switchImage()">
-            <img src="../assets/homePage/standsIcon.png"  alt="Icon" class="iconButtonSwitchStands">
+            <img src="../../public/assets/homePage/standsIcon.png" alt="Icon" class="iconButtonSwitchStands">
          </button>
 
 
@@ -82,12 +82,12 @@
          inkscape:label="HotelA"
          style="display:inline;opacity:1;fill:url(#linearGradient3)"
          @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Hôtel Riviera Marriott : La Porte de Monaco',
                textTitle:'Équipements de l\'établissement',
                text: '• Parking public payant sur site \n • Salle de sport / piscine \n • Bar / lounge \n • Animaux domestiques autorisés',
                details: 'Durant l\'événement, les réservations de l\'hôtel \nRiviera Marriott se font directement sur notre site.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementHotelA.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementHotelA.jpg')
             })"
          @mouseleave="hideTooltip"
          @mousemove="moveTooltip">
@@ -104,12 +104,12 @@
          id="layer2"
          inkscape:label="HotelB"
          @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Hôtel Fairmont Monte Carlo',
                textTitle:'Équipements de l\'établissement',
                text: '• Service de taxi gratuit \n • Salle de sport / piscine \n • Bar / lounge \n • Animaux domestiques autorisés',
                details: 'Durant l\'événement, les réservations de l\'hôtel \nFairmont Monte Carlo se font directement \nsur notre site.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementHotelB.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementHotelB.jpg')
             })"
          @mouseleave="hideTooltip"
          @mousemove="moveTooltip">
@@ -126,12 +126,12 @@
             id="layer3"
             inkscape:label="ZoneVIP"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Secteur Nord : Zone VIP',
                textTitle:'Services à disposition',
                text: '• Bar à cocktails \n • Service de restauration gastronomique \n • Photographies et souvenirs exclusifs \n • Zones de détente et de relaxation',
                details: 'La zone VIP offre une expérience exclusive avec \ndes services personnalisés, un confort raffiné et un \naccès privilégié aux moments forts de l\'événement.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementZoneVIP.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementZoneVIP.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -148,12 +148,12 @@
             id="layer4"
             inkscape:label="GradinA"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Gradin Est : Monte-Carlo',
                textTitle:'Services à disposition',
                text: '• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu \n',
                details: 'Le plus grand gradin, situé au niveau de la ligne de \ndépart, offrant une vue imprenable sur la course.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementGradinA.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementGradinA.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -170,12 +170,12 @@
             id="layer5"
             inkscape:label="GradinB"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Gradin Sud : Senna',
                textTitle:'Services à disposition',
                text: '• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu',
                details: 'Gradin face à la chicane de la Piscine, offrant un aperçu \nsur l\'un des passages les plus techniques du circuit.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementGradinB.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementGradinB.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -192,12 +192,12 @@
             id="layer6"
             inkscape:label="GradinC"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Gradin Nord : Riviera',
                textTitle:'Services à disposition',
                text: '• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu',
                details: 'Gradin face à Sainte-Dévote, offrant une vue \nsur un des virages les plus iconiques du circuit.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementGradinC.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementGradinC.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -214,12 +214,12 @@
             id="layer7"
             inkscape:label="KartingEnfant"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Le Circuit P\'tit Monaco : Karting Enfant',
                textTitle:'Services à disposition',
                text: '• Karting deux places : parent/enfant \n • Mini-compétitions et courses amicales \n • Atelier de pilotage',
                details: 'Un circuit adapté aux enfants pour \ndécouvrir la course à leur façon.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementKartingEnfant.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementKartingEnfant.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -236,12 +236,12 @@
             id="layer8"
             inkscape:label="Simulateur"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'F1 24 : Simulateur',
                textTitle:'Services à disposition',
                text: '• Plusieurs modes de courses \n • Simulation des G-Forces \n • Mode VR',
                details: 'Vivez l\'expérience F1 24 avec un \n simulateur ultra-réaliste, pour des \n sensations de course uniques.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementSimulateur.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementSimulateur.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -258,12 +258,12 @@
             id="layer9"
             inkscape:label="EspaceRencontre"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Hangar Renault : Espace de rencontre',
                textTitle:'Services à disposition',
                text: '• Stands de photo avec les F1 \n • Espace autographes \n • Café / Bar cocktails',
                details: 'Un espace immersif où les fans vivent \nla F1 de près, et rencontrent les \npilotes en exclusivité.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementEspaceRencontre.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementEspaceRencontre.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -280,12 +280,12 @@
             id="layer10"
             inkscape:label="Exposition"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Musée L\'Autodrome : Exposition de F1',
                textTitle:'Contenu de l\'exposition',
                text: '• Salle des équipements de pilote \n • Mur de trophées et médailles \n • Cinéma de la F1 \n• Boutique souvenirs',
                details: 'Explorer l\'histoire de la F1 à travers \ndes voitures mythiques et des \nexpériences immersives. ',
-               image: require('@/assets/homePage/emplacementsImages/emplacementExposition.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementExposition.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -302,12 +302,12 @@
             id="layer11"
             inkscape:label="Parking"
             @mouseover="showTooltip({
-               logo: require('@/assets/logo.png'),
+               logo: require('../../public/assets/logo.png'),
                name: 'Parc de Stationnement',
                textTitle:'Places restantes',
                text: 'Capacité de 10.000',
                details: 'Le parking est simple d\'accès et compte \nplusieurs emplacement pour personnes \nen situation d\'handicap.',
-               image: require('@/assets/homePage/emplacementsImages/emplacementParking.jpg') 
+               image: require('../../public/assets/homePage/emplacementsImages/emplacementParking.jpg')
             })"
             @mouseleave="hideTooltip"
             @mousemove="moveTooltip">
@@ -327,7 +327,7 @@
 
                   <g inkscape:groupmode="layer" id="Emplacement_1" inkscape:label="Emplacement_1" 
                   @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone A - Emplacement n°1',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -341,7 +341,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_2" inkscape:label="Emplacement_2" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone A - Emplacement n°2',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -355,7 +355,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_3" inkscape:label="Emplacement_3" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone A - Emplacement n°3',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -369,7 +369,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_4" inkscape:label="Emplacement_4" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone A - Emplacement n°4',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -383,7 +383,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_5" inkscape:label="Emplacement_5" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone A - Emplacement n°5',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -397,7 +397,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_6" inkscape:label="Emplacement_6" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°1',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -411,7 +411,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_7" inkscape:label="Emplacement_7" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°2',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -425,7 +425,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_8" inkscape:label="Emplacement_8" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°3',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -439,7 +439,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_9" inkscape:label="Emplacement_9" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°4',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -453,7 +453,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_10" inkscape:label="Emplacement_10" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°5',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -467,7 +467,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_11" inkscape:label="Emplacement_11" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone B - Emplacement n°6',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -481,7 +481,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_12" inkscape:label="Emplacement_12" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°1',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -495,7 +495,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_13" inkscape:label="Emplacement_13" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°2',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -509,7 +509,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_14" inkscape:label="Emplacement_14" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°3',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -523,7 +523,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_15" inkscape:label="Emplacement_15" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°4',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -537,7 +537,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_16" inkscape:label="Emplacement_16" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°5',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -551,7 +551,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_17" inkscape:label="Emplacement_17" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°6',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -565,7 +565,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_18" inkscape:label="Emplacement_18" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone C - Emplacement n°7',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -579,7 +579,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_19" inkscape:label="Emplacement_19" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°1',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -593,7 +593,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_20" inkscape:label="Emplacement_20" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°2',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -607,7 +607,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_21" inkscape:label="Emplacement_21"
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°3',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -621,7 +621,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_22" inkscape:label="Emplacement_22" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°4',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -635,7 +635,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_23" inkscape:label="Emplacement_23" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°5',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -649,7 +649,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_24" inkscape:label="Emplacement_24" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°6',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -663,7 +663,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_25" inkscape:label="Emplacement_25" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°7',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -677,7 +677,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_26" inkscape:label="Emplacement_26" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°8',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -691,7 +691,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_27" inkscape:label="Emplacement_27" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone D - Emplacement n°9',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -705,7 +705,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_28" inkscape:label="Emplacement_28" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°1',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -719,7 +719,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_29" inkscape:label="Emplacement_29" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°2',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -733,7 +733,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_30" inkscape:label="Emplacement_30" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°3',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -747,7 +747,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_31" inkscape:label="Emplacement_31" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°4',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -761,7 +761,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_32" inkscape:label="Emplacement_32" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°5',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -775,7 +775,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_33" inkscape:label="Emplacement_33" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°6',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -789,7 +789,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_34" inkscape:label="Emplacement_34" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°7',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -803,7 +803,7 @@
 
                <g inkscape:groupmode="layer" id="Emplacement_35" inkscape:label="Emplacement_35" 
                @mouseover="showTooltip({
-                     logo: require('@/assets/logo.png'),
+                     logo: require('../../public/assets/logo.png'),
                      name: 'Zone E - Emplacement n°8',
                      textTitle:'Caractéristiques de l\'emplacement',
                      text: '...',
@@ -885,7 +885,7 @@
          tooltipImage: '',
          tooltipStyles: { top: '0px', left: '0px' },
 
-         currentImage: require('@/assets/homePage/CarteEvenementAvecStands.png'),
+         currentImage: require('../../public/assets/homePage/CarteEvenementAvecStands.png'),
 
          withStands: true
       };
@@ -951,9 +951,9 @@
       switchImage() {
 
          if (this.withStands) {
-        this.currentImage = require('@/assets/homePage/CarteEvenementSansStands.png');
+        this.currentImage = require('../../public/assets/homePage/CarteEvenementSansStands.png');
       } else {
-        this.currentImage = require('@/assets/homePage/CarteEvenementAvecStands.png');
+        this.currentImage = require('../../public/assets/homePage/CarteEvenementAvecStands.png');
       }
       
       this.withStands = !this.withStands;

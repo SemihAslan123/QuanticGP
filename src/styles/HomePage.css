@@ -2,19 +2,26 @@
 
 
 body, html {
-    background-color: #2c3e50;
     margin: 0;
     padding: 0;
     width: 100%;
+    background-color: rgba(0,22,43,255);
   }
+
+/* ========================= La carte ========================= */ 
+
+.imageBaniere {
+  max-width: 80%;
+  border-radius: 25px;
+  margin-bottom: 18%;
+}
+
 
 /* ========================= La carte ========================= */ 
 
 .svgCarte {
     width: 100%;
     height: auto;
-    border-radius: 200px;
-    border: 30px solid rgba(25, 45, 64, 255); /* Bordure sur le conteneur */
 }
 
 
@@ -104,8 +111,6 @@ body, html {
 
   #section3 {
     background-color: rgba(0,22,43,255);
-    margin-left: -30px;
-    margin-right: -30px;
   }
 
   #section4 {

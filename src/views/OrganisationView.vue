@@ -166,136 +166,171 @@ export default {
 </script>
 
 <style scoped>
-/* Style général de la page */
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: rgba(0,22,43,255); /* Fond sombre */
+  font-family: "Host Grotesk", sans-serif;
+  color: #d4d4d4;
+}
+
 .organizer-page {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background-color: #f7f7f7; /* Fond clair */
-  font-family: Arial, sans-serif;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
 .content {
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: rgba(19, 16, 46, 0.945); /* Fond sombre */
+  border-radius: 15px;
+
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 h1, h2 {
   text-align: center;
-  color: #e74c3c; /* Rouge principal */
+  color: #f3265d; /* Rouge vif */
+  font-family: "Host Grotesk", sans-serif;
 }
 
 h1 {
   font-size: 2.5em;
-  margin-bottom: 20px;
 }
 
 h2 {
   font-size: 1.8em;
-  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-top: 15px;
+  margin-top: 20px;
   font-weight: bold;
-  color: #333;
+  color: #ececec;
   margin-bottom: 5px;
+  font-family: "Host Grotesk", sans-serif;
 }
 
 input[type="text"],
 input[type="date"],
-textarea,
 .editor-container {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  background-color: rgba(243, 38, 93, 0.363); /* Fond semi-transparent */
+  border: 1px solid #f3265d;
+  border-radius: 10px;
   font-size: 1em;
   margin-bottom: 20px;
+  color: #fff;
 }
 
 input[type="file"] {
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  color: #d4d4d4;
 }
 
 button {
-  background-color: #e74c3c; /* Rouge principal */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 12px 20px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 20px;
   width: 100%;
+  background-color: #8d3434; /* Rouge intense */
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.2em;
+  font-family: "Host Grotesk", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 15px;
 }
 
 button:hover {
-  background-color: #c0392b; /* Rouge plus foncé */
-  transform: scale(1.05); /* Légère animation au survol */
+  background-color: #f3265d; /* Rouge plus clair */
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
 }
 
 img {
   display: block;
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
+  border-radius: 15px;
+  margin: 10px 0;
+  border: 2px solid #f3265d;
+  transition: transform 0.3s ease;
 }
 
-.editor-container {
-  height: 200px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  font-size: 1em;
-  background-color: #fafafa;
+img:hover {
+  transform: scale(1.1);
 }
 
-/* Style des événements */
+/* Événements */
 .event-item {
-  background-color: #ffe5e5; /* Légère teinte rouge */
-  border: 2px solid #e74c3c;
-  border-radius: 8px;
+  background-color: rgba(243, 38, 93, 0.15); /* Rouge transparent */
+  border: 2px solid #f3265d;
+  border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .event-item:hover {
   transform: scale(1.03);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
 }
 
 .event-item h3 {
+  color: #f3265d;
   font-size: 1.5em;
-  color: #e74c3c;
+  font-family: "Host Grotesk", sans-serif;
   margin-bottom: 10px;
 }
 
 .event-item p {
-  color: #555;
-  margin-bottom: 10px;
+  color: #d4d4d4;
+  font-size: 1em;
 }
 
-/* Animation pour l'image d'événement */
-.event-item img {
-  transition: transform 0.3s ease;
+/* Éditeur */
+.editor-container {
+  height: 200px;
+  background-color: rgba(19, 16, 46, 0.945); /* Fond sombre */
+  border: 1px solid #f3265d;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1em;
+  color: #fff; /* Texte blanc par défaut */
+  overflow-y: auto; /* Permet le défilement si le contenu dépasse */
 }
 
-.event-item img:hover {
-  transform: scale(1.1);
+/deep/ .ql-editor::before {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08070f; /* Fond sombre */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #f3265d; /* Rouge vif */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #c0392b; /* Rouge foncé */
+}
+
 </style>

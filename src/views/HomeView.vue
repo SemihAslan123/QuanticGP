@@ -11,7 +11,11 @@
     <!-- =========================================================================================================================-->
 
 
-      <div class="section" id="section1">Section 1</div>
+      <div class="section" id="section1">
+
+         <img src="/assets/homePage/photo1.png" alt="Bannière page d'accueil" class="imageBaniere">
+
+      </div>
 
 
     <!-- =========================================================================================================================-->
@@ -52,6 +56,7 @@
                </linearGradient>
                <linearGradient xlink:href="#linearGradient2" id="linearGradient3" />
             </defs>
+            
 
 
             <!-- Groupe CarteEntiere (Non cliquable) -->

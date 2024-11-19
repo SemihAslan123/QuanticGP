@@ -6,45 +6,40 @@
       <!-- Section pour afficher les événements -->
       <div v-if="currentSection === 'events'">
         <h2>Liste des événements</h2>
-        <div v-if="events.length > 0">
-          <div v-for="event in events" :key="event.id" class="event-item">
+        <div v-if="events.length > 0" class="events-grid">
+          <div v-for="event in events" :key="event.id" class="event-card">
             <h3>{{ event.name }}</h3>
-            <p>{{ event.date }}</p>
-            <p>{{ event.description }}</p>
+            <p class="date">{{ event.date }}</p>
+            <p class="description">{{ event.description }}</p>
             <img :src="event.image" alt="Event image" v-if="event.image" />
           </div>
         </div>
         <div v-else>
           <p>Aucun événement trouvé.</p>
         </div>
-
         <button @click="goBackToCreateEvent">Retour à la création d'événement</button>
       </div>
 
       <!-- Section pour modifier l'événement -->
       <div v-if="currentSection === 'event'">
         <h2>Créer un événement</h2>
-        <div>
+        <div class="form-group">
           <label for="courseName">Nom de la course :</label>
           <input type="text" v-model="courseName" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="eventDate">Date de l'événement :</label>
           <input type="date" v-model="eventDate" required />
         </div>
-
-        <div>
+        <div class="form-group">
           <label for="eventDescription">Description de l'événement :</label>
-          <!-- Zone pour l'éditeur WYSIWYG -->
           <div ref="editorContainer" class="editor-container"></div>
         </div>
-
-        <div>
-          <label for="eventImage">Image de l'événement : ( 50 mo Max ) </label>
+        <div class="form-group">
+          <label for="eventImage">Image de l'événement : (50 Mo max)</label>
           <input type="file" @change="handleFileUpload" />
           <img v-if="eventImage" :src="eventImage" alt="Image de l'événement" />
         </div>
-
         <button type="submit" @click="saveEvent">Sauvegarder</button>
       </div>
 
@@ -53,6 +48,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import Quill from 'quill';
@@ -187,10 +183,9 @@ body, html {
 .content {
   max-width: 900px;
   width: 100%;
-  background-color: rgba(19, 16, 46, 0.945); /* Fond sombre */
+  background-color: rgba(0,22,43,255);
   border-radius: 15px;
-
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+  padding-bottom: 20px;
 }
 
 h1, h2 {

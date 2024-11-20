@@ -90,6 +90,12 @@ export default {
     this.quillEditor.root.innerHTML = this.eventDescription;
   },
   methods: {
+
+    dellEditor(){
+      if (this.quillEditor){
+          this.quillEditor = null;
+      }
+    },
     // Méthode pour afficher les événements
     async showEvents() {
       try {
@@ -101,18 +107,29 @@ export default {
         alert("Erreur lors de la récupération des événements.");
       }
     },
-    goBackToCreateEvent(){
+    goBackToCreateEvent() {
       this.currentSection = 'event';
-      this.resetQuillEditor();
+      this.resetForm();
+      this.$nextTick(() => {
+        this.dellEditor();
+        this.quillEditor = new Quill(this.$refs.editorContainer, {
+          theme: 'snow',
+          placeholder: 'Écrivez la description de l’événement...',
+          modules: {
+            toolbar: [
+              [{ header: '1' }, { header: '2' }, { font: [] }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              [{ align: [] }],
+              ['bold', 'italic', 'underline'],
+              ['link', 'image'],
+              ['blockquote', 'code-block'],
+              ['clean'],
+            ]
+          }
+        });
+      });
     },
-    resetQuillEditor() {
-      if (this.quillEditor) {
-        this.quillEditor.root.innerHTML = '';
-      }
-      this.courseName = '';
-      this.eventDate = '';
-      this.eventImage = null;
-    },
+
     async saveEvent() {
       if (!this.courseName || !this.eventDate || !this.quillEditor.getText().trim() || !this.eventImage) {
         alert("Veuillez remplir tous les champs avant de sauvegarder.");
@@ -127,7 +144,7 @@ export default {
         courseName: this.courseName,
         eventDate: this.eventDate,
         eventDescription: this.eventDescription,
-        eventImage: this.eventImage // image encodée en base64
+        eventImage: this.eventImage
       };
 
       try {

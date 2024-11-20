@@ -38,4 +38,4 @@ router.get('/', async (req, res) => {
     }
 });
 
-module.exports = router; // Exporter le router pour pouvoir l'utiliser dans index.js
+module.exports = router;

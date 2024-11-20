@@ -8,10 +8,35 @@
       <p><strong>Prénom:</strong> {{ prenom }}</p>
       <p><strong>Nom:</strong> {{ nom }}</p>
       <p><strong>Email:</strong> {{ email }}</p>
-      <p v-if="selectedHotel"><strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }} - {{ selectedHotel.prix }}€</p>
-      <p><strong>Course choisie:</strong> {{ selectedCourse.nom }} - {{ selectedCourse.prix }}€</p>
-      <p v-if="parking">Place de parking (+50€)</p>
+
+      <!-- Liste des courses sélectionnées -->
+      <div v-if="selectedCourses.length">
+        <h3>Courses choisies :</h3>
+        <ul>
+          <li v-for="course in selectedCourses" :key="course.id">
+            {{ course.nom }} - {{ course.prix }}€
+          </li>
+        </ul>
+      </div>
+
+      <!-- Hôtel sélectionné -->
+      <p v-if="selectedHotel">
+        <strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} -
+        {{ selectedHotel.emplacement }} -
+        {{ selectedHotel.prix }}€
+      </p>
+
+      <!-- Affichage des dates de parking si sélectionnées -->
+      <div v-if="startDate && endDate">
+        <p><strong>Date de début du parking:</strong> {{ startDate }}</p>
+        <p><strong>Date de fin du parking:</strong> {{ endDate }}</p>
+        <p><strong>Prix du parking:</strong> {{ parkingPrice }}€</p>
+      </div>
+
+      <!-- Options supplémentaires -->
       <p v-if="isVIP">Billet VIP (+100€)</p>
+
+      <!-- Prix total -->
       <h3>Prix Total: {{ totalPrice }}€</h3>
     </div>
 
@@ -81,10 +106,12 @@ export default {
       nom: '',
       email: '',
       selectedHotel: null,
-      selectedCourse: null,
-      parking: false,
+      selectedCourses: [], // Tableau pour stocker plusieurs courses
+      startDate: null,
+      endDate: null,
       isVIP: false,
       totalPrice: 0,
+      parkingPrice: 0, // Nouveau champ pour le prix du parking
       cardNumber: '',
       expiryDate: '',
       cvv: '',
@@ -93,17 +120,35 @@ export default {
   },
   created() {
     // Récupérer les données passées depuis la page de réservation
-    const { prenom, nom, email, selectedCourse, selectedHotel, parking, isVIP, totalPrice } = this.$route.params;
+    const { prenom, nom, email, selectedCourses, selectedHotel, startDate, endDate, isVIP, totalPrice } = this.$route.params;
     this.prenom = prenom;
     this.nom = nom;
     this.email = email;
-    this.selectedCourse = selectedCourse;
+    this.selectedCourses = selectedCourses || [];
     this.selectedHotel = selectedHotel;
-    this.parking = parking;
+    this.startDate = startDate;
+    this.endDate = endDate;
     this.isVIP = isVIP;
     this.totalPrice = totalPrice;
+
+    // Calcul du prix du parking en fonction des dates
+    if (this.startDate && this.endDate) {
+      this.calculateParkingPrice();
+    }
   },
   methods: {
+    calculateParkingPrice() {
+      const start = new Date(this.startDate);
+      const end = new Date(this.endDate);
+      const differenceInTime = end - start;
+      const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+      // Exemple : 10€ par jour pour le parking
+      this.parkingPrice = differenceInDays * 50;
+
+      // Mise à jour du totalPrice en ajoutant le prix du parking
+      this.totalPrice += this.parkingPrice;
+    },
     handlePayment() {
       alert('Le paiement a été effectué avec succès!');
       this.$router.push({ name: 'Home' });
@@ -115,10 +160,10 @@ export default {
 <style scoped>
 .payment-container {
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #dbd8d8;
   border-radius: 8px;
 }
 
@@ -187,5 +232,16 @@ h3 {
 
 .submit-button:hover {
   background-color: #c0392b;
+}
+
+.order-summary ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.order-summary li {
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #333;
 }
 </style>

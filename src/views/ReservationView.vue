@@ -20,34 +20,50 @@
         <input type="text" v-model="email" required />
       </div>
 
-      <!-- Choisir une course -->
-      <div>
-        <div class="course-selection">
-          <button type="button" @click="previousCourse">&#8592;</button> <!-- Flèche gauche -->
-          <div class="course-info">
-            <!-- Afficher un message si aucune course n'est sélectionnée -->
-            <template v-if="selectedCourseIndex === -1">
-              <p>Choisir une course :</p>
-            </template>
-            <!-- Afficher les détails de la course si une course est sélectionnée -->
-            <template v-else>
-              <img :src="selectedCourse.image" alt="Image de la course" class="course-image" />
-              <h3>{{ selectedCourse.nom }}</h3>
-              <p>{{ selectedCourse.description }}</p>
-              <p>{{ selectedCourse.prix }}€</p>
-            </template>
-          </div>
-          <button type="button" @click="nextCourse">&#8594;</button> <!-- Flèche droite -->
+      <!-- Affichage des courses sous forme de cartes -->
+      <h2>Choisissez vos courses :</h2>
+      <div class="course-cards">
+        <div
+            v-for="course in courses"
+            :key="course.id"
+            class="course-card"
+            @click="toggleCourseSelection(course)"
+            :class="{ selected: selectedCourses.includes(course) }"
+        >
+          <img :src="course.image" alt="Image de la course" class="course-image" />
+          <h3>{{ course.nom }}</h3>
+          <p>{{ course.description }}</p>
+          <p>Prix : {{ course.prix }}€</p>
         </div>
       </div>
 
+      <!-- Sélection des dates de parking -->
+      <h2>Choisissez vos dates de parking :</h2>
+      <div class="parking-dates">
+        <label for="startDate">Date de début du parking :</label>
+        <input
+            type="date"
+            id="startDate"
+            v-model="startDate"
+            :min="'2025-06-15'"
+            :max="'2025-06-19'"
+            @change="updateMaxEndDate"
+        />
 
-      <!-- Case à cocher pour une place de parking -->
-      <div class="checkbox-group">
-        <label for="parking" class="checkbox-label">
-          <input type="checkbox" v-model="parking" @change="calculateTotal" id="parking" />
-          <span class="checkbox-custom"></span> Prendre une place de parking (+50€)
-        </label>
+        <label for="endDate">Date de fin du parking :</label>
+        <input
+            type="date"
+            id="endDate"
+            v-model="endDate"
+            :min="startDate"
+            :max="'2025-06-19'"
+            @change="calculateTotal"
+        />
+      </div>
+
+      <!-- Affichage du bouton d'annulation de parking si des dates sont choisies -->
+      <div v-if="startDate || endDate">
+        <button id="annulation" type="button" @click="cancelParkingSelection">Annuler la sélection de parking</button>
       </div>
 
       <!-- Case à cocher pour un billet VIP -->
@@ -58,20 +74,23 @@
         </label>
       </div>
 
-
       <!-- Affichage des hôtels sous forme de cartes -->
       <h2>Choisissez un hôtel :</h2>
       <div class="hotel-cards">
-        <div v-for="hotel in hotels" :key="hotel.id"
-             class="hotel-card"
-             @click="selectHotel(hotel)"
-             :class="{'selected': selectedHotel && selectedHotel.id === hotel.id}">
+        <div
+            v-for="hotel in hotels"
+            :key="hotel.id"
+            class="hotel-card"
+            @click="selectHotel(hotel)"
+            :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
+        >
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
           <p>Emplacement : {{ hotel.emplacement }}</p>
-          <p> Prix : {{ hotel.prix}}€</p>
+          <p> Prix : {{ hotel.prix }}€</p>
         </div>
       </div>
+
       <!-- Bouton pour annuler la sélection de l'hôtel -->
       <div v-if="selectedHotel">
         <button id="annulation" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
@@ -90,128 +109,162 @@
 
 <script>
 export default {
-  name: 'ReservationView',
+  name: "ReservationView",
   data() {
     return {
-      prenom: '',
-      nom: '',
-      email: '',
+      prenom: "",
+      nom: "",
+      email: "",
       parking: false,
-      selectedHotel: '', // Sélection d'hôtel vide par défaut
-      selectedCourseIndex: -1, // Indice de la course sélectionnée, -1 signifie aucune sélection
+      selectedHotel: null,
+      selectedCourses: [],
+      startDate: null,
+      endDate: null,
       hotels: [
         {
           id: 1,
-          nom: 'Riviera Marriott',
-          emplacement: 'Ouest',
-          image: '/assets/hotels/hotel1.jpeg',
-          prix : 200,
+          nom: "Riviera Marriott",
+          emplacement: "Ouest",
+          image: "/assets/hotels/hotel1.jpeg",
+          prix: 200,
         },
         {
           id: 2,
-          nom: 'Fairmont Monte Carlo',
-          emplacement: 'Est',
-          image: '/assets/hotels/hotel2.jpg',
-          prix : 350,
-        }
+          nom: "Fairmont Monte Carlo",
+          emplacement: "Est",
+          image: "/assets/hotels/hotel2.jpg",
+          prix: 350,
+        },
       ],
       courses: [
         {
           id: 1,
-          nom: 'Course 1',
+          nom: "Course 1",
           prix: 50,
-          description: 'Une course amusante à travers la ville.',
-          image: '/assets/courses/course1.jpeg',
+          description: "Une course amusante à travers la ville.",
+          image: "/assets/courses/course1.jpeg",
         },
         {
           id: 2,
-          nom: 'Course 2',
+          nom: "Course 2",
           prix: 75,
-          description: 'Course de vitesse sur un circuit.',
-          image: '/assets/courses/course2.png',
+          description: "Course de vitesse sur un circuit.",
+          image: "/assets/courses/course2.png",
         },
         {
           id: 3,
-          nom: 'Course 3',
+          nom: "Course 3",
           prix: 100,
-          description: 'Un défi d’endurance pour les plus courageux.',
-          image: '/assets/courses/course3.png',
-        }
+          description: "Un défi d’endurance pour les plus courageux.",
+          image: "/assets/courses/course3.png",
+        },
       ],
-      totalPrice: 0, // Prix total calculé
-      isVIP: false, // Billet VIP activé ou non
+      totalPrice: 0,
+      isVIP: false,
     };
   },
-  computed: {
-    selectedCourse() {
-      return this.selectedCourseIndex !== -1 ? this.courses[this.selectedCourseIndex] : null;
-    }
-  },
   methods: {
-    nextCourse() {
-      if (this.selectedCourseIndex < this.courses.length - 1) {
-        this.selectedCourseIndex++;
+    toggleCourseSelection(course) {
+      const index = this.selectedCourses.findIndex((c) => c.id === course.id);
+      if (index > -1) {
+        this.selectedCourses.splice(index, 1);
       } else {
-        this.selectedCourseIndex = 0; // Retour au début
+        this.selectedCourses.push(course);
       }
       this.calculateTotal();
     },
-    previousCourse() {
-      if (this.selectedCourseIndex > 0) {
-        this.selectedCourseIndex--;
-      } else {
-        this.selectedCourseIndex = this.courses.length - 1; // Retour à la fin
+    updateMaxEndDate() {
+      if (this.endDate && new Date(this.endDate) < new Date(this.startDate)) {
+        this.endDate = this.startDate;
       }
       this.calculateTotal();
     },
     calculateTotal() {
       let price = 0;
 
-      // Ajout du prix de la course
-      if (this.selectedCourse) price += this.selectedCourse.prix;
+      // Calcul des prix des courses sélectionnées
+      this.selectedCourses.forEach((course) => {
+        price += course.prix;
+      });
 
-      // Ajout du prix du parking
-      if (this.parking) price += 50;
+      // Calcul du prix du parking (50€ par jour)
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate);
+        const end = new Date(this.endDate);
+        const days = Math.min(
+            Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1,
+            5 // Limiter le nombre de jours à 5 max
+        );
+        price += days * 50; // 50€ par jour de parking
+      }
 
-      // Ajout du prix du billet VIP
+      // Ajout du supplément VIP si sélectionné
       if (this.isVIP) price += 100;
 
-      // Ajout du prix de l'hôtel (si un hôtel est sélectionné)
+      // Ajout du prix de l'hôtel sélectionné
       if (this.selectedHotel) price += this.selectedHotel.prix;
 
       // Mise à jour du prix total
       this.totalPrice = price;
     },
     selectHotel(hotel) {
-      this.selectedHotel = hotel; // Met à jour l'hôtel sélectionné
-      this.calculateTotal(); // Recalcule le prix total après la sélection
+      this.selectedHotel = hotel;
+      this.calculateTotal();
     },
     cancelHotelSelection() {
-      this.selectedHotel = null; // Annule la sélection de l'hôtel
-      this.calculateTotal(); // Recalcule le prix total après l'annulation
+      this.selectedHotel = null;
+      this.calculateTotal();
+    },
+    cancelParkingSelection() {
+      this.startDate = null;
+      this.endDate = null;
+      this.calculateTotal();
     },
     submitReservation() {
       this.$router.push({
-        name: 'Paiement',
+        name: "Paiement",
         params: {
           prenom: this.prenom,
           nom: this.nom,
           email: this.email,
-          selectedCourse: this.selectedCourse,
+          selectedCourses: this.selectedCourses,
           selectedHotel: this.selectedHotel,
-          parking: this.parking,
+          startDate: this.startDate,
+          endDate: this.endDate,
           isVIP: this.isVIP,
           totalPrice: this.totalPrice,
         },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
-
-
 <style scoped>
+
+.parking-dates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.parking-dates label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.parking-dates input {
+  width: 200px;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 /* Organisation générale */
 .hotel-cards {
   display: flex;
@@ -235,7 +288,7 @@ export default {
 .hotel-card:hover {
   transform: scale(1.05);
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-  background-color: #ffe5e5; /* Légère teinte rouge au survol */
+  background-color: #3f3232; /* Légère teinte rouge au survol */
 }
 
 .hotel-card.selected {
@@ -432,7 +485,7 @@ form {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: -18px;
-  border: 4px solid black; /* Ajoute une bordure rouge fine autour de l'image */
+  border: 1px solid black; /* Ajoute une bordure rouge fine autour de l'image */
 }
 
 /* Style des boutons de navigation (flèches) */
@@ -472,6 +525,53 @@ button[type="button"]:active {
   margin: 5px 0;
 }
 
+.course-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.course-card {
+  border: 2px solid #e74c3c;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: #3f3232;
+}
+
+.course-card.selected {
+  border: 2px solid #27ae60;
+}
+
+.course-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.course-card h3 {
+  color: #e74c3c;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+
+.course-card p {
+  color: #fff;
+  font-size: 0.9em;
+}
 
 
 </style>

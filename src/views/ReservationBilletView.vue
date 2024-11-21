@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="conteneur-reservation-billet">
     <h1>Réservation de billet</h1>
     <form @submit.prevent="submitReservation">
       <!-- Champ pour le prénom -->
@@ -241,6 +241,10 @@ export default {
 </script>
 
 <style scoped>
+
+.conteneur-reservation-billet{
+  padding-top: 70px;
+}
 
 .parking-dates {
   display: flex;

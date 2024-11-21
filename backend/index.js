@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const organisationRoutes = require('./routes/organisation'); // Importer les routes
+const billetsRoutes = require('./routes/billets');
+const prestataireRoutes = require('./routes/prestataire')
 
 const app = express();
 const port = 3001;
@@ -13,6 +15,8 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Utiliser les routes de l'organisation
 app.use('/organisation', organisationRoutes);
+app.use('/billets', billetsRoutes);
+app.use('/prestataire', prestataireRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {

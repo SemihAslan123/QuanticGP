@@ -23,19 +23,6 @@ CREATE TABLE acheteurnoninscrit (
     email VARCHAR(100) NOT NULL
 );
 
--- Création de la table billet
-CREATE TABLE billet (
-    id SERIAL PRIMARY KEY,
-    acheteur_id INT NOT NULL REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
-    course_nom VARCHAR(100),
-    hotel_nom VARCHAR(100),
-    date_debut_parking DATE,
-    date_fin_parking DATE,
-    is_vip BOOLEAN DEFAULT FALSE,
-    prix_total DECIMAL(10, 2) NOT NULL,
-    date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Création de la table Utilisateurs
 CREATE TABLE Utilisateurs (
     id_utilisateur SERIAL PRIMARY KEY,
@@ -43,7 +30,7 @@ CREATE TABLE Utilisateurs (
     prenom_utilisateur VARCHAR(50),
     mail_utilisateur VARCHAR(50),
     mot_de_passe VARCHAR(50),
-    type_utilisateur VARCHAR(50),
+    type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('admin', 'prestataire', 'client')),
     image_prestataire TEXT
 );
 
@@ -68,6 +55,20 @@ CREATE TABLE servicePrestataire (
     id_stand INT,
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur),
     FOREIGN KEY (id_stand) REFERENCES Stands(id_stand)
+);
+
+-- Création de la table billet
+CREATE TABLE billet (
+    id SERIAL PRIMARY KEY,
+    acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
+    utilisateur_id INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+    course_nom VARCHAR(100),
+    hotel_nom VARCHAR(100),
+    date_debut_parking DATE,
+    date_fin_parking DATE,
+    is_vip BOOLEAN DEFAULT FALSE,
+    prix_total DECIMAL(10, 2) NOT NULL,
+    date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insertion dans la table Utilisateurs
@@ -97,3 +98,12 @@ INSERT INTO Stands (type_stand, statut_stand, numero_emplacement_stand, prix_sta
 VALUES
     ('Restauration', 'Disponible', 201, 100),
     ('Vente souvenirs', 'Disponible', 202, 150);
+
+-- Insertion dans la table billet (Exemple)
+-- Un billet acheté par un utilisateur inscrit
+INSERT INTO billet (utilisateur_id, course_nom, prix_total)
+VALUES (7, 'Course A', 120.50);
+
+-- Un billet acheté par un acheteur non inscrit
+INSERT INTO billet (acheteur_id, course_nom, prix_total)
+VALUES (1, 'Course B', 85.00);

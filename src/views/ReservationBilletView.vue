@@ -2,33 +2,34 @@
   <div class="conteneur-reservation-billet">
     <h1>Réservation de billet</h1>
     <form @submit.prevent="submitReservation">
-      <!-- Champ pour le prénom -->
-      <div>
-        <label for="prenom">Prénom:</label>
-        <input type="text" v-model="prenom" required />
-      </div>
 
-      <!-- Champ pour le nom -->
-      <div>
-        <label for="nom">Nom:</label>
-        <input type="text" v-model="nom" required />
-      </div>
+      <!-- Afficher les champs prénom, nom et email uniquement si l'utilisateur n'est pas connecté -->
+      <div v-if="!isLoggedIn">
+        <div>
+          <label for="prenom">Prénom:</label>
+          <input type="text" v-model="prenom" required />
+        </div>
 
-      <!-- Champ pour l'email -->
-      <div>
-        <label for="email">Email:</label>
-        <input type="text" v-model="email" required />
+        <div>
+          <label for="nom">Nom:</label>
+          <input type="text" v-model="nom" required />
+        </div>
+
+        <div>
+          <label for="email">Email:</label>
+          <input type="text" v-model="email" required />
+        </div>
       </div>
 
       <!-- Affichage des courses sous forme de cartes -->
       <h2>Choisissez vos courses :</h2>
       <div class="course-cards">
         <div
-            v-for="course in courses"
-            :key="course.id"
-            class="course-card"
-            @click="toggleCourseSelection(course)"
-            :class="{ selected: selectedCourses.includes(course) }"
+          v-for="course in courses"
+          :key="course.id"
+          class="course-card"
+          @click="toggleCourseSelection(course)"
+          :class="{ selected: selectedCourses.includes(course) }"
         >
           <img :src="course.image" alt="Image de la course" class="course-image" />
           <h3>{{ course.nom }}</h3>
@@ -42,22 +43,22 @@
       <div class="parking-dates">
         <label for="startDate">Date de début du parking :</label>
         <input
-            type="date"
-            id="startDate"
-            v-model="startDate"
-            :min="'2025-06-15'"
-            :max="'2025-06-19'"
-            @change="updateMaxEndDate"
+          type="date"
+          id="startDate"
+          v-model="startDate"
+          :min="'2025-06-15'"
+          :max="'2025-06-19'"
+          @change="updateMaxEndDate"
         />
 
         <label for="endDate">Date de fin du parking :</label>
         <input
-            type="date"
-            id="endDate"
-            v-model="endDate"
-            :min="startDate"
-            :max="'2025-06-19'"
-            @change="calculateTotal"
+          type="date"
+          id="endDate"
+          v-model="endDate"
+          :min="startDate"
+          :max="'2025-06-19'"
+          @change="calculateTotal"
         />
       </div>
 
@@ -78,11 +79,11 @@
       <h2>Choisissez un hôtel :</h2>
       <div class="hotel-cards">
         <div
-            v-for="hotel in hotels"
-            :key="hotel.id"
-            class="hotel-card"
-            @click="selectHotel(hotel)"
-            :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
+          v-for="hotel in hotels"
+          :key="hotel.id"
+          class="hotel-card"
+          @click="selectHotel(hotel)"
+          :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
         >
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
@@ -121,47 +122,31 @@ export default {
       startDate: null,
       endDate: null,
       hotels: [
-        {
-          id: 1,
-          nom: "Riviera Marriott",
-          emplacement: "Ouest",
-          image: "/assets/hotels/hotel1.jpeg",
-          prix: 200,
-        },
-        {
-          id: 2,
-          nom: "Fairmont Monte Carlo",
-          emplacement: "Est",
-          image: "/assets/hotels/hotel2.jpg",
-          prix: 350,
-        },
+        { id: 1, nom: "Riviera Marriott", emplacement: "Ouest", image: "/assets/hotels/hotel1.jpeg", prix: 200 },
+        { id: 2, nom: "Fairmont Monte Carlo", emplacement: "Est", image: "/assets/hotels/hotel2.jpg", prix: 350 },
       ],
       courses: [
-        {
-          id: 1,
-          nom: "Course 1",
-          prix: 50,
-          description: "Une course amusante à travers la ville.",
-          image: "/assets/courses/course1.jpeg",
-        },
-        {
-          id: 2,
-          nom: "Course 2",
-          prix: 75,
-          description: "Course de vitesse sur un circuit.",
-          image: "/assets/courses/course2.png",
-        },
-        {
-          id: 3,
-          nom: "Course 3",
-          prix: 100,
-          description: "Un défi d’endurance pour les plus courageux.",
-          image: "/assets/courses/course3.png",
-        },
+        { id: 1, nom: "Course 1 Jour 1", prix: 50, description: "Une course amusante à travers la ville.", image: "/assets/courses/course1.jpeg" },
+        { id: 2, nom: "Course 2 Jour 2", prix: 75, description: "Course de vitesse sur un circuit.", image: "/assets/courses/course2.png" },
+        { id: 3, nom: "Course 3 Jour 3", prix: 100, description: "Un défi d’endurance pour les plus courageux.", image: "/assets/courses/course3.png" },
       ],
       totalPrice: 0,
       isVIP: false,
+      isLoggedIn: false, // État de connexion
+      user: null, // Informations de l'utilisateur connecté
     };
+  },
+  mounted() {
+    // Vérification de l'état de connexion de l'utilisateur
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      this.isLoggedIn = true;
+      this.user = user;
+      // Si l'utilisateur est connecté, on récupère ses données
+      this.prenom = user.prenom;
+      this.nom = user.nom;
+      this.email = user.mail;
+    }
   },
   methods: {
     toggleCourseSelection(course) {
@@ -181,7 +166,6 @@ export default {
     },
     calculateTotal() {
       let price = 0;
-
       // Calcul des prix des courses sélectionnées
       this.selectedCourses.forEach((course) => {
         price += course.prix;
@@ -191,11 +175,8 @@ export default {
       if (this.startDate && this.endDate) {
         const start = new Date(this.startDate);
         const end = new Date(this.endDate);
-        const days = Math.min(
-            Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1,
-            5 // Limiter le nombre de jours à 5 max
-        );
-        price += days * 50; // 50€ par jour de parking
+        const days = Math.min(Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1, 5); // Limiter à 5 jours
+        price += days * 50;
       }
 
       // Ajout du supplément VIP si sélectionné
@@ -204,7 +185,6 @@ export default {
       // Ajout du prix de l'hôtel sélectionné
       if (this.selectedHotel) price += this.selectedHotel.prix;
 
-      // Mise à jour du prix total
       this.totalPrice = price;
     },
     selectHotel(hotel) {
@@ -239,6 +219,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 
@@ -446,22 +427,10 @@ form {
 }
 
 .checkbox-label input:checked + .checkbox-custom {
-  background-color: #e74c3c;
-  border-color: #e74c3c;
+  background-color: #06be06;
+  border-color: #06be06;
 }
 
-.checkbox-custom::after {
-  content: '✔';
-  color: white;
-  position: absolute;
-  left: 2px;
-  bottom: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  transform: scale(0);
-  transition: transform 0.3s ease;
-}
 
 .checkbox-label input:checked + .checkbox-custom::after {
   transform: scale(180%);

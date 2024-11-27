@@ -4,7 +4,7 @@
     <nav class="navbar">
 
       <!-- Logo cliquable -->
-     <router-link to="/" exact-active-class="active-link" class="logo-link">
+      <router-link to="/" exact-active-class="active-link" class="logo-link">
         <img src="../public/assets/logo.png" alt="Logo" class="logoNavBar">
       </router-link>
 
@@ -13,6 +13,7 @@
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
       <router-link to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
+      <router-link to="/login" class="login-link" exact-active-class="active-link">Connexion</router-link>
     </nav>
 
     <div class="content">

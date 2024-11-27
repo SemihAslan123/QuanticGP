@@ -84,26 +84,24 @@ VALUES
     ('Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client', NULL),
     ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client', NULL);
 
+-- Insertion dans la table Stands
+INSERT INTO Stands (type_stand, statut_stand, numero_emplacement_stand, prix_stand)
+VALUES
+    ('Restauration', 'Disponible', 1, 100), -- Ajout du stand ID 1
+    ('Sécurité', 'Disponible', 2, 150), -- Ajout du stand ID 2
+    ('Nettoyage', 'Disponible', 3, 120), -- Ajout du stand ID 3
+    ('Vente souvenirs', 'Disponible', 202, 150); -- Stand déjà existant dans votre script
+
 -- Insertion dans la table servicePrestataire
 INSERT INTO servicePrestataire (id_utilisateur, nom_service, type_service, description_service, date_service, heure_service, id_stand)
 VALUES
     (2, 'Restauration', 'Food', 'Service de restauration rapide', '2024-11-20', '12:00', 1),
     (3, 'Sécurité', 'Service', 'Surveillance du site', '2024-11-21', '09:00', 2),
-    (4, 'Nettoyage', 'Maintenance', 'Nettoyage des stands', '2024-11-20', '14:00', 1),
+    (4, 'Nettoyage', 'Maintenance', 'Nettoyage des stands', '2024-11-20', '14:00', 3),
     (5, 'Vente de produits', 'Merchandising', 'Vente de produits dérivés', '2024-11-21', '10:00', 2),
     (6, 'Assistance client', 'Service', 'Aide et informations aux visiteurs', '2024-11-22', '11:00', 1);
-
--- Insertion dans la table Stands
-INSERT INTO Stands (type_stand, statut_stand, numero_emplacement_stand, prix_stand)
-VALUES
-    ('Restauration', 'Disponible', 201, 100),
-    ('Vente souvenirs', 'Disponible', 202, 150);
 
 -- Insertion dans la table billet (Exemple)
 -- Un billet acheté par un utilisateur inscrit
 INSERT INTO billet (utilisateur_id, course_nom, prix_total)
 VALUES (7, 'Course A', 120.50);
-
--- Un billet acheté par un acheteur non inscrit
-INSERT INTO billet (acheteur_id, course_nom, prix_total)
-VALUES (1, 'Course B', 85.00);

@@ -25,11 +25,11 @@
       <h2>Choisissez vos courses :</h2>
       <div class="course-cards">
         <div
-          v-for="course in courses"
-          :key="course.id"
-          class="course-card"
-          @click="toggleCourseSelection(course)"
-          :class="{ selected: selectedCourses.includes(course) }"
+            v-for="course in courses"
+            :key="course.id"
+            class="course-card"
+            @click="toggleCourseSelection(course)"
+            :class="{ selected: selectedCourses.includes(course) }"
         >
           <img :src="course.image" alt="Image de la course" class="course-image" />
           <h3>{{ course.nom }}</h3>
@@ -43,22 +43,24 @@
       <div class="parking-dates">
         <label for="startDate">Date de début du parking :</label>
         <input
-          type="date"
-          id="startDate"
-          v-model="startDate"
-          :min="'2025-06-15'"
-          :max="'2025-06-19'"
-          @change="updateMaxEndDate"
+            type="date"
+            id="startDate"
+            v-model="startDate"
+            :min="'2025-06-15'"
+            :max="'2025-06-19'"
+            @change="updateMaxEndDate"
         />
 
-        <label for="endDate">Date de fin du parking :</label>
+        <!-- Affichage conditionnel de la date de fin -->
+        <label v-if="startDate" for="endDate">Date de fin du parking :</label>
         <input
-          type="date"
-          id="endDate"
-          v-model="endDate"
-          :min="startDate"
-          :max="'2025-06-19'"
-          @change="calculateTotal"
+            v-if="startDate"
+            type="date"
+            id="endDate"
+            v-model="endDate"
+            :min="startDate"
+            :max="'2025-06-19'"
+            @change="calculateTotal"
         />
       </div>
 
@@ -68,6 +70,7 @@
       </div>
 
       <!-- Case à cocher pour un billet VIP -->
+      <h2>Souhaitez-vous un billet VIP ?</h2>
       <div class="checkbox-group">
         <label for="vip" class="checkbox-label">
           <input type="checkbox" v-model="isVIP" @change="calculateTotal" id="vip" />
@@ -75,15 +78,26 @@
         </label>
       </div>
 
+      <!-- Bouton "C'est quoi VIP ?" pour afficher plus d'informations -->
+      <div class="vip-info">
+        <button type="button" @click="toggleVipInfo" id="info-button">C'est quoi VIP ?</button>
+        <p v-if="isVipInfoVisible" class="vip-description">
+          Le billet VIP offre une expérience premium, y compris un accès exclusif aux zones réservées, des boissons gratuites, et des sièges prioritaires.
+          Profitez de votre événement dans les meilleures conditions.
+        </p>
+      </div>
+
+
+
       <!-- Affichage des hôtels sous forme de cartes -->
       <h2>Choisissez un hôtel :</h2>
       <div class="hotel-cards">
         <div
-          v-for="hotel in hotels"
-          :key="hotel.id"
-          class="hotel-card"
-          @click="selectHotel(hotel)"
-          :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
+            v-for="hotel in hotels"
+            :key="hotel.id"
+            class="hotel-card"
+            @click="selectHotel(hotel)"
+            :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
         >
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
@@ -101,6 +115,11 @@
       <div>
         <h2>Prix Total: {{ totalPrice }}€</h2>
       </div>
+
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
 
       <!-- Bouton pour soumettre le formulaire -->
       <button type="submit">Payer</button>
@@ -132,8 +151,11 @@ export default {
       ],
       totalPrice: 0,
       isVIP: false,
+      isVipInfoVisible: false,  // État pour afficher ou masquer les infos VIP
+
       isLoggedIn: false, // État de connexion
       user: null, // Informations de l'utilisateur connecté
+      errorMessage: "", // Message d'erreur pour les validations
     };
   },
   mounted() {
@@ -149,6 +171,9 @@ export default {
     }
   },
   methods: {
+    toggleVipInfo() {
+      this.isVipInfoVisible = !this.isVipInfoVisible;
+    },
     toggleCourseSelection(course) {
       const index = this.selectedCourses.findIndex((c) => c.id === course.id);
       if (index > -1) {
@@ -201,6 +226,19 @@ export default {
       this.calculateTotal();
     },
     submitReservation() {
+      // Validations
+      if (this.selectedCourses.length === 0) {
+        this.errorMessage = "Veuillez sélectionner au moins une course.";
+        return;
+      }
+
+      if (this.startDate && !this.endDate) {
+        this.errorMessage = "Veuillez sélectionner une date de fin de parking si une date de début est définie.";
+        return;
+      }
+
+      // Si tout est valide, rediriger vers la page de paiement
+      this.errorMessage = ""; // Réinitialiser le message d'erreur
       this.$router.push({
         name: "Paiement",
         params: {
@@ -221,7 +259,46 @@ export default {
 </script>
 
 
+
 <style scoped>
+/* Style du bouton d'information "C'est quoi VIP ?" */
+.vip-info {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#info-button {
+  background-color: #3498db; /* Bleu clair */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+#info-button:hover {
+  background-color: #2980b9; /* Bleu plus foncé au survol */
+}
+
+.vip-description {
+  font-size: 1.1em;
+  color: #fff;
+  background-color: #2c3e50;
+  border-radius: 5px;
+  padding: 15px;
+  max-width: 30%;
+  margin: 10px auto;
+}
+
+
+.error-message {
+  color: #e74c3c;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
 
 .conteneur-reservation-billet{
   padding-top: 70px;
@@ -434,21 +511,6 @@ form {
 
 .checkbox-label input:checked + .checkbox-custom::after {
   transform: scale(180%);
-}
-
-
-/* Conteneur pour la sélection de la course */
-.course-selection {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Conteneur d'information de la course */
-.course-info {
-  text-align: center;
-  max-width: 300px; /* Limite la largeur pour éviter que l'image et le texte soient trop larges */
 }
 
 /* Style de l'image de la course */

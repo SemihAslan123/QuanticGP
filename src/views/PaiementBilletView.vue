@@ -143,10 +143,8 @@ export default {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
       const differenceInTime = end - start;
-      const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-
+      const differenceInDays = (differenceInTime / (1000 * 3600 * 24))+1;
       this.parkingPrice = differenceInDays * 50;
-      this.totalPrice += this.parkingPrice;
     },
     async handlePayment() {
       try {

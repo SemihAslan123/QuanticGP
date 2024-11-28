@@ -14,6 +14,7 @@
       <router-link to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
       <router-link to="/login" class="login-link" exact-active-class="active-link">Connexion</router-link>
+      <router-link to="/profil" class="login-link" exact-active-class="active-link">Profil</router-link>
     </nav>
 
     <div class="content">

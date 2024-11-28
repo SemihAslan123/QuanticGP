@@ -5,7 +5,8 @@ import Reservation from '../views/ReservationBilletView.vue';
 import FAQ from '../views/FAQView.vue';
 import Paiement from '../views/PaiementBilletView.vue';
 import Organisation from '../views/OrganisationView.vue';
-import Login from '../components/LoginComponent.vue';  // Import de la page Login
+import Login from '../components/LoginComponent.vue';
+import Profil from "@/views/ProfilView.vue";
 
 Vue.use(Router);
 
@@ -21,15 +22,6 @@ export default new Router({
       path: '/reservation',
       name: 'reservation',
       component: Reservation,
-      beforeEnter: (to, from, next) => {
-        // Vérifier si l'utilisateur est connecté
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          next(); // Si connecté, continue la navigation vers la réservation
-        } else {
-          next(); // Si non connecté, redirige vers la page de login
-        }
-      }
     },
     {
       path: '/faq',
@@ -48,9 +40,22 @@ export default new Router({
       component: Organisation,
     },
     {
-      path: '/login',  // Ajout de la route pour la page de connexion
+      path: '/login',
       name: 'Login',
       component: Login,
+    },
+    {
+      path: '/profil',
+      name: 'Profil',
+      component: Profil,
+      beforeEnter: (to, from, next) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          next();
+        } else {
+          next({ name: 'Login' });
+        }
+      }
     },
   ],
 });

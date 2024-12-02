@@ -149,13 +149,22 @@
 
             <h1 class="titrePremierTexte">CHAQUE VIRAGE À MONACO EST UNE OPPORTUNITÉ<br> DE GAGNER OU DE PERDRE LA COURSE <span class="nomCitation">- Juan Manuel Fangio</span></h1>
 
-            <p class="premierTexte">Chaque pilote de Formule 1 rêve de gagner sur le circuit mythique de Monaco, le plus lent et le plus<br> 
-               difficile du Championnat du Monde de Formule 1. Celui qui s’impose au Quantic GP le mérite, car <br>
-               même une petite erreur dans les rues de la principauté est fatale. <br> <br>
-               
-               Les qualifications jouent un rôle crucial, car les dépassements sont presque impossibles. Toutefois, <br>
-               avec de nombreux abandons,  une conduite maîtrisée peut offrir l’opportunité de marquer des points.
+            <p class="premierTexte">
+               Chaque pilote de Formule 1 rêve de gagner sur le circuit mythique de Monaco, le plus lent et le plus
+               difficile du Championnat du Monde de Formule 1. Celui qui s’impose au Quantic GP le mérite, car
+               même une petite erreur dans les rues de la principauté est fatale.
+               <br><br>
+               Les qualifications jouent un rôle crucial, car les dépassements sont presque impossibles. Toutefois,
+               avec de nombreux abandons, une conduite maîtrisée peut offrir l’opportunité de marquer des points.
             </p>
+            
+         </div>
+
+         <div class="carteHistoireCircuit">
+
+            <p class="texteHistoireCircuit">Un circuit immuable,<br> Le Circuit de Monaco</p>
+
+            <p class="sousTitreHistoireCircuitUn">📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 1 min)</span></p>
 
          </div>
 

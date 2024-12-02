@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Racing+Sans+One&family=Russo+One&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
 
 body, html {
@@ -7,14 +7,6 @@ body, html {
     width: 100%;
     background-color: rgba(0,22,43,255);
   }
-
-/* ========================= La carte ========================= */ 
-
-.imageBaniere {
-  max-width: 80%;
-  border-radius: 25px;
-  margin-bottom: 18%;
-}
 
 
 /* ========================= La carte ========================= */ 
@@ -85,6 +77,297 @@ body, html {
 }
 
 
+/* ========================= Section 1 =========================*/
+
+
+.video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Assure que la vidéo couvre toute la section */
+  z-index: 1; 
+}
+
+
+.overlayVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75); /* Fond noir avec 50% d'opacité */
+  z-index: 2; /* Place l'overlay au-dessus de la vidéo, mais derrière le contenu */
+}
+
+
+.nomEvenementSection1 {
+  position: absolute;
+  font-family: "Goldman", sans-serif;
+  color: white;
+  font-size: 110px;
+  text-align: center;
+  z-index: 3;
+  line-height: 1.5;
+}
+
+.sousTitreEvenementSection1 {
+  position: absolute;
+  font-family: "Goldman", sans-serif;
+  color: rgba(216, 216, 216, 0.856);
+  font-size: 30px;
+  z-index: 3;
+  border-left: 5px solid rgb(216, 216, 216, 0.856);
+  padding-left: 20px;
+}
+
+.span1 {
+  color: #e51e53;
+}
+
+.span2 {
+  color: #b9113ed3;
+}
+
+
+/* ========================= Section 2 =========================*/
+
+
+.imageBaniere {
+  position: absolute;
+  max-width: 80%;
+  border-radius: 25px;
+  margin-bottom: 18%;
+  opacity: 1;
+}
+
+/* Classes d'animation Vue.js */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s ease-in-out; /* Transition de fondu */
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0; /* Lors de l'entrée et la sortie, l'image devient transparente */
+}
+
+.fade-enter-to, .fade-leave {
+  opacity: 1; /* Quand l'image est pleinement visible */
+}
+
+
+/* ========================= Section 2A =========================*/
+
+.containerTexteA {
+  background-color: #1a2e41;
+  border-radius: 20px;
+  padding: 40px;
+  margin-right: 25%;
+  margin-bottom: 15%;
+}
+
+.titrePremierTexte {
+  margin-bottom: 40px;
+  font-family: "Goldman", sans-serif;
+  font-size: 30px;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+}
+
+.nomCitation {
+  font-size: 22px;
+  font-weight: 400
+}
+
+.premierTexte {
+  text-align: left;
+  color: white;
+  font-size: 21px;
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 600;
+}
+
+
+/* ========================= Date / Lieu événement (Section 2) =========================*/
+
+
+.ContainersTopSection2 {
+  gap: 40px;
+  display: flex;
+  margin-bottom: 0%;
+}
+
+.calendrierContainer {
+  background-color: #1a2e41;
+  padding-top: 1px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 60px;
+  border-radius: 20px;
+  font-family: "Goldman", sans-serif;
+  color: white;
+}
+
+.verticalDate {
+  font-size: 20px; 
+  text-align: left;
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 700;
+  padding-top: 15px;
+}
+
+.ligneDate {
+  display: flex; /* Active l'affichage en ligne */
+  align-items: center; 
+  gap: 40px;
+  border-top: 1px solid #3f5264;
+  margin-bottom: 1px;
+  margin-top: 15px;
+}
+
+.journeeCalendrier {
+  font-size: 15px;
+  color: rgb(187, 187, 187);
+  font-family: "Host Grotesk", sans-serif;
+}
+
+.secondSec2Container {
+  position: relative;
+  display: flex; /* Active Flexbox */
+  flex-direction: column; /* Aligne les éléments en colonne */
+  justify-content: flex-start; /* Alignement vertical (haut si c'est en colonne) */
+  align-items: flex-start;
+  background-color: #1a2e41;
+  border-radius: 20px;
+  height: 400px;
+  width: 1050px;
+}
+
+.photoMonacoNuit {
+  filter: brightness(40%);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  height: 400px;
+  clip-path: inset(0 25% 0 0);
+}
+
+.nomCircuit {
+  position: absolute; /* Positionnement par rapport au conteneur parent */
+  font-family: "Goldman", sans-serif;
+  top: 0%;
+  left: 5%;
+  color: white; 
+  font-size: 32px; 
+}
+
+.lieuCircuit {
+  position: absolute; /* Positionnement par rapport au conteneur parent */
+  font-family: "Host Grotesk", sans-serif;
+  top: 16%;
+  left: 5%;
+  color: rgb(182, 182, 182); 
+  font-size: 16px; 
+}
+
+
+/* ========================= Compte à rebours =========================*/
+
+
+.titreCompteRebours {
+  position: absolute;
+  left: 55%;
+  font-family: "Goldman", sans-serif;
+  color: white;
+}
+
+
+.countdown-container {
+  position: absolute;
+  top: 30%;
+  left: 58%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Espacement entre les cercles */
+}
+
+.countdown-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  width: 100px; /* Taille du cercle */
+  height: 100px;
+  border: 1px solid #96969694; /* Couleur et épaisseur de la bordure */
+  border-radius: 50%; /* Rend le div circulaire */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Fond du cercle */
+}
+
+.number {
+  font-family: "Goldman", sans-serif;
+  font-size: 26px; /* Taille du numéro */
+  font-weight: bold;
+  color: #dbdbdb; /* Couleur du texte */
+}
+
+.label {
+  padding-top: 5px;
+  font-size: 12px; /* Taille du label */
+  color: #bdbdbd; /* Couleur plus claire pour le label */
+}
+
+
+/* ========================= Barre de progression =========================*/
+
+
+.progress-container {
+  left: 57%;
+  top: 65%;
+  position: absolute;
+  width: 35%; /* Largeur totale de la barre */
+  height: 60px; /* Hauteur totale */
+  margin: 20px auto; /* Centré avec un espace au-dessus */
+}
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 25px; /* Hauteur de la barre */
+  border: 2px solid #96969694; /* Bordure */
+  border-radius: 10px;
+  overflow: hidden; /* Cache les débordements */
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0; /* Assure que le remplissage commence au bord supérieur */
+  left: 0;
+  height: 100%; /* Remplit toute la hauteur */
+  background-color: #3f4f5f; /* Couleur de remplissage */
+  transition: width 0.5s ease; /* Animation fluide */
+}
+
+.f1-icon {
+  position: absolute;
+  top: 7px; /* Place la F1 légèrement au-dessus de la barre */
+  height: 22px; /* Taille ajustée pour être visible */
+  transition: left 0.5s ease; /* Animation fluide pour le mouvement */
+}
+
+.flag-icon {
+  position: absolute;
+  right: 0; /* Placé à l'extrémité droite */
+  top: 0px; /* Ajusté pour aligner avec la barre */
+  height: 25px; /* Taille du drapeau */
+}
+
+
 /* ========================= Les sections =========================*/
 
 .page-container {
@@ -102,11 +385,14 @@ body, html {
   
   /* Ajoutons des couleurs pour différencier les sections */
   #section1 {
+    position: relative;
     background-color: rgba(0,22,43,255);
+    font-family: "Host Grotesk", sans-serif;
   }
 
   #section2 {
     background-color: rgba(0,22,43,255);
+    height: 60vh;
   }
 
   #section3 {
@@ -128,13 +414,13 @@ body, html {
   
   /* Track de la scrollbar */
   ::-webkit-scrollbar-track {
-    background: #08070f; /* Couleur de fond de la piste */
+    background: #08070f; 
   }
   
   /* Couleur et style du "thumb" (la partie défilante) */
   ::-webkit-scrollbar-thumb {
-    background-color: #37363d; /* Couleur du thumb */
-    border-radius: 10px;    /* Coins arrondis */
+    background-color: #37363d;
+    border-radius: 10px;   
   }
   
   /* Changement de couleur au survol */
@@ -147,20 +433,20 @@ body, html {
 
 
   .buttonSwitchStands {
-    width: 90px; /* Largeur du bouton */
-    height: 90px; /* Hauteur du bouton */
-    background-color: #8d3434; /* Couleur de fond (bleu ici) */
-    border: none; /* Retirer les bordures */
-    border-radius: 8px; /* Coins légèrement arrondis */
-    display: flex; /* Utiliser flexbox pour centrer l'icône */
-    justify-content: center; /* Centrer horizontalement */
-    align-items: center; /* Centrer verticalement */
-    cursor: pointer; /* Change le curseur au survol */
+    width: 90px;
+    height: 90px; 
+    background-color: #8d3434; 
+    border: none;
+    border-radius: 8px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; 
     transition: background-color 0.3s, transform 0.2s; /* Animation pour l'effet de survol */
     position: absolute;
 
     margin-left: 30%;
-    margin-top: 50%;
+    margin-top: 45%;
   }
 
   .buttonSwitchStands:hover {

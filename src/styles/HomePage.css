@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Racing+Sans+One&family=Russo+One&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 
 body, html {
@@ -162,8 +163,9 @@ body, html {
   background-color: #1a2e41;
   border-radius: 20px;
   padding: 40px;
-  margin-right: 25%;
-  margin-bottom: 15%;
+  max-width: 1000px;
+  margin-right: 5%;
+  margin-bottom: 20%;
 }
 
 .titrePremierTexte {
@@ -181,11 +183,58 @@ body, html {
 }
 
 .premierTexte {
-  text-align: left;
-  color: white;
+  border-top: 2px solid #3f5264;
+  padding-top: 40px;
+  text-align: justify;
+  color: rgb(236, 236, 236);
   font-size: 21px;
-  font-family: "Host Grotesk", sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+}
+
+
+.carteHistoireCircuit {
+  border-radius: 30px ;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+  background-image: url('../../public/assets/homePage/carteHistoireCircuit.png'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  width: 397px;
+  height: 513px;
+  color: rgb(238, 238, 238);
+  margin-bottom: 13%;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.carteHistoireCircuit:hover {
+  transform: scale(1.02) rotate(3deg);
+}
+
+.texteHistoireCircuit {
+  margin-top: 95%;
+  margin-left: 5%;
+  margin-bottom: 20px;
+  font-family: "Goldman", sans-serif;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 28px;
   font-weight: 600;
+}
+
+.sousTitreHistoireCircuitUn {
+  font-size: 15px;
+  font-family: "Goldman", sans-serif;
+  color: rgb(240, 240, 240);
+  margin-left: 5%;
+  margin-bottom: 5%;
+}
+
+.sousTitreLectureEnUn {
+  color: rgb(199, 199, 199);
+  margin-left: 5px;
 }
 
 

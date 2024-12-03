@@ -7,6 +7,7 @@ import Paiement from '../views/PaiementBilletView.vue';
 import Organisation from '../views/OrganisationView.vue';
 import Login from '../components/LoginComponent.vue';
 import Profil from "@/views/ProfilView.vue";
+import PrestataireView from "@/views/PrestataireView.vue";
 
 Vue.use(Router);
 
@@ -57,5 +58,10 @@ export default new Router({
         }
       }
     },
+    {
+      path: '/prestataire',
+      name: 'Prestataire',
+      component : PrestataireView
+    }
   ],
 });

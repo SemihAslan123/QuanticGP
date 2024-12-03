@@ -164,7 +164,6 @@ export default {
     if (user) {
       this.isLoggedIn = true;
       this.user = user;
-      // Si l'utilisateur est connecté, on récupère ses données
       this.prenom = user.prenom;
       this.nom = user.nom;
       this.email = user.mail;

@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const organisationRoutes = require('./routes/organisation'); // Importer les routes de l'organisation
-const billetsRoutes = require('./routes/billets'); // Importer les routes des billets
-const prestataireRoutes = require('./routes/prestataire'); // Importer les routes des prestataires
-const loginRoutes = require('./routes/login'); // Importer la route de connexion
+const organisationRoutes = require('./routes/organisation');
+const billetsRoutes = require('./routes/billets');
+const prestataireRoutes = require('./routes/prestataire');
+const loginRoutes = require('./routes/login');
+const ProfilRoutes = require('./routes/profil');
 
 const app = express();
 const port = 3001;
@@ -14,13 +15,12 @@ app.use(cors({ origin: 'http://localhost:8080' })); // Permet l'accès depuis vo
 app.use(bodyParser.json({ limit: '50mb' })); // Pour parser les requêtes JSON
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// Utiliser les routes de l'organisation
+// Routes
 app.use('/organisation', organisationRoutes);
-app.use('/billets', billetsRoutes);
+app.use('/billets', billetsRoutes); // Assure-toi que cette ligne est présente
 app.use('/prestataire', prestataireRoutes);
-
-// Ajouter la route de connexion
 app.use('/login', loginRoutes);
+app.use('/profil', ProfilRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {

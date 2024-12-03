@@ -14,6 +14,7 @@ router.post('/', async (req, res) => {
         endDate,
         isVIP,
         totalPrice,
+        userId,  // Ajout de userId dans le corps de la requête
     } = req.body;
 
     if (!prenom || !nom || !email || !totalPrice) {
@@ -21,26 +22,35 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Insérer dans la table acheteurnoninscrit
-        const queryAcheteur = `
-            INSERT INTO acheteurnoninscrit (prenom, nom, email)
-            VALUES ($1, $2, $3) RETURNING id;
-        `;
-        const valuesAcheteur = [prenom, nom, email];
-        const acheteurResult = await pool.query(queryAcheteur, valuesAcheteur);
+        let acheteurId = null;
+        let utilisateurId = null;
 
-        const acheteurId = acheteurResult.rows[0].id;
+        // Vérification si l'utilisateur est connecté
+        if (userId) {
+            // Si l'utilisateur est inscrit, on utilise son ID et acheteurId reste nul
+            utilisateurId = userId;
+        } else {
+            // Sinon, on insère l'acheteur non inscrit et on récupère son ID
+            const queryAcheteur = `
+                INSERT INTO acheteurnoninscrit (prenom, nom, email)
+                VALUES ($1, $2, $3) RETURNING id;
+            `;
+            const valuesAcheteur = [prenom, nom, email];
+            const acheteurResult = await pool.query(queryAcheteur, valuesAcheteur);
+            acheteurId = acheteurResult.rows[0].id; // L'ID de l'acheteur non inscrit
+        }
 
-        // Insérer dans la table billet
+        // Insertion dans la table billet
         const queryBillet = `
             INSERT INTO billet (
-                acheteur_id, course_nom, hotel_nom, date_debut_parking,
+                acheteur_id, utilisateur_id, course_nom, hotel_nom, date_debut_parking,
                 date_fin_parking, is_vip, prix_total
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7);
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
         `;
         const valuesBillet = [
-            acheteurId,
+            acheteurId || null,   // Si l'utilisateur est connecté, acheteurId est null
+            utilisateurId || null,  // Si l'acheteur est non inscrit, utilisateurId est null
             selectedCourses.map(course => course.nom).join(', '),
             selectedHotel ? selectedHotel.nom : null,
             startDate,
@@ -48,6 +58,7 @@ router.post('/', async (req, res) => {
             isVIP,
             totalPrice,
         ];
+
         await pool.query(queryBillet, valuesBillet);
 
         res.status(201).json({ message: 'Billet enregistré avec succès' });

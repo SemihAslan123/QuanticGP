@@ -1,145 +1,129 @@
 <template>
-  <div class="profil-container">
-    <div class="profil-box">
-      <h2>Profil de {{ user?.prenom || "Utilisateur" }}</h2>
-      <div v-if="user">
-        <div class="profil-info">
-          <p><strong>Nom:</strong> {{ user.nom }}</p>
-          <p><strong>Prénom:</strong> {{ user.prenom }}</p>
-          <p><strong>Email:</strong> {{ user.mail }}</p>
-          <p><strong>Type:</strong> {{ user.type }}</p>
-        </div>
-
-        <div v-if="user.type === 'client'" class="billet-info">
-          <h3>Billets</h3>
-          <ul>
-            <li v-for="billet in billets" :key="billet.id">
-              {{ billet.course_nom }} - {{ billet.hotel_nom }} - {{ billet.date_debut_parking }} au {{ billet.date_fin_parking }} - Prix: {{ billet.prix_total }} €
-            </li>
-          </ul>
-        </div>
-
-        <!-- Détails des services si l'utilisateur est un prestataire -->
-        <div v-if="user.type === 'prestataire'" class="service-info">
-          <h3>Services</h3>
-          <ul>
-            <li v-for="service in services" :key="service.id_service">
-              {{ service.nom_service }} - {{ service.type_service }} - Date: {{ service.date_service }} à {{ service.heure_service }}
-            </li>
-          </ul>
+  <div class="espace-au-dessus">
+    <div class="billet-container">
+      <h1>Vos Billets</h1>
+      <div v-if="loading" class="loading">
+        Chargement en cours...
+      </div>
+      <div v-else-if="billets.length === 0" class="no-billets">
+        <p>Aucun billet trouvé pour votre compte.</p>
+      </div>
+      <div v-else class="billets-list">
+        <div class="billet-card" v-for="billet in billets" :key="billet.id_billet">
+          <h2>Billet #{{ billet.id_billet }}</h2>
+          <p><strong>Course :</strong> {{ billet.course_nom || 'Non spécifiée' }}</p>
+          <p><strong>Hôtel :</strong> {{ billet.hotel_nom || 'Non spécifié' }}</p>
+          <p><strong>Date de début du parking :</strong> {{ billet.date_debut_parking || 'Non spécifiée' }}</p>
+          <p><strong>Date de fin du parking :</strong> {{ billet.date_fin_parking || 'Non spécifiée' }}</p>
+          <p><strong>VIP :</strong> {{ billet.is_vip ? 'Oui' : 'Non' }}</p>
+          <p><strong>Prix total :</strong> {{ billet.prix_total }} €</p>
+          <p><strong>Date de paiement :</strong> {{ billet.date_paiement | formatDate }}</p>
         </div>
       </div>
-      <button class="logout-button" @click="logout">Se déconnecter</button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+  name: 'UserBilletsView',
   data() {
     return {
-      user: null,
       billets: [],
-      services: [],
+      loading: true,
     };
   },
-  mounted() {
-    this.fetchUserProfile();
+  created() {
+    this.fetchBillets();
   },
   methods: {
-    // Récupérer les informations de l'utilisateur
-    async fetchUserProfile() {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user) {
-        this.user = user;
-        // Récupérer les billets de l'utilisateur
-        if (this.user.type === 'client') {
-          await this.fetchBillets();
-        }
-        // Récupérer les services si l'utilisateur est un prestataire
-        if (this.user.type === 'prestataire') {
-          await this.fetchServices();
-        }
-      }
-    },
-
-    // Récupérer les billets pour l'utilisateur
     async fetchBillets() {
-      const response = await fetch(`http://localhost:3001/billets/${this.user.id}`);
-      const data = await response.json();
-      if (data.success) {
-        this.billets = data.billets;
-      } else {
-        console.error('Erreur lors de la récupération des billets');
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        this.$router.push({ name: 'Login' });
+        return;
+      }
+      console.log(user.id);
+      try {
+        const response = await axios.get(`http://localhost:3001/profil/${user.id}/billets`);
+        this.billets = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des billets :', error);
+        alert('Une erreur est survenue lors de la récupération de vos billets.');
+      } finally {
+        this.loading = false;
       }
     },
-
-    // Récupérer les services pour le prestataire
-    async fetchServices() {
-      const response = await fetch(`http://localhost:3001/services/${this.user.id}`);
-      const data = await response.json();
-      if (data.success) {
-        this.services = data.services;
-      } else {
-        console.error('Erreur lors de la récupération des services');
-      }
+  },
+  filters: {
+    formatDate(value) {
+      if (!value) return 'Non spécifiée';
+      const date = new Date(value);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
     },
-
-    logout() {
-      localStorage.removeItem("user");
-      this.$router.push('/login'); // Rediriger vers la page de connexion
-    }
   },
 };
 </script>
 
 <style scoped>
-/* Conteneur de la page de profil */
-.profil-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+.espace-au-dessus {
+  padding-top: 90px;
 }
 
-/* Cadre de la boîte de profil */
-.profil-box {
-  background: #f0ebeb;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+.billet-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+h1 {
   text-align: center;
+  color: #3498db;
+  margin-bottom: 20px;
 }
 
-.profil-info p {
-  font-weight: bold;
+.loading {
+  text-align: center;
+  font-size: 1.2em;
+  color: #999;
+}
+
+.no-billets {
+  text-align: center;
+  font-size: 1.2em;
+  color: #e74c3c;
+}
+
+.billets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.billet-card {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.billet-card h2 {
   margin-bottom: 10px;
+  color: #2c3e50;
 }
 
-.billet-info, .service-info {
-  margin-top: 20px;
-}
-
-.billet-info ul, .service-info ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.logout-button {
-  background-color: #ff6347;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
-  border-radius: 5px;
-}
-
-.logout-button:hover {
-  background-color: #e5533c;
+.billet-card p {
+  margin: 5px 0;
+  color: #34495e;
+  font-size: 1em;
 }
 </style>

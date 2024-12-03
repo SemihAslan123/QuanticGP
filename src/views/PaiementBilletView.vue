@@ -138,6 +138,13 @@ export default {
       this.calculateParkingPrice();
     }
   },
+    mounted() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      this.id = user.id;
+      console.log('ID Utilisateur récupéré :', this.id);
+    }
+  },
   methods: {
     calculateParkingPrice() {
       const start = new Date(this.startDate);
@@ -148,7 +155,6 @@ export default {
     },
     async handlePayment() {
       try {
-        // Simulation de l'insertion dans la base de données
         const response = await axios.post('http://localhost:3001/billets', {
           prenom: this.prenom,
           nom: this.nom,
@@ -159,6 +165,7 @@ export default {
           endDate: this.endDate,
           isVIP: this.isVIP,
           totalPrice: this.totalPrice,
+          userId : this.id || null
         });
 
         console.log('Réponse de l’API :', response.data);
@@ -172,6 +179,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>

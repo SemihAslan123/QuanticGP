@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Racing+Sans+One&family=Russo+One&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* ========================= Style Global ========================= */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: rgba(0, 22, 43, 255); /* Fond sombre pour garder une ambiance similaire */
+    font-family: "Host Grotesk", sans-serif;
+    overflow-x: hidden;
+}
+
+.dashboard-orga {
+    padding-top: 90px;
+    display: flex;
+    min-height: 100vh;
+    background-color: rgba(0, 22, 43, 255); /* Fond en harmonie avec le style global */
+}
+
+/* ========================= Sidebar ========================= */
+
+.sidebar-orga {
+    width: 230px;
+    background-color: #1a2e41; /* Uniformiser avec la couleur principale de la sidebar */
+    padding-top: 90px;
+    border-right: 1px solid #3f5264; /* Légère bordure pour la séparation */
+    position: fixed; /* Fixer la sidebar lors du scroll */
+    height: 100%; /* Prendre toute la hauteur de la fenêtre */
+    top: 0;
+    left: 0;
+    z-index: 10; /* Assurer que la sidebar soit au-dessus du contenu principal */
+}
+
+.sidebar-header-orga {
+    text-align: center;
+    padding: 20px;
+    background-color: #1a2e41;
+    color: white;
+}
+
+.sidebar-header-orga h2 {
+    margin: 0;
+    font-size: 24px;
+    font-family: "Goldman", sans-serif;
+}
+
+.sidebar-nav-orga ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav-orga li {
+    margin-bottom: 10px;
+}
+
+.sidebar-item-orga {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    color: #d4d4d4; /* Texte plus clair */
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.sidebar-item-orga i {
+    margin-right: 10px;
+}
+
+.sidebar-item-orga.active {
+    background-color: #8d3434; /* Mise en valeur de l'élément actif */
+    color: white;
+}
+
+.sidebar-footer-orga {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+.return-home-orga {
+    color: #1a2e41;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* ========================= Contenu Principal ========================= */
+
+.content-orga {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9; /* Fond plus clair pour le contenu */
+    margin-left: 230px;
+    height: 100vh; /* S'assurer que le contenu principal prend toute la hauteur */
+    overflow-y: auto;
+}
+
+.content-orga header {
+    margin-bottom: 20px;
+}
+
+.content-orga header h1 {
+    font-size: 28px;
+    color: #1a2e41;
+    font-family: "Goldman", sans-serif;
+}
+
+/* ========================= Formulaire d'événements ========================= */
+
+.event-form-orga .form-group-orga {
+    margin-bottom: 15px;
+}
+
+.event-form-orga label {
+    font-size: 16px;
+    color: #333;
+}
+
+.event-form-orga input[type="text"],
+.event-form-orga input[type="date"],
+.event-form-orga input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.event-form-orga .editor-container-orga {
+    border: 1px solid #ccc;
+    min-height: 150px;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #1a2e41;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #2a3e58;
+}
+
+button:focus {
+    outline: none;
+}
+
+button[type="submit"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* ========================= Liste des événements ========================= */
+
+.events-orga {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.event-card-orga {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.event-card-orga h3 {
+    font-size: 18px;
+    color: #1a2e41;
+    margin-bottom: 10px;
+}
+
+.event-card-orga .date {
+    font-size: 14px;
+    color: #777;
+}
+
+.event-card-orga .description {
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.event-card-orga img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+/* ========================= Actions ========================= */
+
+.actions-orga {
+    margin-top: 20px;
+}
+
+button@click {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button@click:hover {
+    background-color: #e1e1e1;
+}
+
+/* ========================= Styles Additionnels ========================= */
+
+/* Ajout de la barre de progression */
+.progress-container {
+    left: 57%;
+    top: 65%;
+    position: absolute;
+    width: 35%; /* Largeur totale de la barre */
+    height: 60px; /* Hauteur totale */
+    margin: 20px auto; /* Centré avec un espace au-dessus */
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 25px; /* Hauteur de la barre */
+    border: 2px solid #96969694; /* Bordure */
+    border-radius: 10px;
+    overflow: hidden; /* Cache les débordements */
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0; /* Assure que le remplissage commence au bord supérieur */
+    left: 0;
+    height: 100%; /* Remplit toute la hauteur */
+    background-color: #3f4f5f; /* Couleur de remplissage */
+    transition: width 0.5s ease; /* Animation fluide */
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #08070f;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #37363d;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* Bouton presta */
+.button-orga-presta{
+    margin: 10px;
+}
+
+
+.reservations-table-container {
+    margin-top: 20px;
+    overflow-x: auto; /* Permet un défilement horizontal si nécessaire */
+}
+
+.reservations-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1a2e41; /* Couleur principale du thème */
+    color: #f9f9f9; /* Texte clair */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Légère ombre */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reservations-table thead {
+    background-color: #3f5264; /* Couleur secondaire du thème */
+}
+
+.reservations-table th,
+.reservations-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.reservations-table th {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.reservations-table tbody tr:nth-child(odd) {
+    background-color: #25394e; /* Couleur alternative pour les lignes */
+}
+
+.reservations-table tbody tr:hover {
+    background-color: #3f5264; /* Surbrillance au survol */
+}
+
+.reservation-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: capitalize;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.reservation-status.pending {
+    background-color: #f4a261;
+    color: #1a2e41;
+}
+
+.reservation-status.approved {
+    background-color: #2a9d8f;
+    color: #f9f9f9;
+}
+
+.reservation-status.rejected {
+    background-color: #e76f51;
+    color: #f9f9f9;
+}
+
+.btn-status,
+.btn-delete {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-status {
+    background-color: #8d3434;
+    color: #f9f9f9;
+}
+
+.btn-status:hover {
+    background-color: #a94545;
+}
+
+.btn-delete {
+    background-color: #d62828;
+    color: #f9f9f9;
+}
+
+.btn-delete:hover {
+    background-color: #e63946;
+}
+
+.button-back-orga {
+    margin-top: 20px;
+    display: inline-block;
+    background-color: #1a2e41;
+    color: #f9f9f9;
+    border-radius: 4px;
+    padding: 8px 16px;
+}
+
+.button-back-orga:hover {
+    background-color: #3f5264;
+}
+
+/* ========================= Style du Dropdown ========================= */
+
+/* Conteneur du dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Bouton du menu déroulant */
+.dropdown-button {
+    padding: 12px 20px;
+    background-color: #1a2e41; /* Couleur sombre du thème */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: "Host Grotesk", sans-serif;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition pour l'effet de survol */
+}
+
+/* Effet de survol du bouton */
+.dropdown-button:hover {
+    background-color: #2a3e58;
+    transform: scale(1.05); /* Légère augmentation de taille pour l'effet de survol */
+}
+
+/* Menu déroulant */
+.dropdown-menu {
+    position: absolute;
+    top: 45px; /* Ajustement pour l'espace sous le bouton */
+    left: 0;
+    background-color: #1a2e41; /* Fond sombre */
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus marquée pour donner du relief */
+    width: 200px; /* Largeur du menu */
+    display: none; /* Par défaut, caché */
+    z-index: 10;
+    animation: dropdownFadeIn 0.3s ease-out; /* Animation pour l'apparition */
+}
+
+/* Animation pour faire apparaître le dropdown en douceur */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Lorsque le dropdown est visible, il est affiché */
+.dropdown.open .dropdown-menu {
+    display: block;
+}
+
+/* Chaque élément du menu déroulant */
+.dropdown-menu button {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Host Grotesk", sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+/* Effet de survol des éléments du menu */
+.dropdown-menu button:hover {
+    background-color: #2a3e58; /* Change de couleur au survol */
+    transform: translateX(5px); /* Décalage léger à droite */
+}
+
+/* Style spécifique pour l'élément actif */
+.dropdown-menu button.active {
+    background-color: #8d3434; /* Met en valeur l'option active */
+    color: white;
+}
+
+/* ========================= Sidebar ========================= */
+
+.sidebar-item-orga {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+/* L'élément actif de la sidebar avec l'animation */
+.sidebar-item-orga.active {
+    background-color: #8d3434;
+    color: white;
+    transform: scale(1.05); /* Légère agrandissement de l'élément actif */
+}
+
+
+/* Style pour le select */
+.status-select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: "Host Grotesk", sans-serif;
+    color: #1a2e41; /* Couleur du texte */
+    background-color: #f9f9f9; /* Fond clair */
+    transition: all 0.3s ease;
+    appearance: none; /* Enlève l'apparence native */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(26,46,65,1)"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+/* Effet de survol */
+.status-select :hover {
+    border-color: #8d3434;
+    background-color: #fff; /* Fond plus clair */
+}
+
+/* Effet lors de la sélection */
+.status-select :focus {
+    border-color: #1a2e41;
+    box-shadow: 0 0 5px rgba(26, 46, 65, 0.5);
+    outline: none; /* Supprime le contour natif */
+}

@@ -1,53 +1,192 @@
 <template>
-  <div class="organizer-page">
-    <div class="content">
-      <h1>Gestion de la Course</h1>
+  <div class="dashboard-orga">
 
-      <!-- Section pour afficher les événements -->
-      <div v-if="currentSection === 'events'">
+    <!-- Sidebar -->
+    <aside class="sidebar-orga">
+      <div class="sidebar-header-orga">
+        <h2>Tableau de Bord</h2>
+      </div>
+      <nav class="sidebar-nav-orga">
+        <ul>
+          <li>
+            <button
+                @click="currentSection = 'dashboard'"
+                :class="currentSection === 'dashboard' ? 'active' : ''"
+                class="sidebar-item-orga"
+            >
+              <i class="icon-dashboard"></i> Tableau de bord
+            </button>
+          </li>
+          <li>
+            <button
+                @click="currentSection = 'event'"
+                :class="currentSection === 'event' ? 'active' : ''"
+                class="sidebar-item-orga"
+            >
+              <i class="icon-event"></i> Créer un événement
+            </button>
+          </li>
+          <li>
+            <button
+                @click="showEvents"
+                :class="currentSection === 'events' ? 'active' : ''"
+                class="sidebar-item-orga"
+            >
+              <i class="icon-list"></i> Liste des événements
+            </button>
+          </li>
+          <li>
+            <!-- Menu Dropdown -->
+            <div class="dropdown" :class="{ open: dropdownVisible }">
+              <button class="dropdown-button" @click="toggleDropdown">Gestion des prestataires</button>
+              <div class="dropdown-menu">
+                <button @click="currentSection = 'reservations'; loadReservations()">Ticket prestataire</button>
+                <button @click="currentSection = 'assistance'">Assistance prestataire</button>
+                <button @click="currentSection = 'listPrestataire'">Liste prestataires</button>
+              </div>
+            </div>
+
+          </li>
+          <li>
+            <button
+                @click="currentSection = 'statistiques'"
+                :class="currentSection === 'statistiques' ? 'active' : ''"
+                class="sidebar-item-orga"
+            >
+              <i class="icon-stats"></i> Statistiques
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer-orga">
+        <router-link to="/" class="return-home-orga">
+          Retour à l'accueil
+        </router-link>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content-orga">
+      <header>
+        <h1>Gestion</h1>
+      </header>
+
+      <section v-if="currentSection === 'dashboard'" class="dashboard-section-orga">
+        <h2>Bienvenue</h2>
+      </section>
+
+      <section v-if="currentSection === 'event'" class="event-form-orga">
+        <h2>Créer un événement</h2>
+        <form @submit.prevent="saveEvent">
+          <div class="form-group-orga">
+            <label>Nom de l'événement :</label>
+            <input type="text" v-model="courseName" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Date de l'événement :</label>
+            <input type="date" v-model="eventDate" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Description :</label>
+            <div ref="editorContainer" class="editor-container-orga"></div>
+          </div>
+          <div class="form-group-orga">
+            <label>Image :</label>
+            <input type="file" @change="handleFileUpload" />
+            <img v-if="eventImage" :src="eventImage" alt="Image de l'événement" />
+          </div>
+          <button type="submit">Enregistrer</button>
+          <div class="actions-orga">
+            <button v-if="currentSection !== 'events'" @click="showEvents">Voir les événements</button>
+          </div>
+        </form>
+      </section>
+
+      <section v-if="currentSection === 'events'" class="events-orga">
         <h2>Liste des événements</h2>
-        <div v-if="events.length > 0" class="events-grid">
-          <div v-for="event in events" :key="event.id" class="event-card">
-            <h3>{{ event.name }}</h3>
-            <p class="date">{{ event.date }}</p>
-            <p class="description">{{ event.description }}</p>
-            <img :src="event.image" alt="Event image" v-if="event.image" />
+        <div v-if="events.length > 0" class="events-grid-orga">
+          <div v-for="event in events" :key="event.id" class="event-card-orga">
+            <img :src="event.image" alt="Image de l'événement" class="event-image-orga" v-if="event.image" />
+            <h3 class="event-name-orga">{{ event.name }}</h3>
+            <p class="event-date-orga">{{ new Date(event.date).toLocaleDateString() }}</p>
+            <p class="event-description-orga">{{ event.description }}</p>
           </div>
         </div>
         <div v-else>
           <p>Aucun événement trouvé.</p>
         </div>
-        <button @click="goBackToCreateEvent">Retour à la création d'événement</button>
-      </div>
+        <button @click="goBackToCreateEvent" class="button-back-orga">Retour à la création d'événement</button>
+      </section>
 
-      <!-- Section pour modifier l'événement -->
-      <div v-if="currentSection === 'event'">
-        <h2>Créer un événement</h2>
-        <div class="form-group">
-          <label for="courseName">Nom de la course :</label>
-          <input type="text" v-model="courseName" required />
-        </div>
-        <div class="form-group">
-          <label for="eventDate">Date de l'événement :</label>
-          <input type="date" v-model="eventDate" required />
-        </div>
-        <div class="form-group">
-          <label for="eventDescription">Description de l'événement :</label>
-          <div ref="editorContainer" class="editor-container"></div>
-        </div>
-        <div class="form-group">
-          <label for="eventImage">Image de l'événement : (50 Mo max)</label>
-          <input type="file" @change="handleFileUpload" />
-          <img v-if="eventImage" :src="eventImage" alt="Image de l'événement" />
-        </div>
-        <button type="submit" @click="saveEvent">Sauvegarder</button>
-      </div>
+      <section v-if="currentSection === 'assistance'" class="">
+        <h2>Assistance Prestataire</h2>
+      </section>
 
-      <!-- Bouton pour afficher les événements -->
-      <button v-if="currentSection !== 'events'" @click="showEvents">Afficher les événements</button>
-    </div>
+      <section v-if="currentSection === 'reservations'" class="reservations-section-orga">
+        <h2>Réservations</h2>
+        <div v-if="reservations.length > 0" class="reservations-table-container">
+          <table class="reservations-table">
+            <thead>
+            <tr>
+              <th>ID Réservation</th>
+              <th>ID Utilisateur</th>
+              <th>ID Stand</th>
+              <th>Date</th>
+              <th>Heure Début</th>
+              <th>Heure Fin</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="reservation in reservations" :key="reservation.id_reservation">
+              <td>{{ reservation.id_reservation }}</td>
+              <td>{{ reservation.id_utilisateur }}</td>
+              <td>{{ reservation.id_stand }}</td>
+              <td>{{ new Date(reservation.date_reservation).toLocaleDateString() }}</td>
+              <td>{{ reservation.heure_debut }}</td>
+              <td>{{ reservation.heure_fin }}</td>
+              <td>
+            <span :class="['reservation-status', reservation.statut.toLowerCase()]">
+              {{ reservation.statut }}
+            </span>
+              </td>
+              <td>
+                <select
+                    @change="changeStatus(reservation.id_reservation, $event.target.value)"
+                    class="status-select"
+                >
+                  <option value="en attente" :selected="reservation.statut === 'en attente'">En attente</option>
+                  <option value="acceptée" :selected="reservation.statut === 'acceptée'">Acceptée</option>
+                  <option value="refusée" :selected="reservation.statut === 'refusée'">Refusée</option>
+                </select>
+
+                <button class="btn-delete" @click="deleteReservation(reservation.id_reservation)">Supprimer</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else>
+          <p>Aucune réservation trouvée.</p>
+        </div>
+        <button @click="currentSection = 'prestataire'" class="button-back-orga">Retour</button>
+      </section>
+
+
+
+      <section v-if="currentSection === 'statistiques'" class="stats-orga">
+        <h2>Statistiques</h2>
+        <p>Les statistiques apparaîtront ici...</p>
+      </section>
+
+    </main>
   </div>
 </template>
+
+
+
+
 
 
 <script>
@@ -59,17 +198,19 @@ export default {
   name: 'OrganisationView',
   data() {
     return {
-      currentSection: 'event', // La section actuellement affichée
+      currentSection: 'event',
+      dropdownVisible: false,
       courseName: '',
       eventDate: '',
       eventDescription: '',
       eventImage: null,
       events: [], // Liste des événements récupérés
+      reservations: [], // list des réservations stand
       quillEditor: null, // Instance de l'éditeur Quill
     };
   },
   mounted() {
-    // Initialiser Quill lorsque le composant est monté
+
     this.quillEditor = new Quill(this.$refs.editorContainer, {
       theme: 'snow',
       placeholder: 'Écrivez la description de l’événement...',
@@ -91,6 +232,10 @@ export default {
   },
   methods: {
 
+    toggleDropdown() {
+      this.dropdownVisible = !this.dropdownVisible;
+    },
+
     dellEditor(){
       if (this.quillEditor){
           this.quillEditor = null;
@@ -99,7 +244,7 @@ export default {
     // Méthode pour afficher les événements
     async showEvents() {
       try {
-        const response = await axios.get('http://localhost:3001/organisation');  // URL pour récupérer les événements
+        const response = await axios.get('http://localhost:3001/organisation/events');  // URL pour récupérer les événements
         this.events = response.data; // Enregistrer les événements dans la variable `events`
         this.currentSection = 'events'; // Afficher la section des événements
       } catch (error) {
@@ -148,7 +293,7 @@ export default {
       };
 
       try {
-        const response = await axios.post('http://localhost:3001/organisation', eventData);
+        const response = await axios.post('http://localhost:3001/organisation/', eventData);
         alert(response.data.message);
 
         // Réinitialiser le formulaire après succès
@@ -174,175 +319,56 @@ export default {
       this.quillEditor.setText('');
       this.eventImage = null;
     },
+
+
+    // voir les réservations
+    async loadReservations() {
+      try {
+        const response = await axios.get('http://localhost:3001/organisation/stands');
+        console.log("Données récupérées :", JSON.stringify(response.data, null, 2));
+        this.reservations = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des réservations :', error);
+        alert('Erreur lors de la récupération des réservations.');
+      }
+    },
+
+
+    //changer le statue d'une réservation
+    async changeStatus(reservationId, newStatus) {
+      if (!["en attente", "acceptée", "refusée"].includes(newStatus)) {
+        alert("Statut invalide.");
+        return;
+      }
+
+      try {
+        await axios.patch(`http://localhost:3001/organisation/stands/${reservationId}`, { statut: newStatus });
+        alert("Statut mis à jour avec succès.");
+        this.loadReservations(); // Recharge les données
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut :", error);
+        alert("Erreur lors de la mise à jour du statut.");
+      }
+    },
+
+
+    //supprimer une réservation
+    async deleteReservation(reservationId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cette réservation ?")) {
+        try {
+          await axios.delete(`http://localhost:3001/organisation/stands/${reservationId}`);
+          alert("Réservation supprimée avec succès.");
+          this.loadReservations(); // Recharge les données
+        } catch (error) {
+          console.error("Erreur lors de la suppression :", error);
+          alert("Erreur lors de la suppression.");
+        }
+      }
+    }
   }
 };
+
 </script>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: rgba(0,22,43,255); /* Fond sombre */
-  font-family: "Host Grotesk", sans-serif;
-  color: #d4d4d4;
-}
-
-.organizer-page {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-}
-
-.content {
-  max-width: 900px;
-  width: 100%;
-  background-color: rgba(0,22,43,255);
-  border-radius: 15px;
-  padding-bottom: 20px;
-}
-
-h1, h2 {
-  text-align: center;
-  color: #f3265d; /* Rouge vif */
-  font-family: "Host Grotesk", sans-serif;
-}
-
-h1 {
-  font-size: 2.5em;
-}
-
-h2 {
-  font-size: 1.8em;
-}
-
-label {
-  display: block;
-  margin-top: 20px;
-  font-weight: bold;
-  color: #ececec;
-  margin-bottom: 5px;
-  font-family: "Host Grotesk", sans-serif;
-}
-
-input[type="text"],
-input[type="date"],
-.editor-container {
-  width: 100%;
-  padding: 12px;
-  background-color: rgba(243, 38, 93, 0.363); /* Fond semi-transparent */
-  border: 1px solid #f3265d;
-  border-radius: 10px;
-  font-size: 1em;
-  margin-bottom: 20px;
-  color: #fff;
-}
-
-input[type="file"] {
-  margin-top: 10px;
-  color: #d4d4d4;
-}
-
-button {
-  width: 100%;
-  background-color: #8d3434; /* Rouge intense */
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1.2em;
-  font-family: "Host Grotesk", sans-serif;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin-top: 15px;
-}
-
-button:hover {
-  background-color: #f3265d; /* Rouge plus clair */
-  transform: scale(1.05);
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-img {
-  display: block;
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 15px;
-  margin: 10px 0;
-  border: 2px solid #f3265d;
-  transition: transform 0.3s ease;
-}
-
-img:hover {
-  transform: scale(1.1);
-}
-
-/* Événements */
-.event-item {
-  background-color: rgba(243, 38, 93, 0.15); /* Rouge transparent */
-  border: 2px solid #f3265d;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.event-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
-}
-
-.event-item h3 {
-  color: #f3265d;
-  font-size: 1.5em;
-  font-family: "Host Grotesk", sans-serif;
-  margin-bottom: 10px;
-}
-
-.event-item p {
-  color: #d4d4d4;
-  font-size: 1em;
-}
-
-/* Éditeur */
-.editor-container {
-  height: 200px;
-  background-color: rgba(19, 16, 46, 0.945); /* Fond sombre */
-  border: 1px solid #f3265d;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1em;
-  color: #fff; /* Texte blanc par défaut */
-  overflow-y: auto; /* Permet le défilement si le contenu dépasse */
-}
-
-/deep/ .ql-editor::before {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-
-/* Scrollbar personnalisée */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #08070f; /* Fond sombre */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #f3265d; /* Rouge vif */
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #c0392b; /* Rouge foncé */
-}
-
-</style>
+<style src="../styles/OrganisationPage.css"></style>

@@ -57,7 +57,7 @@ CREATE TABLE servicePrestataire (
     FOREIGN KEY (id_stand) REFERENCES Stands(id_stand)
 );
 
--- Création de la table billet
+-- Création de la table billet avec ajout des dates début et fin pour l'hôtel
 CREATE TABLE billet (
     id SERIAL PRIMARY KEY,
     acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
@@ -66,6 +66,8 @@ CREATE TABLE billet (
     hotel_nom VARCHAR(100),
     date_debut_parking DATE,
     date_fin_parking DATE,
+    date_debut_hotel DATE,  -- Ajout de la date début pour l'hôtel
+    date_fin_hotel DATE,    -- Ajout de la date fin pour l'hôtel
     is_vip BOOLEAN DEFAULT FALSE,
     prix_total DECIMAL(10, 2) NOT NULL,
     date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -102,6 +104,11 @@ VALUES
     (6, 'Assistance client', 'Service', 'Aide et informations aux visiteurs', '2024-11-22', '11:00', 1);
 
 -- Insertion dans la table billet (Exemple)
--- Un billet acheté par un utilisateur inscrit
+-- Un billet acheté par un utilisateur inscrit, avec réservation de l'hôtel
+INSERT INTO billet (utilisateur_id, course_nom, hotel_nom, date_debut_parking, date_fin_parking, date_debut_hotel, date_fin_hotel, prix_total)
+VALUES
+    (7, 'Course A', 'Hotel ABC', '2024-12-01', '2024-12-05', '2024-12-01', '2024-12-05', 120.50);
+
+-- Exemple d'insertion avec un autre utilisateur et un billet sans réservation d'hôtel
 INSERT INTO billet (utilisateur_id, course_nom, prix_total)
-VALUES (7, 'Course A', 120.50);
+VALUES (8, 'Course B', 150.00);

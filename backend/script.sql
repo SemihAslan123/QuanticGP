@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS billet CASCADE;
 DROP TABLE IF EXISTS acheteurnoninscrit CASCADE;
 DROP TABLE IF EXISTS servicePrestataire CASCADE;
+DROP TABLE IF EXISTS reservation_stand CASCADE ;
 DROP TABLE IF EXISTS Stands CASCADE;
 DROP TABLE IF EXISTS Utilisateurs CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
@@ -42,6 +43,21 @@ CREATE TABLE Stands (
     numero_emplacement_stand INT,
     prix_stand INT
 );
+
+-- Création de la table reservation_stand
+CREATE TABLE reservation_stand (
+                                   id_reservation SERIAL PRIMARY KEY,  -- Identifiant unique de la réservation
+                                   id_utilisateur INT,                -- Le prestataire qui fait la demande de réservation
+                                   id_stand INT,                      -- Le stand réservé
+                                   date_reservation DATE NOT NULL,    -- La date de la réservation du stand
+                                   heure_debut TIME NOT NULL,         -- L'heure de début de la réservation
+                                   heure_fin TIME NOT NULL,           -- L'heure de fin de la réservation
+                                   statut VARCHAR(20) DEFAULT 'en attente' CHECK (statut IN ('en attente', 'acceptée', 'refusée')),  -- Statut de la demande
+                                   FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur),  -- Lien vers le prestataire
+                                   FOREIGN KEY (id_stand) REFERENCES Stands(id_stand),                    -- Lien vers le stand
+                                   CONSTRAINT check_dates CHECK (heure_debut < heure_fin)  -- Vérification que l'heure de début est avant l'heure de fin
+);
+
 
 -- Création de la table servicePrestataire
 CREATE TABLE servicePrestataire (
@@ -112,3 +128,12 @@ VALUES
 -- Exemple d'insertion avec un autre utilisateur et un billet sans réservation d'hôtel
 INSERT INTO billet (utilisateur_id, course_nom, prix_total)
 VALUES (8, 'Course B', 150.00);
+
+
+INSERT INTO reservation_stand (id_utilisateur, id_stand, date_reservation, heure_debut, heure_fin, statut)
+VALUES
+    (2, 1, '2024-12-05', '08:00', '12:00', 'en attente'), -- Réservation d'un stand de restauration par Jean Dupont
+    (3, 2, '2024-12-06', '09:00', '13:00', 'acceptée'), -- Réservation d'un stand de sécurité par Claire Martin
+    (4, 3, '2024-12-07', '10:00', '14:00', 'en attente'), -- Réservation d'un stand de nettoyage par Pierre Durand
+    (5, 4, '2024-12-05', '11:00', '15:00', 'acceptée'), -- Réservation d'un stand de vente de produits par Anne Leclerc
+    (6, 1, '2024-12-08', '12:00', '16:00', 'refusée');

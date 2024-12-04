@@ -45,7 +45,7 @@
   background-color: rgba(248, 249, 250, 0); /* Complètement transparent */
 }
 
-nav {
+.navbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -57,7 +57,7 @@ nav {
   z-index: 1000;
 }
 
-nav a {
+.navbar a {
   margin: 0 40px;
   font-size: 18px;
   text-decoration: none;
@@ -66,12 +66,12 @@ nav a {
   transition: color 0.3s ease, transform 0.2s ease;
 }
 
-nav a:hover {
+.navbar a:hover {
   color: #e51e53;
   transform: scale(1.1);
 }
 
-nav a.active-link {
+.navbar a.active-link {
   color: #e51e53;
 }
 </style>

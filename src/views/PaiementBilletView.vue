@@ -22,10 +22,11 @@
 
         <!-- Hôtel sélectionné -->
         <p v-if="selectedHotel">
-          <strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} -
-          {{ selectedHotel.emplacement }} -
-          {{ selectedHotel.prix }}€
+          <strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }} - {{ selectedHotel.prix }}€
         </p>
+        <!-- Affichage des dates de l'hôtel -->
+        <p v-if="hotelStartDate"><strong>Date d'arrivée à l'hôtel:</strong> {{ hotelStartDate }}</p>
+        <p v-if="hotelEndDate"><strong>Date de départ de l'hôtel:</strong> {{ hotelEndDate }}</p>
 
         <!-- Affichage des dates de parking si sélectionnées -->
         <div v-if="startDate && endDate">
@@ -99,6 +100,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 
@@ -111,8 +113,10 @@ export default {
       email: '',
       selectedHotel: null,
       selectedCourses: [],
-      startDate: null,
-      endDate: null,
+      startDate: null, // Parking start date
+      endDate: null, // Parking end date
+      hotelStartDate: null, // Hotel start date
+      hotelEndDate: null, // Hotel end date
       isVIP: false,
       totalPrice: 0,
       parkingPrice: 0,
@@ -123,14 +127,21 @@ export default {
     };
   },
   created() {
-    const { prenom, nom, email, selectedCourses, selectedHotel, startDate, endDate, isVIP, totalPrice } = this.$route.params;
+    const {
+      prenom, nom, email, selectedCourses, selectedHotel,
+      startDate, endDate, hotelStartDate, hotelEndDate,
+      isVIP, totalPrice
+    } = this.$route.params;
+
     this.prenom = prenom;
     this.nom = nom;
     this.email = email;
     this.selectedCourses = selectedCourses || [];
     this.selectedHotel = selectedHotel;
-    this.startDate = startDate;
+    this.startDate = startDate; // Parking dates
     this.endDate = endDate;
+    this.hotelStartDate = hotelStartDate; // Hotel dates
+    this.hotelEndDate = hotelEndDate;
     this.isVIP = isVIP;
     this.totalPrice = totalPrice;
 
@@ -138,7 +149,7 @@ export default {
       this.calculateParkingPrice();
     }
   },
-    mounted() {
+  mounted() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       this.id = user.id;
@@ -150,7 +161,7 @@ export default {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
       const differenceInTime = end - start;
-      const differenceInDays = (differenceInTime / (1000 * 3600 * 24))+1;
+      const differenceInDays = (differenceInTime / (1000 * 3600 * 24)) + 1;
       this.parkingPrice = differenceInDays * 50;
     },
     async handlePayment() {
@@ -163,9 +174,11 @@ export default {
           selectedHotel: this.selectedHotel,
           startDate: this.startDate,
           endDate: this.endDate,
+          hotelStartDate: this.hotelStartDate,
+          hotelEndDate: this.hotelEndDate,
           isVIP: this.isVIP,
           totalPrice: this.totalPrice,
-          userId : this.id || null
+          userId: this.id || null,
         });
 
         console.log('Réponse de l’API :', response.data);
@@ -179,6 +192,7 @@ export default {
   },
 };
 </script>
+
 
 
 

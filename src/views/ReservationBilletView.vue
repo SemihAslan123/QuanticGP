@@ -87,8 +87,6 @@
         </p>
       </div>
 
-
-
       <!-- Affichage des hôtels sous forme de cartes -->
       <h2>Choisissez un hôtel :</h2>
       <div class="hotel-cards">
@@ -106,6 +104,31 @@
         </div>
       </div>
 
+      <!-- Sélection des dates pour l'hôtel -->
+      <h2>Choisissez vos dates pour l'hôtel :</h2>
+      <div class="hotel-dates" v-if="selectedHotel">
+        <label for="hotelStartDate">Date de début :</label>
+        <input
+            type="date"
+            id="hotelStartDate"
+            v-model="hotelStartDate"
+            :min="'2025-06-15'"
+            :max="'2025-06-19'"
+            @change="updateMaxHotelEndDate"
+        />
+
+        <label v-if="hotelStartDate" for="hotelEndDate">Date de fin :</label>
+        <input
+            v-if="hotelStartDate"
+            type="date"
+            id="hotelEndDate"
+            v-model="hotelEndDate"
+            :min="hotelStartDate"
+            :max="'2025-06-19'"
+            @change="calculateTotal"
+        />
+      </div>
+
       <!-- Bouton pour annuler la sélection de l'hôtel -->
       <div v-if="selectedHotel">
         <button id="annulation" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
@@ -119,7 +142,6 @@
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-
 
       <!-- Bouton pour soumettre le formulaire -->
       <button type="submit">Payer</button>
@@ -140,6 +162,8 @@ export default {
       selectedCourses: [],
       startDate: null,
       endDate: null,
+      hotelStartDate: null,
+      hotelEndDate: null,
       hotels: [
         { id: 1, nom: "Riviera Marriott", emplacement: "Ouest", image: "/assets/hotels/hotel1.jpeg", prix: 200 },
         { id: 2, nom: "Fairmont Monte Carlo", emplacement: "Est", image: "/assets/hotels/hotel2.jpg", prix: 350 },
@@ -151,15 +175,13 @@ export default {
       ],
       totalPrice: 0,
       isVIP: false,
-      isVipInfoVisible: false,  // État pour afficher ou masquer les infos VIP
-
-      isLoggedIn: false, // État de connexion
-      user: null, // Informations de l'utilisateur connecté
-      errorMessage: "", // Message d'erreur pour les validations
+      isVipInfoVisible: false,
+      isLoggedIn: false,
+      user: null,
+      errorMessage: "",
     };
   },
   mounted() {
-    // Vérification de l'état de connexion de l'utilisateur
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       this.isLoggedIn = true;
@@ -188,56 +210,52 @@ export default {
       }
       this.calculateTotal();
     },
+    updateMaxHotelEndDate() {
+      if (this.hotelEndDate && new Date(this.hotelEndDate) < new Date(this.hotelStartDate)) {
+        this.hotelEndDate = this.hotelStartDate;
+      }
+      this.calculateTotal();
+    },
     calculateTotal() {
       let price = 0;
-      // Calcul des prix des courses sélectionnées
       this.selectedCourses.forEach((course) => {
         price += course.prix;
       });
-
-      // Calcul du prix du parking (50€ par jour)
       if (this.startDate && this.endDate) {
         const start = new Date(this.startDate);
         const end = new Date(this.endDate);
-        const days = Math.min(Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1, 5); // Limiter à 5 jours
+        const days = Math.min(Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1, 5);
         price += days * 50;
       }
-
-      // Ajout du supplément VIP si sélectionné
+      if (this.selectedHotel && this.hotelStartDate && this.hotelEndDate) {
+        const start = new Date(this.hotelStartDate);
+        const end = new Date(this.hotelEndDate);
+        const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        price += Math.max(0, nights) * this.selectedHotel.prix;
+      }
       if (this.isVIP) price += 100;
-
-      // Ajout du prix de l'hôtel sélectionné
-      if (this.selectedHotel) price += this.selectedHotel.prix;
-
       this.totalPrice = price;
     },
-    selectHotel(hotel) {
-      this.selectedHotel = hotel;
-      this.calculateTotal();
-    },
-    cancelHotelSelection() {
-      this.selectedHotel = null;
-      this.calculateTotal();
-    },
-    cancelParkingSelection() {
-      this.startDate = null;
-      this.endDate = null;
-      this.calculateTotal();
-    },
     submitReservation() {
-      // Validations
       if (this.selectedCourses.length === 0) {
         this.errorMessage = "Veuillez sélectionner au moins une course.";
         return;
       }
-
       if (this.startDate && !this.endDate) {
         this.errorMessage = "Veuillez sélectionner une date de fin de parking si une date de début est définie.";
         return;
       }
-
-      // Si tout est valide, rediriger vers la page de paiement
-      this.errorMessage = ""; // Réinitialiser le message d'erreur
+      if (this.selectedHotel) {
+        if (!this.hotelStartDate || !this.hotelEndDate) {
+          this.errorMessage = "Veuillez sélectionner des dates valides pour votre séjour à l'hôtel.";
+          return;
+        }
+        if (this.hotelStartDate === this.hotelEndDate) {
+          this.errorMessage = "La date d'arrivée et de départ pour l'hôtel ne peuvent pas être identiques.";
+          return;
+        }
+      }
+      this.errorMessage = "";
       this.$router.push({
         name: "Paiement",
         params: {
@@ -246,6 +264,8 @@ export default {
           email: this.email,
           selectedCourses: this.selectedCourses,
           selectedHotel: this.selectedHotel,
+          hotelStartDate: this.hotelStartDate,
+          hotelEndDate: this.hotelEndDate,
           startDate: this.startDate,
           endDate: this.endDate,
           isVIP: this.isVIP,
@@ -253,9 +273,27 @@ export default {
         },
       });
     },
+    cancelParkingSelection() {
+      this.startDate = null;
+      this.endDate = null;
+      this.calculateTotal();
+    },
+    cancelHotelSelection() {
+      this.selectedHotel = null;
+      this.hotelStartDate = null;
+      this.hotelEndDate = null;
+      this.calculateTotal();
+    },
+    selectHotel(hotel) {
+      this.selectedHotel = this.selectedHotel?.id === hotel.id ? null : hotel;
+      this.hotelStartDate = null;
+      this.hotelEndDate = null;
+      this.calculateTotal();
+    },
   },
 };
 </script>
+
 
 
 

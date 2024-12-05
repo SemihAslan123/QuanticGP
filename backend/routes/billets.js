@@ -12,6 +12,8 @@ router.post('/', async (req, res) => {
         selectedHotel,
         startDate,
         endDate,
+        hotelStartDate, // Nouvelle donnée ajoutée
+        hotelEndDate,   // Nouvelle donnée ajoutée
         isVIP,
         totalPrice,
         userId,  // Ajout de userId dans le corps de la requête
@@ -44,9 +46,9 @@ router.post('/', async (req, res) => {
         const queryBillet = `
             INSERT INTO billet (
                 acheteur_id, utilisateur_id, course_nom, hotel_nom, date_debut_parking,
-                date_fin_parking, is_vip, prix_total
+                date_fin_parking, date_debut_hotel, date_fin_hotel, is_vip, prix_total
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
         `;
         const valuesBillet = [
             acheteurId || null,   // Si l'utilisateur est connecté, acheteurId est null
@@ -55,6 +57,8 @@ router.post('/', async (req, res) => {
             selectedHotel ? selectedHotel.nom : null,
             startDate,
             endDate,
+            hotelStartDate,   // Ajout des dates d'hôtel
+            hotelEndDate,     // Ajout des dates d'hôtel
             isVIP,
             totalPrice,
         ];

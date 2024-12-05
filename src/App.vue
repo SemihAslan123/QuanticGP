@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-
     <nav class="navbar">
-
       <!-- Logo cliquable -->
       <router-link to="/" exact-active-class="active-link" class="logo-link">
         <img src="../public/assets/logo.png" alt="Logo" class="logoNavBar">
@@ -13,8 +11,12 @@
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
       <router-link to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
-      <router-link to="/login" class="login-link" exact-active-class="active-link">CONNEXION</router-link>
-      <router-link to="/profil" class="login-link" exact-active-class="active-link">PROFIL</router-link>
+
+      <!-- Affiche "Connexion" si l'utilisateur n'est pas connecté -->
+      <router-link v-if="!isLoggedIn" to="/login" class="login-link" exact-active-class="active-link">CONNEXION</router-link>
+
+      <!-- Affiche "Profil" si l'utilisateur est connecté -->
+      <router-link v-if="isLoggedIn" to="/profil" class="login-link" exact-active-class="active-link">PROFIL</router-link>
     </nav>
 
     <div class="content">
@@ -22,6 +24,48 @@
     </div>
   </div>
 </template>
+
+<script setup>
+
+import {onMounted, onUnmounted, ref} from "vue";
+
+onMounted(() => {
+  const navbar = document.querySelector('.navbar'); // Sélectionne la barre de navigation
+
+  const handleScroll = () => {
+    if (window.scrollY === 0) {
+      // Si la page est tout en haut
+      navbar.classList.add('transparent');
+    } else {
+      // Si la page est scrollée
+      navbar.classList.remove('transparent');
+    }
+  };
+
+  // Vérifie si la page est déjà en haut au moment du chargement
+  if (window.scrollY === 0) {
+    navbar.classList.add('transparent');
+  }
+
+  // Ajoute l'écouteur d'événement scroll
+  window.addEventListener('scroll', handleScroll);
+
+  // Supprime l'écouteur lors du démontage
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+  });
+});
+
+const isLoggedIn = ref(false);
+
+onMounted(() => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    isLoggedIn.value = true;
+  }
+});
+
+</script>
 
 <style>
 
@@ -75,36 +119,3 @@
   color: #e51e53;
 }
 </style>
-
-<script setup>
-
-import { onMounted, onUnmounted } from "vue";
-
-onMounted(() => {
-  const navbar = document.querySelector('.navbar'); // Sélectionne la barre de navigation
-
-  const handleScroll = () => {
-    if (window.scrollY === 0) {
-      // Si la page est tout en haut
-      navbar.classList.add('transparent');
-    } else {
-      // Si la page est scrollée
-      navbar.classList.remove('transparent');
-    }
-  };
-
-  // Vérifie si la page est déjà en haut au moment du chargement
-  if (window.scrollY === 0) {
-    navbar.classList.add('transparent');
-  }
-
-  // Ajoute l'écouteur d'événement scroll
-  window.addEventListener('scroll', handleScroll);
-
-  // Supprime l'écouteur lors du démontage
-  onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-  });
-});
-
-</script>

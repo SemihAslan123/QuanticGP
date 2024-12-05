@@ -63,6 +63,7 @@ export default {
         this.isLoggedIn = true;
         this.user = data.user;
         this.errorMessage = '';
+        window.location.reload()
       } else {
         this.errorMessage = 'Saisissez une adresse e-mail et un mot de passe valide.';
       }

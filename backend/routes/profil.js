@@ -6,36 +6,29 @@ const pool = require('../database/db'); // Chemin vers votre configuration de la
 router.get('/:userId/billets', async (req, res) => {
     const { userId } = req.params;
 
+    // Vérifier que l'ID utilisateur est présent
     if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur manquant.' });
     }
 
     try {
-        // Requête pour récupérer les billets du client connecté
+        // Requête pour récupérer toutes les informations des billets pour un utilisateur donné
         const queryBillets = `
-            SELECT 
-                id AS id_billet,
-                course_nom,
-                hotel_nom,
-                date_debut_parking,
-                date_fin_parking,
-                is_vip,
-                prix_total,
-                date_paiement
-            FROM 
-                billet
-            WHERE 
-                utilisateur_id = $1;
+            SELECT * 
+            FROM billet
+            WHERE utilisateur_id = $1;
         `;
         const values = [userId];
 
         const result = await pool.query(queryBillets, values);
 
+        // Si aucun billet n'est trouvé, on renvoie une liste vide
         if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Aucun billet trouvé pour cet utilisateur.' });
+            return res.status(200).json([]); // Liste vide, pas de billets
         }
 
-        res.status(200).json(result.rows); // Renvoie les billets sous forme de tableau JSON
+        // Si des billets sont trouvés, on les renvoie sous forme de JSON
+        res.status(200).json(result.rows);
     } catch (error) {
         console.error('Erreur lors de la récupération des billets :', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });

@@ -8,6 +8,10 @@ import Organisation from '../views/OrganisationView.vue';
 import Login from '../components/LoginComponent.vue';
 import Profil from "@/views/ProfilView.vue";
 import PrestataireView from "@/views/PrestataireView.vue";
+import ArticleHistoireCircuit from '../views/ArticleHistoireCircuit.vue';
+import ArticleCoulisses from '../views/ArticleCoulisses.vue';
+import ArticleGuide from '../views/ArticleGuide.vue';
+import ArticleVieMonaco from '../views/ArticleVieMonaco.vue';
 
 Vue.use(Router);
 
@@ -62,6 +66,30 @@ export default new Router({
       path: '/prestataire',
       name: 'Prestataire',
       component : PrestataireView
-    }
+    },
+
+    {
+      path: '/articlehistoire',
+      name: 'ArticleHistoireCircuit',
+      component: ArticleHistoireCircuit,
+    },
+
+    {
+      path: '/articlecoulisses',
+      name: 'ArticleCoulisses',
+      component: ArticleCoulisses,
+    },
+
+    {
+      path: '/articleguide',
+      name: 'ArticleGuide',
+      component: ArticleGuide,
+    },
+
+    {
+      path: '/articlemonaco',
+      name: 'ArticleVieMonaco',
+      component: ArticleVieMonaco,
+    },
   ],
 });

@@ -147,7 +147,7 @@
 
          <div class="containerTexteA">
 
-            <h1 class="titrePremierTexte">CHAQUE VIRAGE À MONACO EST UNE OPPORTUNITÉ<br> DE GAGNER OU DE PERDRE LA COURSE <span class="nomCitation">- Juan Manuel Fangio</span></h1>
+            <h1 class="titrePremierTexte">CHAQUE VIRAGE À MONACO EST UNE OPPORTUNITÉ<br> DE <span class="texteRouge">GAGNER</span> OU DE <span class="texteRouge">PERDRE</span> LA COURSE <span class="nomCitation">- Juan Manuel Fangio</span></h1>
 
             <p class="premierTexte">
                Chaque pilote de Formule 1 rêve de gagner sur le circuit mythique de Monaco, le plus lent et le plus
@@ -160,16 +160,51 @@
             
          </div>
 
-         <div class="carteHistoireCircuit">
+         <router-link to="/articlehistoire" tag="div" class="carteHistoireCircuit">
 
             <p class="texteHistoireCircuit">Un circuit immuable,<br> Le Circuit de Monaco</p>
 
             <p class="sousTitreHistoireCircuitUn">📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 1 min)</span></p>
 
-         </div>
+         </router-link>
 
       </div>
 
+
+    <!-- =============================================================================================================================-->
+    <!-- ================================================ DEUXIEME CONTAINER : B ==================================================== -->
+    <!-- =============================================================================================================================-->
+
+
+    <div class="section" id="section2B">
+
+      <router-link to="/articlecoulisses" tag="div" class="carteCoulisses">
+
+         <p class="texteHistoireCircuit">Les coulisses de<br> l'événement</p>
+
+         <p class="sousTitreHistoireCircuitUn">📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 3 min)</span></p>
+
+      </router-link>   
+
+
+      <router-link to="/articlemonaco" tag="div" class="carteVieMonaco">
+
+         <p class="texteHistoireCircuit">La vie à Monaco pendant l'événement<br> </p>
+
+         <p class="sousTitreHistoireCircuitUn">📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 3 min)</span></p>
+
+      </router-link>
+
+
+      <router-link to="/articleguide" tag="div" class="carteGuidePratique">
+
+         <p class="texteHistoireCircuit">Le guide pratique du Quantic GP</p>
+
+         <p class="sousTitreHistoireCircuitUn">📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 1 min)</span></p>
+
+      </router-link>
+
+    </div>
 
 
     <!-- =============================================================================================================================-->
@@ -178,42 +213,50 @@
 
       <div class="section" id="section3">
 
+         <h1 class="titreCarteInteractive">CARTE INTERACTIVE</h1>
 
-         <button class="buttonSwitchStands" @click="switchImage()">
+
+         <div class="carteContainer">
+
+            <div class="partieGaucheCarte">
+
+               <button class="buttonSwitchStands" @click="switchImage()">
             <img src="/assets/homePage/standsIcon.png"  alt="Icon" class="iconButtonSwitchStands">
          </button>
 
-
-         <svg class="svgCarte"
-         version="1.1"
-         id="svg1"
-         width="2341"
-         height="1317"
-         viewBox="0 0 2341 1317"
-         xmlns="http://www.w3.org/2000/svg"
-         >
+            </div>
 
 
-            <!-- Définitions des éléments SVG -->
-            <defs>
-               <linearGradient id="linearGradient2">
-               <stop style="stop-color:#000000;stop-opacity:1;" offset="0" />
-               <stop style="stop-color:#000000;stop-opacity:0;" offset="1" />
-               </linearGradient>
-               <linearGradient xlink:href="#linearGradient2" id="linearGradient3" />
-            </defs>
-            
+            <svg class="svgCarte"
+            version="1.1"
+            id="svg1"
+            width="2341"
+            height="1317"
+            viewBox="0 0 2341 1317"
+            xmlns="http://www.w3.org/2000/svg"
+            >
 
 
-            <!-- Groupe CarteEntiere (Non cliquable) -->
-            <g id="g1" style="display:inline">
-               <image
-               width="2341"
-               height="1317"
-               preserveAspectRatio="true"
-               :xlink:href="currentImageMap"
-               />
-            </g>
+               <!-- Définitions des éléments SVG -->
+               <defs>
+                  <linearGradient id="linearGradient2">
+                  <stop style="stop-color:#000000;stop-opacity:1;" offset="0" />
+                  <stop style="stop-color:#000000;stop-opacity:0;" offset="1" />
+                  </linearGradient>
+                  <linearGradient xlink:href="#linearGradient2" id="linearGradient3" />
+               </defs>
+               
+
+
+               <!-- Groupe CarteEntiere (Non cliquable) -->
+               <g id="g1" style="display:inline">
+                  <image
+                  width="2341"
+                  height="1317"
+                  preserveAspectRatio="true"
+                  :xlink:href="currentImageMap"
+                  />
+               </g>
 
 
          <!-- =============================================================================================================================-->
@@ -221,37 +264,38 @@
          <!-- =============================================================================================================================-->
 
 
-            <g v-for="emplacement in emplacementsPrincipaux" :key="emplacement.id" 
-                  @mouseover="showTooltip(emplacement)"
-                  @mouseleave="hideTooltip"
-                  @mousemove="moveTooltip">
-                  <path
-                     style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
-                     :d="emplacement.path"
-                  />
-            </g>
+               <g v-for="emplacement in emplacementsPrincipaux" :key="emplacement.id" 
+                     @mouseover="showTooltip(emplacement)"
+                     @mouseleave="hideTooltip"
+                     @mousemove="moveTooltip">
+                     <path
+                        style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
+                        :d="emplacement.path"
+                     />
+               </g>
 
 
          <!-- =============================================================================================================================-->
          <!-- ===================================== PARTIE DES EMPLACEMENT POUR PRESTATAIRE (1 à 35) ===================================== -->
          <!-- =============================================================================================================================-->
 
-         <!-- Les groupes ci-dessous seront opérationnels seulement si withStands = true -->
-            <g v-if="withStands">
+            <!-- Les groupes ci-dessous seront opérationnels seulement si withStands = true -->
+               <g v-if="withStands">
 
-               <g v-for="emplacement in emplacementsPrestataires" :key="emplacement.id" 
-                  @mouseover="showTooltip(emplacement)"
-                  @mouseleave="hideTooltip"
-                  @mousemove="moveTooltip">
-                  <path
-                     style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
-                     :d="emplacement.path"
-                  />
+                  <g v-for="emplacement in emplacementsPrestataires" :key="emplacement.id" 
+                     @mouseover="showTooltip(emplacement)"
+                     @mouseleave="hideTooltip"
+                     @mousemove="moveTooltip">
+                     <path
+                        style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
+                        :d="emplacement.path"
+                     />
+                  </g>
+
                </g>
 
-            </g>
-
-         </svg>
+            </svg>
+         </div>
 
 
          <!-- TOOLTIP = info-bulle qui s'affiche lors du survol d'une zone-->

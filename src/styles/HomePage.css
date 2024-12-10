@@ -9,17 +9,43 @@ body, html {
     background-color: rgba(0,22,43,255);
   }
 
+  
+.texteRouge {
+  color: #c41846;
+}
+
 
 /* ========================= La carte ========================= */ 
 
 .svgCarte {
-    width: 100%;
+    width: 70%;
     height: auto;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
 }
 
 
-.map-container {
-    position: relative;
+.carteContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.titreCarteInteractive {
+  color: #ffffff;
+  font-family: "Goldman", sans-serif;
+  margin-bottom: 5%;
+  font-size: 75px;
+}
+
+.partieGaucheCarte {
+  z-index: 5;
+  margin-left: 4%;
+  background-color: rgba(99, 12, 34, 0.87);
+  width: 400px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.342);
 }
   
   
@@ -238,6 +264,76 @@ body, html {
 }
 
 
+/* ========================= Section 2B =========================*/
+
+
+.carteCoulisses {
+  border-radius: 30px ;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+  background-image: url('../../public/assets/homePage/carteCoulisse.png'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  width: 397px;
+  height: 513px;
+  color: rgb(238, 238, 238);
+  margin-bottom: 50%;
+  margin-right: 7%;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: rotate(1deg);
+}
+
+.carteCoulisses:hover {
+  transform: scale(1.02) rotate(2deg);
+}
+
+.carteVieMonaco {
+  border-radius: 30px ;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+  background-image: url('../../public/assets/homePage/carteVieMonaco.png'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  width: 397px;
+  height: 513px;
+  color: rgb(238, 238, 238);
+  margin-bottom: 55%;
+  margin-right: 6%;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: rotate(-3deg);
+}
+
+.carteVieMonaco:hover {
+  transform: scale(1.02) rotate(-5deg);
+}
+
+.carteGuidePratique {
+  border-radius: 30px ;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+  background-image: url('../../public/assets/homePage/carteGuide.png'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  width: 397px;
+  height: 513px;
+  color: rgb(238, 238, 238);
+  margin-top: 5%;
+  margin-bottom: 50%;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: rotate(2deg);
+}
+
+.carteGuidePratique:hover {
+  transform: scale(1.02) rotate(3deg);
+}
+
+
 /* ========================= Date / Lieu événement (Section 2) =========================*/
 
 
@@ -446,6 +542,8 @@ body, html {
 
   #section3 {
     background-color: rgba(0,22,43,255);
+    display: flex;
+    flex-direction: column;
   }
 
   #section4 {
@@ -486,21 +584,20 @@ body, html {
     height: 90px; 
     background-color: #8d3434; 
     border: none;
-    border-radius: 8px; 
+    border-radius: 10px; 
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer; 
     transition: background-color 0.3s, transform 0.2s; /* Animation pour l'effet de survol */
-    position: absolute;
 
-    margin-left: 30%;
-    margin-top: 45%;
+    margin-left: 10%;
+    margin-top: 10%;
   }
 
   .buttonSwitchStands:hover {
-    background-color: #8d3030; /* Couleur de fond au survol */
-    transform: scale(1.1); /* Agrandissement au survol */
+    background-color: #792626; /* Couleur de fond au survol */
+    transform: scale(1.01); /* Agrandissement au survol */
   }
 
   .buttonSwitchStands:active {

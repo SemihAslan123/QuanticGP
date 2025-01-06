@@ -12,6 +12,7 @@ import ArticleHistoireCircuit from '../views/ArticleHistoireCircuit.vue';
 import ArticleCoulisses from '../views/ArticleCoulisses.vue';
 import ArticleGuide from '../views/ArticleGuide.vue';
 import ArticleVieMonaco from '../views/ArticleVieMonaco.vue';
+import InscriptionView from "@/views/InscriptionView.vue";
 
 Vue.use(Router);
 
@@ -91,5 +92,11 @@ export default new Router({
       name: 'ArticleVieMonaco',
       component: ArticleVieMonaco,
     },
+
+    {
+      path: '/inscription',
+      name: 'InscriptionView',
+      component: InscriptionView,
+    }
   ],
 });

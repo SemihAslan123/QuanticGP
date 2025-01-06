@@ -2,7 +2,76 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
 
-// Route POST pour ajouter un billet
+/**
+ * @swagger
+ * /billets:
+ *   post:
+ *     summary: Ajouter un billet
+ *     description: Cette route permet de créer un billet pour un utilisateur ou un acheteur non inscrit.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               prenom:
+ *                 type: string
+ *                 description: Prénom de l'acheteur.
+ *               nom:
+ *                 type: string
+ *                 description: Nom de l'acheteur.
+ *               email:
+ *                 type: string
+ *                 description: Email de l'acheteur.
+ *               selectedCourses:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     nom:
+ *                       type: string
+ *                       description: Nom du cours sélectionné.
+ *               selectedHotel:
+ *                 type: object
+ *                 properties:
+ *                   nom:
+ *                     type: string
+ *                     description: Nom de l'hôtel sélectionné.
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de début du parking.
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de fin du parking.
+ *               hotelStartDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de début de l'hôtel.
+ *               hotelEndDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de fin de l'hôtel.
+ *               isVIP:
+ *                 type: boolean
+ *                 description: Indicateur si le billet est VIP.
+ *               totalPrice:
+ *                 type: number
+ *                 format: float
+ *                 description: Prix total du billet.
+ *               userId:
+ *                 type: integer
+ *                 description: ID de l'utilisateur connecté (optionnel).
+ *     responses:
+ *       201:
+ *         description: Billet enregistré avec succès.
+ *       400:
+ *         description: Champs obligatoires manquants ou invalides.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
 router.post('/', async (req, res) => {
     const {
         prenom,

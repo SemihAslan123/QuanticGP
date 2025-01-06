@@ -2,7 +2,61 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/db'); // Assurez-vous que le chemin vers votre fichier de configuration de la base de données est correct
 
-// Route POST pour la connexion des utilisateurs
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Connexion de l'utilisateur
+ *     description: Cette route permet de connecter un utilisateur en vérifiant son email et son mot de passe.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: L'email de l'utilisateur pour la connexion.
+ *               password:
+ *                 type: string
+ *                 description: Le mot de passe de l'utilisateur.
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, retourne les informations de l'utilisateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indique si la connexion a réussi.
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: L'ID de l'utilisateur.
+ *                     nom:
+ *                       type: string
+ *                       description: Le nom de l'utilisateur.
+ *                     prenom:
+ *                       type: string
+ *                       description: Le prénom de l'utilisateur.
+ *                     mail:
+ *                       type: string
+ *                       description: L'email de l'utilisateur.
+ *                     type:
+ *                       type: string
+ *                       description: Le type de l'utilisateur (par exemple "admin", "user").
+ *       400:
+ *         description: Email et mot de passe sont obligatoires.
+ *       401:
+ *         description: L'email ou le mot de passe est incorrect.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
 

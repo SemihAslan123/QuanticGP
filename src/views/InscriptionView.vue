@@ -1,128 +1,150 @@
 <template>
+  <div class="registration-container">
+    <h1>Inscription</h1>
 
-  <form @submit.prevent="submitRegistration">
-    <h2>Inscription</h2>
+    <form @submit.prevent="handleRegistration">
+      <div class="form-group">
+        <label for="prenomUtilisateur">Prénom</label>
+        <input
+          v-model="prenomUtilisateur"
+          type="text"
+          id="prenomUtilisateur"
+          placeholder="John"
+          required
+        />
+      </div>
 
-    <label for="nom">Nom :</label>
-    <input type="text" id="nom" name="nom" placeholder="Entrez votre nom" required>
+      <div class="form-group">
+        <label for="nomUtilisateur">Nom</label>
+        <input
+          v-model="nomUtilisateur"
+          type="text"
+          id="nomUtilisateur"
+          placeholder="Doe"
+          required
+        />
+      </div>
 
-    <label for="prenom">Prénom :</label>
-    <input type="text" id="prenom" name="prenom" placeholder="Entrez votre prénom" required>
+      <div class="form-group">
+        <label for="emailUtilisateur">Email</label>
+        <input
+          v-model="emailUtilisateur"
+          type="email"
+          id="emailUtilisateur"
+          placeholder="exemple@mail.com"
+          required
+        />
+      </div>
 
-    <label for="email">E-mail :</label>
-    <input type="email" id="email" name="email" placeholder="Entrez votre email" required>
+      <div class="form-group">
+        <label for="motDePasse">Mot de passe</label>
+        <input
+          v-model="motDePasse"
+          type="password"
+          id="motDePasse"
+          placeholder="********"
+          required
+        />
+      </div>
 
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" placeholder="Entrez un mot de passe" required>
+      <div class="form-group">
+        <label for="typeUtilisateur">Type d'utilisateur</label>
+        <select v-model="typeUtilisateur" id="typeUtilisateur" required>
+          <option value="client">Client</option>
+          <option value="prestataire">Prestataire</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
 
-    <label for="user_type">Type d'utilisateur :</label>
-    <select id="user_type" name="user_type" required>
-      <option value="">--Choisissez une option--</option>
-      <option value="client">Client</option>
-      <option value="prestataire">Prestataire</option>
-    </select>
-
-    <button type="submit">S'inscrire</button>
-
-  </form>
-
+      <button type="submit">S'inscrire</button>
+    </form>
+  </div>
 </template>
 
-
-
 <script>
+import axios from "axios";
+
 export default {
-  name: "InscriptionView",
   data() {
     return {
-      nom: "",
-      prenom: "",
-      email: "",
-      mdp: "",
-      type_utilisateur: "",
+      prenomUtilisateur: "",
+      nomUtilisateur: "",
+      emailUtilisateur: "",
+      motDePasse: "",
+      typeUtilisateur: "client", // Valeur par défaut
     };
   },
   methods: {
-    async submitRegistration() {
+    async handleRegistration() {
       try {
-        const response = await fetch("http://localhost:3000/inscription", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nom_utilisateur: this.nom,
-            prenom_utilisateur: this.prenom,
-            mail_utilisateur: this.email,
-            mot_de_passe: this.mdp,
-            type_utilisateur: this.type_utilisateur,
-            image_prestataire: null, // Si vous ne gérez pas d'images pour l'instant
-          }),
+        const response = await axios.post("http://localhost:3001/inscription", {
+          prenomUtilisateur: this.prenomUtilisateur,
+          nomUtilisateur: this.nomUtilisateur,
+          emailUtilisateur: this.emailUtilisateur,
+          motDePasse: this.motDePasse,
+          typeUtilisateur: this.typeUtilisateur,
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          alert("Inscription réussie !");
-          console.log("Utilisateur créé :", data.utilisateur);
-        } else {
-          const error = await response.json();
-          alert(`Erreur : ${error.error}`);
-        }
-      } catch (err) {
-        console.error("Erreur réseau ou serveur :", err);
-        alert("Erreur lors de l'inscription. Veuillez réessayer.");
+        console.log("Réponse de l’API : ", response.data);
+        alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        this.$router.push({ name: "Login" }); // Redirige vers la page de connexion
+      } catch (error) {
+        console.error("Erreur lors de l'inscription : ", error);
+        alert("Une erreur est survenue lors de l'inscription.");
       }
     },
   },
 };
 </script>
 
-
-
-
 <style scoped>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f4f4f9;
-}
-form {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
+.registration-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+h1 {
+  text-align: center;
+  color: #e74c3c;
 }
-input, select, button {
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
+  font-size: 1em;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #0056b3;
+  box-sizing: border-box;
 }
 
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #c0392b;
+}
 </style>

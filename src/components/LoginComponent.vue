@@ -13,6 +13,9 @@
         </div>
         <button class="login-button" type="submit">Se connecter</button>
       </form>
+      <br>
+      <button v-if="!isLoggedIn" @click="goToInscription">S'inscrire</button>
+
 
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
@@ -44,6 +47,9 @@ export default {
     }
   },
   methods: {
+    goToInscription() {
+      this.$router.push({ name: "InscriptionView" });
+    },
     logout() {
       localStorage.removeItem("user");
       this.isLoggedIn = false;

@@ -2,7 +2,40 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
 
-// Route GET pour récupérer les billets d'un client connecté
+/**
+ * @swagger
+ * /profil/{userId}/billets:
+ *   get:
+ *     summary: Récupérer les billets d'un utilisateur
+ *     description: Cette route permet de récupérer tous les billets d'un utilisateur en fonction de son ID.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: L'ID de l'utilisateur dont on souhaite récupérer les billets
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des billets trouvée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   titre:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *       400:
+ *         description: ID utilisateur manquant.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
 router.get('/:userId/billets', async (req, res) => {
     const { userId } = req.params;
 

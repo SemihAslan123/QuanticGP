@@ -1,11 +1,13 @@
 -- Suppression des tables dans l'ordre pour respecter les dépendances
+DROP TABLE IF EXISTS LivreOr CASCADE;
 DROP TABLE IF EXISTS billet CASCADE;
 DROP TABLE IF EXISTS acheteurnoninscrit CASCADE;
 DROP TABLE IF EXISTS servicePrestataire CASCADE;
-DROP TABLE IF EXISTS reservation_stand CASCADE ;
+DROP TABLE IF EXISTS reservation_stand CASCADE;
 DROP TABLE IF EXISTS Stands CASCADE;
 DROP TABLE IF EXISTS Utilisateurs CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
+
 
 -- Création de la table events
 CREATE TABLE events (
@@ -89,6 +91,16 @@ CREATE TABLE billet (
     date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Création de la table LivreOr
+CREATE TABLE LivreOr (
+    id_avis SERIAL PRIMARY KEY,
+    id_utilisateur INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+    commentaire TEXT NOT NULL,
+    date_avis TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    note INT CHECK (note BETWEEN 1 AND 5) -- Note sur 5
+);
+
+
 -- Insertion dans la table Utilisateurs
 INSERT INTO Utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire)
 VALUES
@@ -137,3 +149,10 @@ VALUES
     (4, 3, '2024-12-07', '10:00', '14:00', 'en attente'), -- Réservation d'un stand de nettoyage par Pierre Durand
     (5, 4, '2024-12-05', '11:00', '15:00', 'acceptée'), -- Réservation d'un stand de vente de produits par Anne Leclerc
     (6, 1, '2024-12-08', '12:00', '16:00', 'refusée');
+
+-- Insertion d'avis dans la table LivreOr
+INSERT INTO LivreOr (id_utilisateur, commentaire, note)
+VALUES
+    (1, 'Très bon événement, bien organisé !', 5),
+    (2, 'Bonne ambiance, mais l’organisation pourrait être améliorée.', 3),
+    (3, 'Excellente expérience, je reviendrai l’année prochaine.', 4);

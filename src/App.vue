@@ -9,6 +9,7 @@
       <!-- Liens cliquables -->
       <router-link to="/reservation" exact-active-class="active-link">BILLETS</router-link>
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
+      <router-link to="/livredor" exact-active-class="active-link">livre d'or</router-link>
       <router-link to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
 

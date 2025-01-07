@@ -6,44 +6,44 @@
       <div class="form-group">
         <label for="prenomUtilisateur">Prénom</label>
         <input
-          v-model="prenomUtilisateur"
-          type="text"
-          id="prenomUtilisateur"
-          placeholder="John"
-          required
+            v-model="prenomUtilisateur"
+            type="text"
+            id="prenomUtilisateur"
+            placeholder="John"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="nomUtilisateur">Nom</label>
         <input
-          v-model="nomUtilisateur"
-          type="text"
-          id="nomUtilisateur"
-          placeholder="Doe"
-          required
+            v-model="nomUtilisateur"
+            type="text"
+            id="nomUtilisateur"
+            placeholder="Doe"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="emailUtilisateur">Email</label>
         <input
-          v-model="emailUtilisateur"
-          type="email"
-          id="emailUtilisateur"
-          placeholder="exemple@mail.com"
-          required
+            v-model="emailUtilisateur"
+            type="email"
+            id="emailUtilisateur"
+            placeholder="exemple@mail.com"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="motDePasse">Mot de passe</label>
         <input
-          v-model="motDePasse"
-          type="password"
-          id="motDePasse"
-          placeholder="********"
-          required
+            v-model="motDePasse"
+            type="password"
+            id="motDePasse"
+            placeholder="********"
+            required
         />
       </div>
 
@@ -58,6 +58,8 @@
 
       <button type="submit">S'inscrire</button>
     </form>
+    <br>
+    <button class="login-button" type="submit" @click="goToLogin">Se connecter</button>
   </div>
 </template>
 
@@ -75,6 +77,9 @@ export default {
     };
   },
   methods: {
+        goToLogin() {
+      this.$router.push({ name: "Login" });
+    },
     async handleRegistration() {
       try {
         const response = await axios.post("http://localhost:3001/inscription", {
@@ -98,6 +103,19 @@ export default {
 </script>
 
 <style scoped>
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .registration-container {
   width: 100%;
   max-width: 600px;
@@ -105,6 +123,7 @@ export default {
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
+  margin-top: 90px;
 }
 
 h1 {

@@ -13,6 +13,7 @@ import ArticleCoulisses from '../views/ArticleCoulisses.vue';
 import ArticleGuide from '../views/ArticleGuide.vue';
 import ArticleVieMonaco from '../views/ArticleVieMonaco.vue';
 import InscriptionView from "@/views/InscriptionView.vue";
+import livreDor from "@/views/livreDor.vue";
 
 Vue.use(Router);
 
@@ -97,6 +98,11 @@ export default new Router({
       path: '/inscription',
       name: 'InscriptionView',
       component: InscriptionView,
+    },
+    {
+      path: '/livredor',
+      name: 'LivreDor',
+      component: livreDor,
     }
   ],
 });

@@ -40,7 +40,7 @@
             <div class="dropdown" :class="{ open: dropdownVisible }">
               <button class="dropdown-button" @click="toggleDropdown">Gestion des prestataires</button>
               <div class="dropdown-menu">
-                <button @click="currentSection = 'reservations'; loadReservations()">Ticket prestataire</button>
+                <button @click="currentSection = 'reservations'; loadReservations()">Ticket réservation</button>
                 <button @click="currentSection = 'assistance';">Assistance prestataire</button>
                 <button @click="currentSection = 'listPrestataire'; loadPrestataires()">Liste prestataires</button>
               </div>
@@ -132,33 +132,59 @@
 
       <section v-if="currentSection === 'listPrestataire'" class="list-prestataire-section-orga">
         <h2>Liste des Prestataires</h2>
-        <div v-if="prestataires.length > 0" class="prestataires-grid-orga">
-          <div v-for="prestataire in prestataires" :key="prestataire.id_utilisateur" class="prestataire-card-orga">
-            <h3 class="prestataire-name-orga">{{ prestataire.nom_utilisateur }} {{ prestataire.prenom_utilisateur }}</h3>
+
+        <!-- Barre de recherche et filtre -->
+        <div class="filter-container-orga">
+          <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Rechercher par nom ou email"
+              class="search-bar-orga"
+          />
+          <select v-model="selectedFilter" class="filter-select-orga">
+            <option value="">Tous les types</option>
+            <option value="prestataire">Prestataire</option>
+            <option value="client">Client</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <!-- filtre -->
+        <div v-if="filteredPrestataires.length > 0" class="prestataires-grid-orga">
+          <div
+              v-for="prestataire in filteredPrestataires"
+              :key="prestataire.id_utilisateur"
+              class="prestataire-card-orga"
+          >
+            <h3 class="prestataire-name-orga">
+              {{ prestataire.nom_utilisateur }} {{ prestataire.prenom_utilisateur }}
+            </h3>
             <p class="prestataire-id-orga">Id : {{ prestataire.id_utilisateur }}</p>
             <p class="prestataire-email-orga">Email : {{ prestataire.mail_utilisateur }}</p>
-            <td>
-                <span :class="['prestataire-service', prestataire.type_utilisateur.toLowerCase()]">
-                 service : {{ prestataire.type_utilisateur }}
-                </span>
-            </td>
-            <td>
-              <select
-                  @change="changeService(prestataire.id_utilisateur, $event.target.value)"
-                  class="service-select"
-              >
-                <option value="prestataire" :selected="prestataire.type_utilisateur === 'prestataire'">prestataire</option>
-                <option value="client" :selected="prestataire.type_utilisateur === 'client'">client</option>
-                <option value="admin" :selected="prestataire.type_utilisateur === 'admin'">admin</option>
-
-              </select>
-            </td>
+            <span :class="['prestataire-service', prestataire.type_utilisateur.toLowerCase()]">
+        Service : {{ prestataire.type_utilisateur }}
+      </span>
+            <select
+                @change="changeService(prestataire.id_utilisateur, $event.target.value)"
+                class="service-select"
+            >
+              <option value="prestataire" :selected="prestataire.type_utilisateur === 'prestataire'">
+                Prestataire
+              </option>
+              <option value="client" :selected="prestataire.type_utilisateur === 'client'">
+                Client
+              </option>
+              <option value="admin" :selected="prestataire.type_utilisateur === 'admin'">
+                Admin
+              </option>
+            </select>
           </div>
         </div>
         <div v-else>
-          <p>Aucun prestataire trouvé.</p>
+          <p>Aucun prestataire correspondant trouvé.</p>
         </div>
       </section>
+
 
 
       <section v-if="currentSection === 'reservations'" class="reservations-section-orga">
@@ -168,7 +194,9 @@
             <thead>
             <tr>
               <th>ID Réservation</th>
-              <th>ID Utilisateur</th>
+              <th>Id Utilisateur</th>
+              <th>Nom Utilisateur</th>
+              <th>Prénom Utilisateur</th>
               <th>ID Stand</th>
               <th>Date</th>
               <th>Heure Début</th>
@@ -181,14 +209,16 @@
             <tr v-for="reservation in reservations" :key="reservation.id_reservation">
               <td>{{ reservation.id_reservation }}</td>
               <td>{{ reservation.id_utilisateur }}</td>
+              <td>{{ reservation.nom_utilisateur }}</td>
+              <td>{{ reservation.prenom_utilisateur }}</td>
               <td>{{ reservation.id_stand }}</td>
               <td>{{ new Date(reservation.date_reservation).toLocaleDateString() }}</td>
               <td>{{ reservation.heure_debut }}</td>
               <td>{{ reservation.heure_fin }}</td>
               <td>
-                <span :class="['reservation-status', reservation.statut.toLowerCase()]">
-                  {{ reservation.statut }}
-                </span>
+            <span :class="['reservation-status', reservation.statut.toLowerCase()]">
+              {{ reservation.statut }}
+            </span>
               </td>
               <td>
                 <select
@@ -200,7 +230,9 @@
                   <option value="refusée" :selected="reservation.statut === 'refusée'">Refusée</option>
                 </select>
 
-                <button class="btn-delete" @click="deleteReservation(reservation.id_reservation)">Supprimer</button>
+                <button class="btn-delete" @click="deleteReservation(reservation.id_reservation)">
+                  Supprimer
+                </button>
               </td>
             </tr>
             </tbody>
@@ -211,6 +243,7 @@
         </div>
         <button @click="currentSection = 'prestataire'" class="button-back-orga">Retour</button>
       </section>
+
 
 
 
@@ -228,7 +261,7 @@
           </div>
 
           <div class="stat-item">
-            <h3>Nombre de ticket prestataire</h3>
+            <h3>Nombre de ticket de réservation</h3>
             <p>{{ totalTicketPrestataire }}</p>
           </div>
         </div>
@@ -272,6 +305,8 @@ export default {
       totalTicketPrestataire: 0,
       prestataires: [],
       editingPrestataireId: null,
+      searchQuery: '',
+      selectedFilter: '',
     };
   },
   mounted() {
@@ -299,7 +334,26 @@ export default {
 
 
   },
+
+  computed: {
+    filteredPrestataires() {
+      return this.prestataires.filter(prestataire => {
+        // Filtre par type
+        const matchesFilter = !this.selectedFilter || prestataire.type_utilisateur === this.selectedFilter;
+
+        // Filtre par recherche (nom ou email)
+        const matchesSearch =
+            prestataire.nom_utilisateur.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            prestataire.mail_utilisateur.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+        return matchesFilter && matchesSearch;
+      });
+    }
+  },
+
   methods: {
+
+
 
     async loadPrestataires() {
       try {

@@ -41,9 +41,22 @@ router.get('/events', async (req, res) => {
 router.get('/stands', async (req, res) => {
     try {
         const query = `
-            SELECT id_reservation, id_utilisateur, id_stand, date_reservation, heure_debut, heure_fin, statut
-            FROM reservation_stand
-            ORDER BY date_reservation DESC;
+            SELECT
+                rs.id_reservation,
+                rs.id_utilisateur,
+                u.nom_utilisateur,
+                u.prenom_utilisateur,
+                rs.id_stand,
+                rs.date_reservation,
+                rs.heure_debut,
+                rs.heure_fin,
+                rs.statut
+            FROM
+                reservation_stand rs
+                    JOIN
+                Utilisateurs u ON rs.id_utilisateur = u.id_utilisateur
+            ORDER BY
+                rs.date_reservation DESC;
         `;
         const result = await pool.query(query);
         res.status(200).json(result.rows);

@@ -570,3 +570,137 @@ canvas {
     height: auto;
     border: 1px solid #ddd; /* Optionnel : démarque le canvas */
 }
+
+
+/* ========================= Liste des Prestataires ========================= */
+
+.list-prestataire-section-orga {
+    padding: 20px;
+    background-color: #f9f9f9; /* Fond clair */
+    color: #1a2e41; /* Texte sombre */
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 1200px; /* Largeur maximale pour centrer */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+.list-prestataire-section-orga h2 {
+    font-family: "Goldman", sans-serif;
+    font-size: 28px;
+    color: #1a2e41;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Barre de recherche et filtre */
+.filter-container-orga {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar-orga {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: "Host Grotesk", sans-serif;
+    color: #333;
+}
+
+.filter-select-orga {
+    width: 35%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: "Host Grotesk", sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Grille des prestataires */
+.prestataires-grid-orga {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Carte individuelle */
+.prestataire-card-orga {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.prestataire-card-orga:hover {
+    transform: translateY(-5px); /* Effet de survol : élévation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Texte des prestataires */
+.prestataire-name-orga {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a2e41;
+}
+
+.prestataire-id-orga,
+.prestataire-email-orga {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Style des services */
+.prestataire-service {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-transform: capitalize;
+}
+
+/* Couleurs des types de services */
+.prestataire-service.prestataire {
+    background-color: #2a9d8f;
+    color: #f9f9f9;
+}
+
+.prestataire-service.client {
+    background-color: #f4a261;
+    color: #1a2e41;
+}
+
+.prestataire-service.admin {
+    background-color: #e76f51;
+    color: #f9f9f9;
+}
+
+/* Sélecteur de service */
+.service-select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: "Host Grotesk", sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Message Aucun prestataire trouvé */
+.list-prestataire-section-orga p {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+}

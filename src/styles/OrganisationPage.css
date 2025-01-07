@@ -518,3 +518,55 @@ button@click:hover {
     box-shadow: 0 0 5px rgba(26, 46, 65, 0.5);
     outline: none; /* Supprime le contour natif */
 }
+
+
+.statistics-orga {
+    display: block; /* S'assure que la section est visible */
+    padding: 20px;
+    background-color: #f9f9f9; /* Fond clair pour bien voir le contenu */
+    border: 1px solid #ddd; /* Ajoute une bordure légère pour délimiter */
+    border-radius: 5px; /* Coins arrondis */
+    color: #333; /* Couleur de texte bien contrastée */
+    font-family: Arial, sans-serif;
+}
+
+.stats-overview {
+    display: flex; /* Affiche les statistiques côte à côte */
+    flex-wrap: wrap; /* Permet un retour à la ligne si nécessaire */
+    gap: 20px; /* Espace entre les items */
+}
+
+.stat-item {
+    flex: 1 1 calc(33.333% - 20px); /* Taille flexible avec espace entre */
+    min-width: 150px; /* Largeur minimale pour éviter que ça devienne trop petit */
+    text-align: center; /* Centrer le contenu */
+    background-color: #ffffff; /* Fond blanc */
+    padding: 15px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    border-radius: 8px; /* Coins arrondis */
+    border: 1px solid #ccc; /* Bordure pour démarquer */
+}
+
+.stat-item h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #555;
+}
+
+.stat-item p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #222; /* Texte bien visible */
+    margin: 0;
+}
+
+.stats-graphs {
+    margin-top: 30px; /* Espace au-dessus des graphiques */
+    text-align: center; /* Centrer les graphiques */
+}
+
+canvas {
+    max-width: 100%; /* S'assure que le canvas reste dans la page */
+    height: auto;
+    border: 1px solid #ddd; /* Optionnel : démarque le canvas */
+}

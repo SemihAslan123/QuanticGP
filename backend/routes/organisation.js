@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Chemin vers db.js
+const pool = require('../database/db');
 
 // Route POST pour ajouter un événement
 router.post('/', async (req, res) => {
@@ -37,7 +37,7 @@ router.get('/events', async (req, res) => {
     }
 });
 
-//get pour récuperer les réservations
+// Route GET pour récupérer les réservations
 router.get('/stands', async (req, res) => {
     try {
         const query = `
@@ -53,7 +53,7 @@ router.get('/stands', async (req, res) => {
     }
 });
 
-//delete une réservation
+// Route DELETE pour supprimer une réservation
 router.delete('/stands/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -66,11 +66,7 @@ router.delete('/stands/:id', async (req, res) => {
     }
 });
 
-
-
-
-
-//changer le statue d'une réservation
+// Route PATCH pour changer le statut d'une réservation
 router.patch('/stands/:id', async (req, res) => {
     const { id } = req.params;
     const { statut } = req.body;
@@ -85,6 +81,108 @@ router.patch('/stands/:id', async (req, res) => {
     }
 });
 
+router.patch('/prestataires/:id', async (req, res) => {
+    const { id } = req.params;
+    const { type_utilisateur } = req.body;
+
+    console.log("ID reçu:", id); // Ajout de logs pour debug
+    console.log("type_utilisateur reçu:", type_utilisateur);
+
+    // Validation des entrées
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "ID invalide ou manquant." });
+    }
+    if (!type_utilisateur) {
+        return res.status(400).json({ error: "type_utilisateur est requis." });
+    }
+
+    try {
+        const query = 'UPDATE Utilisateurs SET type_utilisateur = $1 WHERE id_utilisateur = $2';
+        await pool.query(query, [type_utilisateur, id]);
+        res.status(200).json({ message: "Type utilisateur mis à jour avec succès." });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour :", error);
+        res.status(500).send({ message: "Erreur serveur lors de la mise à jour du type utilisateur." });
+    }
+});
+
+
+// Route PUT pour mettre à jour un événement
+router.put('/events/:id', async (req, res) => {
+    const { id } = req.params;
+    const { courseName, eventDate, eventDescription, eventImage } = req.body;
+
+    try {
+        const query = `
+            UPDATE events
+            SET name = $1, date = $2, description = $3, image = $4
+            WHERE id = $5
+        `;
+        const values = [courseName, eventDate, eventDescription, eventImage, id];
+        await pool.query(query, values);
+
+        res.status(200).json({ message: 'Événement mis à jour avec succès.' });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+});
+
+// Route DELETE pour supprimer un événement
+router.delete('/events/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const query = 'DELETE FROM events WHERE id = $1';
+        await pool.query(query, [id]);
+        res.status(200).json({ message: 'Événement supprimé avec succès.' });
+    } catch (error) {
+        console.error('Erreur lors de la suppression :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+});
+
+// Route GET pour les statistiques
+router.get('/statistics', async (req, res) => {
+    try {
+        const totalEventsResult = await pool.query('SELECT COUNT(*) AS total FROM events');
+        const totalParticipantsResult = await pool.query(
+            `SELECT COUNT(DISTINCT utilisateur_id) AS total 
+             FROM billet 
+             WHERE utilisateur_id IS NOT NULL`
+        );
+        const totalTicketPrestataireResult = await pool.query(
+            `SELECT COUNT(*) AS total 
+             FROM reservation_stand`
+        );
+
+        res.json({
+            totalEvents: totalEventsResult.rows[0].total,
+            totalParticipants: totalParticipantsResult.rows[0].total,
+            totalTicketPrestataire: totalTicketPrestataireResult.rows[0].total,
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des statistiques:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+
+router.get('/prestataires', async (req, res) => {
+    try {
+        const query = `
+      SELECT id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire, type_utilisateur
+      FROM Utilisateurs
+    `;
+
+        const { rows: prestataires } = await pool.query(query);
+
+        res.status(200).json(prestataires);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des prestataires :", error);
+        res.status(500).json({ error: "Erreur serveur. Impossible de récupérer les prestataires." });
+    }
+});
 
 
 module.exports = router;

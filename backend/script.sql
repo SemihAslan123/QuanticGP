@@ -11,39 +11,39 @@ DROP TABLE IF EXISTS events CASCADE;
 
 -- Création de la table events
 CREATE TABLE events (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    date DATE NOT NULL,
-    description TEXT NOT NULL,
-    image TEXT NOT NULL
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        date DATE NOT NULL,
+                        description TEXT NOT NULL,
+                        image TEXT NOT NULL
 );
 
 -- Création de la table acheteurnoninscrit
 CREATE TABLE acheteurnoninscrit (
-    id SERIAL PRIMARY KEY,
-    prenom VARCHAR(50) NOT NULL,
-    nom VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL
+                                    id SERIAL PRIMARY KEY,
+                                    prenom VARCHAR(50) NOT NULL,
+                                    nom VARCHAR(50) NOT NULL,
+                                    email VARCHAR(100) NOT NULL
 );
 
 -- Création de la table Utilisateurs
 CREATE TABLE Utilisateurs (
-    id_utilisateur SERIAL PRIMARY KEY,
-    nom_utilisateur VARCHAR(50),
-    prenom_utilisateur VARCHAR(50),
-    mail_utilisateur VARCHAR(50),
-    mot_de_passe VARCHAR(50),
-    type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('admin', 'prestataire', 'client')),
-    image_prestataire TEXT
+                              id_utilisateur SERIAL PRIMARY KEY,
+                              nom_utilisateur VARCHAR(50),
+                              prenom_utilisateur VARCHAR(50),
+                              mail_utilisateur VARCHAR(50),
+                              mot_de_passe VARCHAR(50),
+                              type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('admin', 'prestataire', 'client')),
+                              image_prestataire TEXT
 );
 
 -- Création de la table Stands
 CREATE TABLE Stands (
-    id_stand SERIAL PRIMARY KEY,
-    type_stand VARCHAR(50),
-    statut_stand VARCHAR(50),
-    numero_emplacement_stand INT,
-    prix_stand INT
+                        id_stand SERIAL PRIMARY KEY,
+                        type_stand VARCHAR(50),
+                        statut_stand VARCHAR(50),
+                        numero_emplacement_stand INT,
+                        prix_stand INT
 );
 
 -- Création de la table reservation_stand
@@ -63,56 +63,56 @@ CREATE TABLE reservation_stand (
 
 -- Création de la table servicePrestataire
 CREATE TABLE servicePrestataire (
-    id_service SERIAL PRIMARY KEY,
-    id_utilisateur INT,
-    nom_service VARCHAR(50),
-    type_service VARCHAR(50),
-    description_service VARCHAR(100),
-    date_service DATE,
-    heure_service TIME,
-    id_stand INT,
-    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur),
-    FOREIGN KEY (id_stand) REFERENCES Stands(id_stand)
+                                    id_service SERIAL PRIMARY KEY,
+                                    id_utilisateur INT,
+                                    nom_service VARCHAR(50),
+                                    type_service VARCHAR(50),
+                                    description_service VARCHAR(100),
+                                    date_service DATE,
+                                    heure_service TIME,
+                                    id_stand INT,
+                                    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur),
+                                    FOREIGN KEY (id_stand) REFERENCES Stands(id_stand)
 );
 
 -- Création de la table billet avec ajout des dates début et fin pour l'hôtel
 CREATE TABLE billet (
-    id SERIAL PRIMARY KEY,
-    acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
-    utilisateur_id INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
-    course_nom VARCHAR(100),
-    hotel_nom VARCHAR(100),
-    date_debut_parking DATE,
-    date_fin_parking DATE,
-    date_debut_hotel DATE,  -- Ajout de la date début pour l'hôtel
-    date_fin_hotel DATE,    -- Ajout de la date fin pour l'hôtel
-    is_vip BOOLEAN DEFAULT FALSE,
-    prix_total DECIMAL(10, 2) NOT NULL,
-    date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        id SERIAL PRIMARY KEY,
+                        acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
+                        utilisateur_id INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+                        course_nom VARCHAR(100),
+                        hotel_nom VARCHAR(100),
+                        date_debut_parking DATE,
+                        date_fin_parking DATE,
+                        date_debut_hotel DATE,  -- Ajout de la date début pour l'hôtel
+                        date_fin_hotel DATE,    -- Ajout de la date fin pour l'hôtel
+                        is_vip BOOLEAN DEFAULT FALSE,
+                        prix_total DECIMAL(10, 2) NOT NULL,
+                        date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Création de la table LivreOr
 CREATE TABLE LivreOr (
-    id_avis SERIAL PRIMARY KEY,
-    id_utilisateur INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
-    commentaire TEXT NOT NULL,
-    date_avis TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    note INT CHECK (note BETWEEN 1 AND 5) -- Note sur 5
+                         id_avis SERIAL PRIMARY KEY,
+                         id_utilisateur INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+                         commentaire TEXT NOT NULL,
+                         date_avis TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                         note INT CHECK (note BETWEEN 1 AND 5) -- Note sur 5
 );
 
 
 -- Insertion dans la table Utilisateurs
-INSERT INTO Utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire)
+INSERT INTO Utilisateurs (id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire)
 VALUES
-    ('Dupont', 'Jean', 'jean.dupont@example.com', 'password123', 'admin', NULL),
-    ('Martin', 'Claire', 'claire.martin@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire1.jpg'),
-    ('Durand', 'Pierre', 'pierre.durand@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire2.jpg'),
-    ('Leclerc', 'Anne', 'anne.leclerc@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire3.jpg'),
-    ('Bernard', 'Sophie', 'sophie.bernard@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire4.jpg'),
-    ('Morel', 'Julien', 'julien.morel@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire5.jpg'),
-    ('Fabre', 'Lucie', 'lucie.fabre@example.com', 'password123', 'client', NULL),
-    ('Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client', NULL),
-    ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client', NULL);
+    (1, 'Dupont', 'Jean', 'jean.dupont@example.com', 'password123', 'admin', NULL),
+    (2, 'Martin', 'Claire', 'claire.martin@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire1.jpg'),
+    (3, 'Durand', 'Pierre', 'pierre.durand@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire2.jpg'),
+    (4, 'Leclerc', 'Anne', 'anne.leclerc@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire3.jpg'),
+    (5, 'Bernard', 'Sophie', 'sophie.bernard@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire4.jpg'),
+    (6, 'Morel', 'Julien', 'julien.morel@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire5.jpg'),
+    (7, 'Fabre', 'Lucie', 'lucie.fabre@example.com', 'password123', 'client', NULL),
+    (8, 'Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client', NULL),
+    (9, 'Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client', NULL);
 
 -- Insertion dans la table Stands
 INSERT INTO Stands (type_stand, statut_stand, numero_emplacement_stand, prix_stand)

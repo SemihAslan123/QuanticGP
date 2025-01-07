@@ -41,21 +41,22 @@
               <button class="dropdown-button" @click="toggleDropdown">Gestion des prestataires</button>
               <div class="dropdown-menu">
                 <button @click="currentSection = 'reservations'; loadReservations()">Ticket prestataire</button>
-                <button @click="currentSection = 'assistance'">Assistance prestataire</button>
-                <button @click="currentSection = 'listPrestataire'">Liste prestataires</button>
+                <button @click="currentSection = 'assistance';">Assistance prestataire</button>
+                <button @click="currentSection = 'listPrestataire'; loadPrestataires()">Liste prestataires</button>
               </div>
             </div>
 
           </li>
           <li>
             <button
-                @click="currentSection = 'statistiques'"
+                @click="chargeStat"
                 :class="currentSection === 'statistiques' ? 'active' : ''"
                 class="sidebar-item-orga"
             >
               <i class="icon-stats"></i> Statistiques
             </button>
           </li>
+
         </ul>
       </nav>
       <div class="sidebar-footer-orga">
@@ -110,6 +111,12 @@
             <h3 class="event-name-orga">{{ event.name }}</h3>
             <p class="event-date-orga">{{ new Date(event.date).toLocaleDateString() }}</p>
             <p class="event-description-orga">{{ event.description }}</p>
+
+            <!-- Modifier et Supprimer -->
+            <div class="event-actions-orga">
+              <button @click="editEvent(event)" class="btn-edit">Modifier</button>
+              <button @click="deleteEvent(event.id)" class="btn-delete">Supprimer</button>
+            </div>
           </div>
         </div>
         <div v-else>
@@ -118,9 +125,41 @@
         <button @click="goBackToCreateEvent" class="button-back-orga">Retour à la création d'événement</button>
       </section>
 
+
       <section v-if="currentSection === 'assistance'" class="">
         <h2>Assistance Prestataire</h2>
       </section>
+
+      <section v-if="currentSection === 'listPrestataire'" class="list-prestataire-section-orga">
+        <h2>Liste des Prestataires</h2>
+        <div v-if="prestataires.length > 0" class="prestataires-grid-orga">
+          <div v-for="prestataire in prestataires" :key="prestataire.id_utilisateur" class="prestataire-card-orga">
+            <h3 class="prestataire-name-orga">{{ prestataire.nom_utilisateur }} {{ prestataire.prenom_utilisateur }}</h3>
+            <p class="prestataire-id-orga">Id : {{ prestataire.id_utilisateur }}</p>
+            <p class="prestataire-email-orga">Email : {{ prestataire.mail_utilisateur }}</p>
+            <td>
+                <span :class="['prestataire-service', prestataire.type_utilisateur.toLowerCase()]">
+                 service : {{ prestataire.type_utilisateur }}
+                </span>
+            </td>
+            <td>
+              <select
+                  @change="changeService(prestataire.id_utilisateur, $event.target.value)"
+                  class="service-select"
+              >
+                <option value="prestataire" :selected="prestataire.type_utilisateur === 'prestataire'">prestataire</option>
+                <option value="client" :selected="prestataire.type_utilisateur === 'client'">client</option>
+                <option value="admin" :selected="prestataire.type_utilisateur === 'admin'">admin</option>
+
+              </select>
+            </td>
+          </div>
+        </div>
+        <div v-else>
+          <p>Aucun prestataire trouvé.</p>
+        </div>
+      </section>
+
 
       <section v-if="currentSection === 'reservations'" class="reservations-section-orga">
         <h2>Réservations</h2>
@@ -147,9 +186,9 @@
               <td>{{ reservation.heure_debut }}</td>
               <td>{{ reservation.heure_fin }}</td>
               <td>
-            <span :class="['reservation-status', reservation.statut.toLowerCase()]">
-              {{ reservation.statut }}
-            </span>
+                <span :class="['reservation-status', reservation.statut.toLowerCase()]">
+                  {{ reservation.statut }}
+                </span>
               </td>
               <td>
                 <select
@@ -175,10 +214,31 @@
 
 
 
-      <section v-if="currentSection === 'statistiques'" class="stats-orga">
+      <section v-if="currentSection === 'statistiques'" class="statistics-orga">
         <h2>Statistiques</h2>
-        <p>Les statistiques apparaîtront ici...</p>
+
+        <div class="stats-overview">
+          <div class="stat-item">
+            <h3>Nombre total d'événements</h3>
+            <p>{{ totalEvents }}</p>
+          </div>
+          <div class="stat-item">
+            <h3>Nombre de participants</h3>
+            <p>{{ totalParticipants }}</p>
+          </div>
+
+          <div class="stat-item">
+            <h3>Nombre de ticket prestataire</h3>
+            <p>{{ totalTicketPrestataire }}</p>
+          </div>
+        </div>
+
+        <div class="stats-graphs">
+          <h3>Participants par événement</h3>
+          <canvas id="participantsChart"></canvas>
+        </div>
       </section>
+
 
     </main>
   </div>
@@ -207,6 +267,11 @@ export default {
       events: [], // Liste des événements récupérés
       reservations: [], // list des réservations stand
       quillEditor: null, // Instance de l'éditeur Quill
+      totalEvents: 0,
+      totalParticipants: 0,
+      totalTicketPrestataire: 0,
+      prestataires: [],
+      editingPrestataireId: null,
     };
   },
   mounted() {
@@ -229,16 +294,77 @@ export default {
 
     // Récupérer la valeur initiale si nécessaire
     this.quillEditor.root.innerHTML = this.eventDescription;
+
+
+
+
   },
   methods: {
+
+    async loadPrestataires() {
+      try {
+        const response = await axios.get('http://localhost:3001/organisation/prestataires');
+        this.prestataires = response.data;
+        console.log("Données récupérées :", JSON.stringify(response.data, null, 2));
+      } catch (error) {
+        console.error('Erreur lors de la récupération des prestataires :', error);
+        alert('Erreur lors de la récupération des prestataires.');
+      }
+    },
+
+
+
+    chargeStat() {
+      this.currentSection = 'statistiques';
+      this.loadStatistics();
+    },
+
+    async loadStatistics() {
+      try {
+        const response = await axios.get('http://localhost:3001/organisation/statistics');
+        const data = response.data;
+        console.log("Statistiques récupérées :", data);
+        this.totalEvents = data.totalEvents;
+        this.totalParticipants = data.totalParticipants;
+        this.totalTicketPrestataire = data.totalTicketPrestataire;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des statistiques:', error);
+        alert('Erreur lors de la récupération des statistiques.');
+      }
+    },
+
+    editEvent(event) {
+
+      this.courseName = event.name;
+      this.eventDate = event.date;
+      this.quillEditor.setText(event.description);
+      this.eventImage = event.image;
+
+      this.currentSection = 'event';
+
+      this.editingEventId = event.id;
+    },
+
+    async deleteEvent(eventId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) {
+        try {
+          await axios.delete(`http://localhost:3001/organisation/events/${eventId}`);
+          alert("Événement supprimé avec succès.");
+          this.showEvents();
+        } catch (error) {
+          console.error("Erreur lors de la suppression :", error);
+          alert("Erreur lors de la suppression de l'événement.");
+        }
+      }
+    },
 
     toggleDropdown() {
       this.dropdownVisible = !this.dropdownVisible;
     },
 
-    dellEditor(){
-      if (this.quillEditor){
-          this.quillEditor = null;
+    dellEditor() {
+      if (this.quillEditor) {
+        this.quillEditor = null;
       }
     },
     // Méthode pour afficher les événements
@@ -262,9 +388,9 @@ export default {
           placeholder: 'Écrivez la description de l’événement...',
           modules: {
             toolbar: [
-              [{ header: '1' }, { header: '2' }, { font: [] }],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              [{ align: [] }],
+              [{header: '1'}, {header: '2'}, {font: []}],
+              [{list: 'ordered'}, {list: 'bullet'}],
+              [{align: []}],
               ['bold', 'italic', 'underline'],
               ['link', 'image'],
               ['blockquote', 'code-block'],
@@ -281,25 +407,30 @@ export default {
         return;
       }
 
-      // Récupérer la description de l'événement
-      this.eventDescription = this.quillEditor.getText().trim();
-
-      // Construire l'objet de données
+      const eventDescription = this.quillEditor.getText().trim();
       const eventData = {
         courseName: this.courseName,
         eventDate: this.eventDate,
-        eventDescription: this.eventDescription,
-        eventImage: this.eventImage
+        eventDescription: eventDescription,
+        eventImage: this.eventImage,
       };
 
       try {
-        const response = await axios.post('http://localhost:3001/organisation/', eventData);
-        alert(response.data.message);
+        if (this.editingEventId) {
+          // Mise à jour d'un événement existant
+          const response = await axios.put(`http://localhost:3001/organisation/events/${this.editingEventId}`, eventData);
+          alert(response.data.message);
+        } else {
+          // Création d'un nouvel événement
+          const response = await axios.post('http://localhost:3001/organisation/', eventData);
+          alert(response.data.message);
+        }
 
-        // Réinitialiser le formulaire après succès
+        // Réinitialise le formulaire
         this.resetForm();
+        this.showEvents();
       } catch (error) {
-        console.error("Erreur lors de l'envoi des données:", error);
+        console.error("Erreur lors de l'enregistrement :", error);
         alert("Erreur lors de l'enregistrement de l'événement.");
       }
     },
@@ -342,7 +473,7 @@ export default {
       }
 
       try {
-        await axios.patch(`http://localhost:3001/organisation/stands/${reservationId}`, { statut: newStatus });
+        await axios.patch(`http://localhost:3001/organisation/stands/${reservationId}`, {statut: newStatus});
         alert("Statut mis à jour avec succès.");
         this.loadReservations(); // Recharge les données
       } catch (error) {
@@ -350,6 +481,26 @@ export default {
         alert("Erreur lors de la mise à jour du statut.");
       }
     },
+
+    async changeService(prestataireId, newService) {
+      console.log("ID du prestataire:", prestataireId);
+
+      if (!["prestataire", "client", "admin"].includes(newService)) {
+        alert("Service invalide.");
+        return;
+      }
+
+      try {
+        await axios.patch(`http://localhost:3001/organisation/prestataires/${prestataireId}`, { type_utilisateur: newService });
+        alert("Service mis à jour avec succès.");
+        this.loadPrestataires();
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du service :", error);
+        alert("Erreur lors de la mise à jour du service.");
+      }
+    },
+
+
 
 
     //supprimer une réservation
@@ -364,7 +515,7 @@ export default {
           alert("Erreur lors de la suppression.");
         }
       }
-    }
+    },
   }
 };
 

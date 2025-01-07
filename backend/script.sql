@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS Utilisateurs CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 
 
--- Création de la table events
+-- Création de la table event
 CREATE TABLE events (
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,

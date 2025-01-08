@@ -95,9 +95,9 @@ body, html {
 .content-orga {
     flex: 1;
     padding: 20px;
-    background-color: #f9f9f9; /* Fond plus clair pour le contenu */
+    background-color: #f9f9f9;
     margin-left: 230px;
-    height: 100vh; /* S'assurer que le contenu principal prend toute la hauteur */
+    height: 100vh;
     overflow-y: auto;
 }
 
@@ -781,12 +781,12 @@ canvas {
 }
 
 .prestataire-service.client {
-    background-color: #f4a261;
+    background-color: #ca61f4;
     color: #1a2e41;
 }
 
-.prestataire-service.admin {
-    background-color: #e76f51;
+.prestataire-service.organisateur {
+    background-color: #ff1531;
     color: #f9f9f9;
 }
 

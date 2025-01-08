@@ -14,10 +14,12 @@ CREATE TABLE events (
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
                         date DATE NOT NULL,
+                        heure_debut TIME NOT NULL,
+                        heure_fin TIME NOT NULL,
+                        prix DECIMAL(10, 2) NOT NULL,
                         description TEXT NOT NULL,
                         image TEXT NOT NULL
 );
-
 -- Création de la table acheteurnoninscrit
 CREATE TABLE acheteurnoninscrit (
                                     id SERIAL PRIMARY KEY,

@@ -19,11 +19,11 @@
           </li>
           <li>
             <button
-                @click="currentSection = 'event'"
+                @click="resetClick"
                 :class="currentSection === 'event' ? 'active' : ''"
                 class="sidebar-item-orga"
             >
-              <i class="icon-event"></i> Créer un événement
+              <i class="icon-event"></i> Créer une activitée
             </button>
           </li>
           <li>
@@ -77,15 +77,27 @@
       </section>
 
       <section v-if="currentSection === 'event'" class="event-form-orga">
-        <h2>Créer un événement</h2>
+        <h2>Créer une activitée</h2>
         <form @submit.prevent="saveEvent">
           <div class="form-group-orga">
-            <label>Nom de l'événement :</label>
+            <label>Nom de l'activitée :</label>
             <input type="text" v-model="courseName" required />
           </div>
           <div class="form-group-orga">
-            <label>Date de l'événement :</label>
+            <label>Date de l'activitée :</label>
             <input type="date" v-model="eventDate" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Prix (en €) :</label>
+            <input type="number" v-model="eventPrice" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Horaire Début :</label>
+            <input type="time" v-model="horaireDebut" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Horaire Fin :</label>
+            <input type="time" v-model="horaireFin" required />
           </div>
           <div class="form-group-orga">
             <label>Description :</label>
@@ -98,19 +110,30 @@
           </div>
           <button type="submit">Enregistrer</button>
           <div class="actions-orga">
-            <button v-if="currentSection !== 'events'" @click="showEvents">Voir les événements</button>
+            <button v-if="currentSection !== 'events'" @click="showEvents">Voir les activitées</button>
           </div>
         </form>
       </section>
 
       <section v-if="currentSection === 'events'" class="events-orga">
-        <h2>Liste des événements</h2>
+        <h2>Liste des activitées</h2>
         <div v-if="events.length > 0" class="events-grid-orga">
           <div v-for="event in events" :key="event.id" class="event-card-orga">
             <img :src="event.image" alt="Image de l'événement" class="event-image-orga" v-if="event.image" />
             <h3 class="event-name-orga">{{ event.name }}</h3>
             <p class="event-date-orga">{{ new Date(event.date).toLocaleDateString() }}</p>
-            <p class="event-description-orga">{{ event.description }}</p>
+
+            <p class="event-time-orga">
+              <strong>Horaire :</strong>
+              {{ event.heure_debut }} - {{ event.heure_fin }}
+            </p>
+
+            <p class="event-price-orga">
+              <strong>Prix :</strong> {{ event.prix }} €
+            </p>
+            <p class="event-description-orga">
+              <strong>Description :</strong> {{ event.description }}
+            </p>
 
             <!-- Modifier et Supprimer -->
             <div class="event-actions-orga">
@@ -120,9 +143,9 @@
           </div>
         </div>
         <div v-else>
-          <p>Aucun événement trouvé.</p>
+          <p>Aucune activitée trouvé.</p>
         </div>
-        <button @click="goBackToCreateEvent" class="button-back-orga">Retour à la création d'événement</button>
+        <button @click="goBackToCreateEvent" class="button-back-orga">Retour à la création d'activitée</button>
       </section>
 
 
@@ -295,6 +318,9 @@ export default {
       dropdownVisible: false,
       courseName: '',
       eventDate: '',
+      eventPrice: null,
+      horaireDebut: '',
+      horaireFin: '',
       eventDescription: '',
       eventImage: null,
       events: [], // Liste des événements récupérés
@@ -313,7 +339,7 @@ export default {
 
     this.quillEditor = new Quill(this.$refs.editorContainer, {
       theme: 'snow',
-      placeholder: 'Écrivez la description de l’événement...',
+      placeholder: 'Écrivez la description de l’activitée...',
       modules: {
         toolbar: [
           [{ header: '1' }, { header: '2' }, { font: [] }],
@@ -341,7 +367,7 @@ export default {
         // Filtre par type
         const matchesFilter = !this.selectedFilter || prestataire.type_utilisateur === this.selectedFilter;
 
-        // Filtre par recherche (nom ou email)
+        // Filtre par nom ou email
         const matchesSearch =
             prestataire.nom_utilisateur.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             prestataire.mail_utilisateur.toLowerCase().includes(this.searchQuery.toLowerCase());
@@ -400,14 +426,14 @@ export default {
     },
 
     async deleteEvent(eventId) {
-      if (confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet activitée ?")) {
         try {
           await axios.delete(`http://localhost:3001/organisation/events/${eventId}`);
-          alert("Événement supprimé avec succès.");
+          alert("Activitée supprimé avec succès.");
           this.showEvents();
         } catch (error) {
           console.error("Erreur lors de la suppression :", error);
-          alert("Erreur lors de la suppression de l'événement.");
+          alert("Erreur lors de la suppression de l'activitée.");
         }
       }
     },
@@ -428,8 +454,8 @@ export default {
         this.events = response.data; // Enregistrer les événements dans la variable `events`
         this.currentSection = 'events'; // Afficher la section des événements
       } catch (error) {
-        console.error("Erreur lors de la récupération des événements :", error);
-        alert("Erreur lors de la récupération des événements.");
+        console.error("Erreur lors de la récupération des activitées :", error);
+        alert("Erreur lors de la récupération des activitées.");
       }
     },
     goBackToCreateEvent() {
@@ -439,7 +465,7 @@ export default {
         this.dellEditor();
         this.quillEditor = new Quill(this.$refs.editorContainer, {
           theme: 'snow',
-          placeholder: 'Écrivez la description de l’événement...',
+          placeholder: 'Écrivez la description de l’activitée...',
           modules: {
             toolbar: [
               [{header: '1'}, {header: '2'}, {font: []}],
@@ -455,8 +481,13 @@ export default {
       });
     },
 
+    resetClick() {
+      this.currentSection = 'event';
+      this.goBackToCreateEvent();
+    },
+
     async saveEvent() {
-      if (!this.courseName || !this.eventDate || !this.quillEditor.getText().trim() || !this.eventImage) {
+      if (!this.courseName || !this.eventDate || !this.horaireDebut || !this.horaireFin || !this.eventPrice || !this.quillEditor.getText().trim() || !this.eventImage) {
         alert("Veuillez remplir tous les champs avant de sauvegarder.");
         return;
       }
@@ -465,6 +496,9 @@ export default {
       const eventData = {
         courseName: this.courseName,
         eventDate: this.eventDate,
+        horaireDebut: this.horaireDebut,
+        horaireFin: this.horaireFin,
+        eventPrice: this.eventPrice,
         eventDescription: eventDescription,
         eventImage: this.eventImage,
       };
@@ -488,6 +522,7 @@ export default {
         alert("Erreur lors de l'enregistrement de l'événement.");
       }
     },
+
     handleFileUpload(event) {
       const file = event.target.files[0];
       if (file) {
@@ -501,6 +536,9 @@ export default {
     resetForm() {
       this.courseName = '';
       this.eventDate = '';
+      this.horaireDebut = '';
+      this.horaireFin = '';
+      this.eventPrice = null;
       this.quillEditor.setText('');
       this.eventImage = null;
     },

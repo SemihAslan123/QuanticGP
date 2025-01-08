@@ -33,7 +33,7 @@ CREATE TABLE Utilisateurs (
                               prenom_utilisateur VARCHAR(50),
                               mail_utilisateur VARCHAR(50),
                               mot_de_passe VARCHAR(50),
-                              type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('admin', 'prestataire', 'client')),
+                              type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('organisateur', 'prestataire', 'client')),
                               image_prestataire TEXT
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE LivreOr (
 -- Insertion dans la table Utilisateurs
 INSERT INTO Utilisateurs (id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire)
 VALUES
-    (1, 'Dupont', 'Jean', 'jean.dupont@example.com', 'password123', 'admin', NULL),
+    (1, 'Dupont', 'Jean', 'jean.dupont@example.com', 'password123', 'organisateur', NULL),
     (2, 'Martin', 'Claire', 'claire.martin@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire1.jpg'),
     (3, 'Durand', 'Pierre', 'pierre.durand@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire2.jpg'),
     (4, 'Leclerc', 'Anne', 'anne.leclerc@example.com', 'password123', 'prestataire', '/assets/prestataire/prestataire3.jpg'),

@@ -16,11 +16,11 @@
       <br>
       <button v-if="!isLoggedIn" @click="goToInscription">S'inscrire</button>
 
-
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
       <div v-if="isLoggedIn" class="welcome-box">
         <p>Bienvenue, {{ user?.prenom || "Utilisateur" }} !</p>
+        <p>Session ID : {{ user?.sessionId }}</p>
         <button class="logout-button" @click="logout">Se déconnecter</button>
       </div>
     </div>
@@ -34,12 +34,11 @@ export default {
       email: '',
       password: '',
       isLoggedIn: false,
-      user: null, // Stockera les données de l'utilisateur connecté
-      errorMessage: '', // Pour stocker les messages d'erreur
+      user: null,
+      errorMessage: '',
     };
   },
   mounted() {
-    // Vérifier si l'utilisateur est connecté au chargement de la page
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       this.isLoggedIn = true;
@@ -56,22 +55,27 @@ export default {
       this.user = null;
     },
     async submitForm() {
-      const response = await fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: this.email, password: this.password }),
-      });
+      try {
+        const response = await fetch('http://localhost:3001/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: this.email, password: this.password }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        this.isLoggedIn = true;
-        this.user = data.user;
-        this.errorMessage = '';
-        window.location.reload()
-      } else {
-        this.errorMessage = 'Saisissez une adresse e-mail et un mot de passe valide.';
+        if (data.success) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+          this.isLoggedIn = true;
+          this.user = data.user;
+          this.errorMessage = '';
+          window.location.reload()
+        } else {
+          this.errorMessage = 'Email ou mot de passe incorrect.';
+        }
+      } catch (error) {
+        console.error('Erreur lors de la connexion:', error);
+        this.errorMessage = 'Erreur du serveur, veuillez réessayer plus tard.';
       }
     },
   },

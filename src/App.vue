@@ -10,7 +10,10 @@
       <router-link to="/reservation" exact-active-class="active-link">BILLETS</router-link>
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
       <router-link to="/livredor" exact-active-class="active-link">livre d'or</router-link>
-      <router-link to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
+
+      <!-- Affiche l'onglet Organisation si l'utilisateur est un organisateur -->
+      <router-link v-if="isLoggedIn && user?.type === 'organisateur'" to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
+
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
 
       <!-- Affiche "Connexion" si l'utilisateur n'est pas connecté -->
@@ -27,49 +30,42 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted, ref } from "vue";
 
-import {onMounted, onUnmounted, ref} from "vue";
+const isLoggedIn = ref(false);
+const user = ref(null);  // Stocke les données utilisateur
 
 onMounted(() => {
-  const navbar = document.querySelector('.navbar'); // Sélectionne la barre de navigation
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  if (storedUser) {
+    isLoggedIn.value = true;
+    user.value = storedUser;  // Assigne les données utilisateur
+  }
+
+  // Gestion du défilement pour changer la couleur de la barre de navigation
+  const navbar = document.querySelector('.navbar');
 
   const handleScroll = () => {
     if (window.scrollY === 0) {
-      // Si la page est tout en haut
       navbar.classList.add('transparent');
     } else {
-      // Si la page est scrollée
       navbar.classList.remove('transparent');
     }
   };
 
-  // Vérifie si la page est déjà en haut au moment du chargement
   if (window.scrollY === 0) {
     navbar.classList.add('transparent');
   }
 
-  // Ajoute l'écouteur d'événement scroll
   window.addEventListener('scroll', handleScroll);
 
-  // Supprime l'écouteur lors du démontage
   onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
   });
 });
-
-const isLoggedIn = ref(false);
-
-onMounted(() => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (user) {
-    isLoggedIn.value = true;
-  }
-});
-
 </script>
 
-<style>
-
+<style scoped>
 .logoNavBar {
   position: absolute;
   max-width: 90px;

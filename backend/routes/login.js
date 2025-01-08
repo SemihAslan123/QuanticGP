@@ -1,61 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Assurez-vous que le chemin vers votre fichier de configuration de la base de données est correct
+const pool = require('../database/db'); // Chemin vers la configuration de la DB
+const { v4: uuidv4 } = require('uuid'); // Génère un identifiant unique pour la session
 
 /**
  * @swagger
  * /login:
  *   post:
  *     summary: Connexion de l'utilisateur
- *     description: Cette route permet de connecter un utilisateur en vérifiant son email et son mot de passe.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: L'email de l'utilisateur pour la connexion.
- *               password:
- *                 type: string
- *                 description: Le mot de passe de l'utilisateur.
+ *     description: Cette route connecte un utilisateur en vérifiant son email et son mot de passe.
  *     responses:
  *       200:
- *         description: Connexion réussie, retourne les informations de l'utilisateur.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indique si la connexion a réussi.
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       description: L'ID de l'utilisateur.
- *                     nom:
- *                       type: string
- *                       description: Le nom de l'utilisateur.
- *                     prenom:
- *                       type: string
- *                       description: Le prénom de l'utilisateur.
- *                     mail:
- *                       type: string
- *                       description: L'email de l'utilisateur.
- *                     type:
- *                       type: string
- *                       description: Le type de l'utilisateur (par exemple "admin", "user").
+ *         description: Connexion réussie.
  *       400:
- *         description: Email et mot de passe sont obligatoires.
+ *         description: Paramètres manquants.
  *       401:
- *         description: L'email ou le mot de passe est incorrect.
+ *         description: Échec de l'authentification.
  *       500:
- *         description: Erreur interne du serveur.
+ *         description: Erreur interne.
  */
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
@@ -65,9 +27,6 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        console.log('Requête reçue:', email, password); // Log de la requête pour debug
-
-        // Rechercher l'utilisateur dans la base de données
         const query = 'SELECT * FROM Utilisateurs WHERE mail_utilisateur = $1';
         const result = await pool.query(query, [email]);
 
@@ -77,15 +36,15 @@ router.post('/', async (req, res) => {
 
         const utilisateur = result.rows[0];
 
-        // Vérification du mot de passe
         if (utilisateur.mot_de_passe !== password) {
             return res.status(401).json({ error: 'Mot de passe incorrect.' });
         }
 
-        // Log de l'utilisateur récupéré pour debug
-        console.log('Utilisateur trouvé:', utilisateur);
+        // Générer un sessionId unique
+        const sessionId = uuidv4();
 
-        // Retourner la réponse avec les informations de l'utilisateur
+        // Vous pouvez stocker le sessionId en base de données ici si nécessaire
+
         res.status(200).json({
             success: true,
             user: {
@@ -94,7 +53,8 @@ router.post('/', async (req, res) => {
                 prenom: utilisateur.prenom_utilisateur,
                 mail: utilisateur.mail_utilisateur,
                 type: utilisateur.type_utilisateur,
-            }
+                sessionId, // Retourner le sessionId
+            },
         });
     } catch (error) {
         console.error('Erreur lors de la connexion:', error);

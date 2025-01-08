@@ -62,6 +62,7 @@ export default {
       // Implémentez ici le traitement du paiement via une API (par exemple, Stripe)
       alert('Paiement traité avec succès !');
       this.clearCart();
+      this.$router.push('/');
     },
     clearCart() {
       const user = JSON.parse(localStorage.getItem('user'));

@@ -91,6 +91,7 @@ export default {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 300px;
 }
 
 .logout-button:hover {

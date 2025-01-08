@@ -53,6 +53,7 @@ export default {
       localStorage.removeItem("user");
       this.isLoggedIn = false;
       this.user = null;
+      window.location.reload()
     },
     async submitForm() {
       try {

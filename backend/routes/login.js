@@ -1,23 +1,65 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Chemin vers la configuration de la DB
-const { v4: uuidv4 } = require('uuid'); // Génère un identifiant unique pour la session
+const pool = require('../database/db');
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * @swagger
  * /login:
  *   post:
- *     summary: Connexion de l'utilisateur
- *     description: Cette route connecte un utilisateur en vérifiant son email et son mot de passe.
+ *     summary: Authentification de l'utilisateur
+ *     description: Cette route permet de connecter un utilisateur en vérifiant son email et mot de passe.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: L'email de l'utilisateur.
+ *               password:
+ *                 type: string
+ *                 description: Le mot de passe de l'utilisateur.
  *     responses:
  *       200:
- *         description: Connexion réussie.
+ *         description: Connexion réussie. Retourne les informations de l'utilisateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indique si la connexion a réussi.
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: L'ID de l'utilisateur.
+ *                     nom:
+ *                       type: string
+ *                       description: Le nom de l'utilisateur.
+ *                     prenom:
+ *                       type: string
+ *                       description: Le prénom de l'utilisateur.
+ *                     mail:
+ *                       type: string
+ *                       description: L'email de l'utilisateur.
+ *                     type:
+ *                       type: string
+ *                       description: Le type d'utilisateur (admin, user).
+ *                     sessionId:
+ *                       type: string
+ *                       description: L'ID de la session de l'utilisateur généré après une connexion réussie.
  *       400:
- *         description: Paramètres manquants.
+ *         description: Email et mot de passe sont requis.
  *       401:
- *         description: Échec de l'authentification.
+ *         description: L'email ou mot de passe est incorrect.
  *       500:
- *         description: Erreur interne.
+ *         description: Erreur du serveur.
  */
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
@@ -42,8 +84,6 @@ router.post('/', async (req, res) => {
 
         // Générer un sessionId unique
         const sessionId = uuidv4();
-
-        // Vous pouvez stocker le sessionId en base de données ici si nécessaire
 
         res.status(200).json({
             success: true,

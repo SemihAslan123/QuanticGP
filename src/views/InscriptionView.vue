@@ -52,7 +52,7 @@
         <select v-model="typeUtilisateur" id="typeUtilisateur" required>
           <option value="client">Client</option>
           <option value="prestataire">Prestataire</option>
-          <option value="admin">Admin</option>
+          <option value="organisateur">Organisateur</option>
         </select>
       </div>
 

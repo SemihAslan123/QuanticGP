@@ -14,6 +14,8 @@ import ArticleGuide from '../views/ArticleGuide.vue';
 import ArticleVieMonaco from '../views/ArticleVieMonaco.vue';
 import InscriptionView from "@/views/InscriptionView.vue";
 import livreDor from "@/views/livreDor.vue";
+import ClientActivite from "@/views/clientActivite.vue";
+import ClientPaiementActivites from "@/views/clientPaiementActivites.vue";
 
 Vue.use(Router);
 
@@ -103,6 +105,16 @@ export default new Router({
       path: '/livredor',
       name: 'LivreDor',
       component: livreDor,
+    },
+    {
+      path: '/clientActivite',
+      name: 'ClientActivite',
+      component: ClientActivite,
+    },
+    {
+     path: '/clientPaiementActivite',
+     name: 'ClientPaiementActivite',
+     component: ClientPaiementActivites,
     }
   ],
 });

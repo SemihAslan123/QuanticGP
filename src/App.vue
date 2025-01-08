@@ -16,6 +16,9 @@
 
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
 
+      <!-- Affiche l'onglet Activités si l'utilisateur est un client -->
+      <router-link v-if="isLoggedIn && user?.type === 'client'" to="/clientactivite" exact-active-class="active-link">ACTIVITÉS</router-link>
+
       <!-- Affiche "Connexion" si l'utilisateur n'est pas connecté -->
       <router-link v-if="!isLoggedIn" to="/login" class="login-link" exact-active-class="active-link">CONNEXION</router-link>
 

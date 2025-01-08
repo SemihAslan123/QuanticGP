@@ -313,6 +313,7 @@ export default {
   cursor: pointer;
   font-size: 1em;
   transition: background-color 0.3s ease;
+  width: 300px;
 }
 
 #info-button:hover {

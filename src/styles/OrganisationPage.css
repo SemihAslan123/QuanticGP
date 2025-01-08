@@ -110,44 +110,90 @@ body, html {
     color: #1a2e41;
     font-family: "Goldman", sans-serif;
 }
-
 /* ========================= Formulaire d'événements ========================= */
 
+.event-form-orga {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.event-form-orga h2 {
+    font-size: 24px;
+    color: #1a2e41;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .event-form-orga .form-group-orga {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .event-form-orga label {
-    font-size: 16px;
+    font-size: 18px;
     color: #333;
+    display: block;
+    margin-bottom: 8px;
 }
 
 .event-form-orga input[type="text"],
 .event-form-orga input[type="date"],
-.event-form-orga input[type="file"] {
+.event-form-orga input[type="number"],
+.event-form-orga input[type="time"],
+.event-form-orga input[type="file"],
+.event-form-orga textarea {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 12px 15px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
     font-size: 16px;
+    background-color: #fff;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.event-form-orga input[type="text"]:focus,
+.event-form-orga input[type="date"]:focus,
+.event-form-orga input[type="number"]:focus,
+.event-form-orga input[type="time"]:focus,
+.event-form-orga input[type="file"]:focus,
+.event-form-orga textarea:focus {
+    border-color: #1a2e41;
+    outline: none;
 }
 
 .event-form-orga .editor-container-orga {
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     min-height: 150px;
-    padding: 10px;
-    margin-top: 5px;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.event-form-orga .editor-container-orga:focus {
+    border-color: #1a2e41;
+}
+
+textarea {
+    resize: vertical;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 12px 25px;
     background-color: #1a2e41;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    width: 100%;
+    transition: background-color 0.3s ease-in-out;
 }
 
 button:hover {
@@ -161,6 +207,65 @@ button:focus {
 button[type="submit"]:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+button[type="submit"]:disabled:hover {
+    background-color: #ccc;
+}
+
+/* Style des messages d'erreur (si nécessaire) */
+.event-form-orga .error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Limiter la taille de l'image */
+.event-form-orga img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Limiter le champ du prix à un format correct */
+.event-form-orga input[type="number"] {
+    -moz-appearance: textfield; /* Désactive les flèches sur certains navigateurs */
+}
+
+.event-form-orga input[type="number"]::-webkit-outer-spin-button,
+.event-form-orga input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Amélioration des boutons de navigation */
+.event-form-orga .actions-orga {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.event-form-orga .actions-orga button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #1a2e41;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 180px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.event-form-orga .actions-orga button:hover {
+    background-color: #2a3e58;
+}
+
+.event-form-orga .actions-orga button:focus {
+    outline: none;
 }
 
 /* ========================= Liste des événements ========================= */

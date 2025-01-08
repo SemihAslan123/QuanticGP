@@ -4,18 +4,18 @@ const pool = require('../database/db');
 
 // Route POST pour ajouter un événement
 router.post('/', async (req, res) => {
-    const { courseName, eventDate, eventDescription, eventImage } = req.body;
+    const { courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage } = req.body;
 
-    if (!courseName || !eventDate || !eventDescription || !eventImage) {
+    if (!courseName || !eventDate || !horaireDebut || !horaireFin || !eventPrice || !eventDescription || !eventImage) {
         return res.status(400).json({ error: "Tous les champs sont requis" });
     }
 
     try {
         const query = `
-            INSERT INTO events (name, date, description, image)
-            VALUES ($1, $2, $3, $4) RETURNING *;
+            INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
         `;
-        const values = [courseName, eventDate, eventDescription, eventImage];
+        const values = [courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage];
         const result = await pool.query(query, values);
 
         res.status(201).json({ message: "Événement ajouté avec succès", event: result.rows[0] });
@@ -123,15 +123,15 @@ router.patch('/prestataires/:id', async (req, res) => {
 // Route PUT pour mettre à jour un événement
 router.put('/events/:id', async (req, res) => {
     const { id } = req.params;
-    const { courseName, eventDate, eventDescription, eventImage } = req.body;
+    const { courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage } = req.body;
 
     try {
         const query = `
             UPDATE events
-            SET name = $1, date = $2, description = $3, image = $4
-            WHERE id = $5
+            SET name = $1, date = $2, heure_debut = $3, heure_fin = $4, prix = $5, description = $6, image = $7
+            WHERE id = $8
         `;
-        const values = [courseName, eventDate, eventDescription, eventImage, id];
+        const values = [courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage, id];
         await pool.query(query, values);
 
         res.status(200).json({ message: 'Événement mis à jour avec succès.' });

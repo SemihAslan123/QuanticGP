@@ -157,10 +157,6 @@ VALUES
     (5, 4, '2024-12-05', '11:00', '15:00', 'acceptée'),
     (6, 1, '2024-12-08', '12:00', '16:00', 'refusée');
 
--- Insertion dans la table events
-COPY events(id, name, date, heure_debut, heure_fin, prix, description, image)
-    FROM '/home/esteban/2emeAnnee/S3/devWeb/QuanticGP20/backend/events.csv'
-    DELIMITER ',' CSV HEADER;
 
 -- Insertion dans la table LivreOr
 INSERT INTO LivreOr (id_utilisateur, commentaire, note)
@@ -174,24 +170,25 @@ VALUES
     (5, 'Un peu déçu par la qualité du service, je mattendais à mieux.', 2),
     (6, 'Bon service, mais il manque un peu dinteraction avec les visiteurs.', 3);
 
+-- Insertion dans la table events
+INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
+VALUES
+    ('Karting enfant', '2025-01-10', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
+    ('Simulateur F1', '2025-01-10', '11:30', '12:30', 25.00, 'Expérience immersive dans un simulateur F1', '/assets/events/simulateur_f1.jpg'),
+    ('Rencontre avec Charles Leclerc', '2025-01-10', '09:00', '10:00', 15.00, 'Rencontre exclusive avec Charles Leclerc', '/assets/events/rencontre_leclerc.jpg'),
+    ('Rencontre avec Max Verstappen', '2025-01-10', '10:00', '11:00', 15.00, 'Rencontre exclusive avec Max Verstappen', '/assets/events/rencontre_verstappen.jpg'),
+    ('Exposition F1', '2025-01-10', '13:00', '18:00', 10.00, 'Exposition des voitures de F1', '/assets/events/exposition_f1.jpg');
+
+
+-- Insertion dans la table liste_activite_client avec une répartition variée
 INSERT INTO liste_activite_client (id_utilisateur, id_event)
 VALUES
-    -- Participants pour le Concert de Musique Classique
-    (7, 7),
-    (8, 7),
-    (9, 7),
-
-    -- Participants pour le Festival de Jazz
-    (7, 7),
-    (8, 7),
-
-    -- Participants pour l'Exposition Art Moderne
-    (7, 7),
-    (9, 7),
-
-    -- Participants pour la Conférence sur l'Innovation Technologique
-    (8, 8),
-
-    -- Participants pour le Marché de Noël
-    (7, 8),
-    (9, 8);
+    (7, 1),
+    (8, 1),
+    (9, 1),
+    (7, 1),
+    (8, 2),
+    (9, 3),
+    (7, 3),
+    (8, 3),
+    (9, 4);

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database/db');
+const { v4: uuidv4 } = require('uuid');
+
 
 // Route POST pour ajouter un événement
 router.post('/', async (req, res) => {
@@ -160,25 +162,42 @@ router.get('/statistics', async (req, res) => {
     try {
         const totalEventsResult = await pool.query('SELECT COUNT(*) AS total FROM events');
         const totalParticipantsResult = await pool.query(
-            `SELECT COUNT(DISTINCT utilisateur_id) AS total 
-             FROM billet 
+            `SELECT COUNT(DISTINCT utilisateur_id) AS total
+             FROM billet
              WHERE utilisateur_id IS NOT NULL`
         );
         const totalTicketPrestataireResult = await pool.query(
-            `SELECT COUNT(*) AS total 
+            `SELECT COUNT(*) AS total
              FROM reservation_stand`
         );
+
+        const participantsByEventResult = await pool.query(`
+            SELECT 
+                e.id AS event_id,
+                e.name AS event_name,
+                COUNT(lac.id_utilisateur) AS participants_count
+            FROM 
+                events e
+            LEFT JOIN 
+                liste_activite_client lac ON e.id = lac.id_event
+            GROUP BY 
+                e.id, e.name
+            ORDER BY 
+                e.id;
+        `);
 
         res.json({
             totalEvents: totalEventsResult.rows[0].total,
             totalParticipants: totalParticipantsResult.rows[0].total,
             totalTicketPrestataire: totalTicketPrestataireResult.rows[0].total,
+            participantsByEvent: participantsByEventResult.rows, // Ajout des données
         });
     } catch (error) {
         console.error('Erreur lors de la récupération des statistiques:', error);
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });
+
 
 
 router.get('/prestataires', async (req, res) => {

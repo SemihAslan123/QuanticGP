@@ -166,3 +166,14 @@ VALUES
     ('Conférence sur lInnovation Technologique', '2024-12-10', '09:00', '12:00', 10.00, 'Une conférence sur les dernières avancées en technologie et innovation.', '/assets/events/tech_conference.jpg'),
     ('Marché de Noël', '2024-12-20', '09:00', '18:00', 5.00, 'Un marché de Noël avec des produits artisanaux, des animations et des décorations festives.', '/assets/events/christmas_market.jpg');
 
+-- Insertion dans la table LivreOr
+INSERT INTO LivreOr (id_utilisateur, commentaire, note)
+VALUES
+    (7, 'Très bon service et expérience générale agréable. Je recommande!', 5),
+    (8, 'Le service était correct, mais lattente était un peu longue.', 3),
+    (9, 'Excellente organisation, je reviendrai à coup sûr pour dautres événements!', 4),
+    (2, 'Le prestataire a été ponctuel et a fourni un service de qualité.', 5),
+    (3, 'Très satisfait de la prestation, à recommander pour des événements similaires.', 4),
+    (4, 'Le service était bon mais quelques améliorations sont possibles.', 3),
+    (5, 'Un peu déçu par la qualité du service, je mattendais à mieux.', 2),
+    (6, 'Bon service, mais il manque un peu dinteraction avec les visiteurs.', 3);

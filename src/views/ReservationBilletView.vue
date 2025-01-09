@@ -165,13 +165,31 @@ export default {
       hotelStartDate: null,
       hotelEndDate: null,
       hotels: [
-        { id: 1, nom: "Riviera Marriott", emplacement: "Ouest", image: "/assets/hotels/hotel1.jpeg", prix: 200 },
-        { id: 2, nom: "Fairmont Monte Carlo", emplacement: "Est", image: "/assets/hotels/hotel2.jpg", prix: 350 },
+        { id: 1, nom: "Riviera Marriott", emplacement: "Ouest", image: "/assets/hotels/hotel1.jpeg", prix: 600 },
+        { id: 2, nom: "Fairmont Monte Carlo", emplacement: "Est", image: "/assets/hotels/hotel2.jpg", prix: 700 },
       ],
       courses: [
-        { id: 1, nom: "Course 1 Jour 1", prix: 50, description: "Une course amusante à travers la ville.", image: "/assets/courses/course1.jpeg" },
-        { id: 2, nom: "Course 2 Jour 2", prix: 75, description: "Course de vitesse sur un circuit.", image: "/assets/courses/course2.png" },
-        { id: 3, nom: "Course 3 Jour 3", prix: 100, description: "Un défi d’endurance pour les plus courageux.", image: "/assets/courses/course3.png" },
+        {
+          id: 1,
+          nom: "Course 1 Jour 1",
+          prix: 500,
+          description: "Course de Formule 1 standard en journée, idéale pour les amateurs souhaitant profiter de l'action à moindre coût.",
+          image: "/assets/courses/course1.jpeg"
+        },
+        {
+          id: 2,
+          nom: "Course 2 Jour 2",
+          prix: 850,
+          description: "Course en fin de journée, incluant un accès VIP aux zones de ravitaillement et des stands pour observer les équipes de près.",
+          image: "/assets/courses/course2.png"
+        },
+        {
+          id: 3,
+          nom: "Course 3 Jour 3",
+          prix: 1200,
+          description: "Course nocturne spectaculaire avec accès exclusif aux coulisses et une rencontre avec les pilotes après la course.",
+          image: "/assets/courses/course3.png"
+        },
       ],
       totalPrice: 0,
       isVIP: false,

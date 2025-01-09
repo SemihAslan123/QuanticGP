@@ -168,7 +168,7 @@
             <option value="">Tous les types</option>
             <option value="prestataire">Prestataire</option>
             <option value="client">Client</option>
-            <option value="admin">Admin</option>
+            <option value="organisateur">Organisateur</option>
           </select>
         </div>
 
@@ -197,8 +197,8 @@
               <option value="client" :selected="prestataire.type_utilisateur === 'client'">
                 Client
               </option>
-              <option value="admin" :selected="prestataire.type_utilisateur === 'admin'">
-                Admin
+              <option value="organisateur" :selected="prestataire.type_utilisateur === 'organisateur'">
+                Organisateur
               </option>
             </select>
           </div>
@@ -361,6 +361,16 @@ export default {
 
   },
 
+  // Pour edit
+  watch: {
+    currentSection(newSection) {
+      if (newSection === 'event') {
+        this.recreateEditor();
+      }
+    },
+  },
+
+
   computed: {
     filteredPrestataires() {
       return this.prestataires.filter(prestataire => {
@@ -414,16 +424,23 @@ export default {
     },
 
     editEvent(event) {
-
-      this.courseName = event.name;
-      this.eventDate = event.date;
-      this.quillEditor.setText(event.description);
-      this.eventImage = event.image;
-
+      this.courseName = event.name || '';
+      this.eventDate = event.date ? new Date(event.date).toISOString().split('T')[0] : '';
+      this.horaireDebut = event.heure_debut || '';
+      this.horaireFin = event.heure_fin || '';
+      this.eventPrice = event.prix || null;
+      this.eventImage = event.image || null;
       this.currentSection = 'event';
-
       this.editingEventId = event.id;
+
+      this.$nextTick(() => {
+        if (this.quillEditor) {
+          this.quillEditor.root.innerHTML = event.description || '';
+        }
+      });
+
     },
+
 
     async deleteEvent(eventId) {
       if (confirm("Êtes-vous sûr de vouloir supprimer cet activitée ?")) {
@@ -447,6 +464,32 @@ export default {
         this.quillEditor = null;
       }
     },
+
+    recreateEditor() {
+      if (this.quillEditor) {
+        this.quillEditor = null;
+      }
+      this.$nextTick(() => {
+        this.quillEditor = new Quill(this.$refs.editorContainer, {
+          theme: 'snow',
+          placeholder: 'Écrivez la description de l’activité...',
+          modules: {
+            toolbar: [
+              [{ header: '1' }, { header: '2' }, { font: [] }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              [{ align: [] }],
+              ['bold', 'italic', 'underline'],
+              ['link', 'image'],
+              ['blockquote', 'code-block'],
+              ['clean'],
+            ],
+          },
+        });
+      });
+    },
+
+
+
     // Méthode pour afficher les événements
     async showEvents() {
       try {
@@ -461,30 +504,15 @@ export default {
     goBackToCreateEvent() {
       this.currentSection = 'event';
       this.resetForm();
-      this.$nextTick(() => {
-        this.dellEditor();
-        this.quillEditor = new Quill(this.$refs.editorContainer, {
-          theme: 'snow',
-          placeholder: 'Écrivez la description de l’activitée...',
-          modules: {
-            toolbar: [
-              [{header: '1'}, {header: '2'}, {font: []}],
-              [{list: 'ordered'}, {list: 'bullet'}],
-              [{align: []}],
-              ['bold', 'italic', 'underline'],
-              ['link', 'image'],
-              ['blockquote', 'code-block'],
-              ['clean'],
-            ]
-          }
-        });
-      });
+      this.recreateEditor();
     },
 
     resetClick() {
       this.currentSection = 'event';
       this.goBackToCreateEvent();
     },
+
+
 
     async saveEvent() {
       if (!this.courseName || !this.eventDate || !this.horaireDebut || !this.horaireFin || !this.eventPrice || !this.quillEditor.getText().trim() || !this.eventImage) {
@@ -577,7 +605,7 @@ export default {
     async changeService(prestataireId, newService) {
       console.log("ID du prestataire:", prestataireId);
 
-      if (!["prestataire", "client", "admin"].includes(newService)) {
+      if (!["prestataire", "client", "organisateur"].includes(newService)) {
         alert("Service invalide.");
         return;
       }

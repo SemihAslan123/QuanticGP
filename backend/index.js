@@ -10,6 +10,7 @@ const inscriptionRoutes = require('./routes/inscription');
 const livreDorRoutes = require('./routes/livreDor');
 const clientActiviteRoutes = require('./routes/clientActivite');
 const clientPaiementActiviteRoutes = require('./routes/clientPaiementActivite');
+const carteRoutes = require('./routes/carte');
 
 // Ajout de Swagger
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -47,6 +48,7 @@ app.use('/inscription', inscriptionRoutes);
 app.use('/livreDor',livreDorRoutes);
 app.use('/clientActivite',clientActiviteRoutes);
 app.use('/clientPaiementActivite', clientPaiementActiviteRoutes);
+app.use('/carte', carteRoutes);
 
 // Exposer Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));

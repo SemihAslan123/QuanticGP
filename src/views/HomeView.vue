@@ -281,17 +281,15 @@
 
             <!-- Les groupes ci-dessous seront opérationnels seulement si withStands = true -->
                <g v-if="withStands">
-
-                  <g v-for="emplacement in emplacementsPrestataires" :key="emplacement.id" 
-                     @mouseover="showTooltip(emplacement)"
+                  <g v-for="emplacement in emplacements_prestataires" :key="emplacement.id_emplacement"
+                     @mouseover="showTooltipPrestataire(emplacement)"
                      @mouseleave="hideTooltip"
                      @mousemove="moveTooltip">
                      <path
                         style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
-                        :d="emplacement.path"
+                        :d="emplacement.coordonnees_svg"
                      />
                   </g>
-
                </g>
 
             </svg>
@@ -305,7 +303,11 @@
                <img :src="toolTipLogo" alt="Logo QGP" style="max-width: 100px; height: auto;">
             </div>
 
+            <div class="toolTipNomPrestataire">{{ toolTipNomPrestataire }}</div>
+
             <div class="toolTipName">{{ toolTipName }}</div>
+
+            <div class="toolTipStatut">{{ toolTipStatut }}</div>
 
             <div class="infosContainer">
 
@@ -314,6 +316,10 @@
                <div class="toolTipText">{{ tooltipText }}</div>
 
             </div>
+
+            <div class="toolTipPrix">{{ toolTipPrix }}</div>
+
+            <div class="toolTipCB">{{ toolTipCB }}</div>
 
             <div class="toolTipDetails">{{ tooltipDetails }}</div>
 
@@ -333,7 +339,7 @@
       <!-- =========================================================================================================================-->
 
 
-      <div class="section" id="section4">Section 4</div>
+      <div class="section" id="section4">Section 4 (EN TRAVAUX)</div>
 
 
    </div>
@@ -350,7 +356,7 @@
 
 
    import homePageMap from '@/data/homePageMap.json';
-
+   import axios from 'axios';
 
    export default {
 
@@ -361,15 +367,20 @@
          tooltipVisible: false,
          toolTipLogo: '',
          toolTipName: '',
+         toolTipNomPrestataire: '',
+         toolTipStatut: '',
          toolTipTextTitle: '',
          tooltipText: '',
          tooltipDetails: '',
          tooltipImage: '',
+         toolTipPrix: '',
+         toolTipCB: '',
          tooltipStyles: { top: '0px', left: '0px' },
          currentImageMap: '/assets/homePage/CarteEvenementAvecStands.png',
          withStands: true,
          emplacementsPrincipaux: homePageMap.emplacementsPrincipaux,
-         emplacementsPrestataires: homePageMap.emplacementsPrestataires,
+
+         emplacements_prestataires: [], 
 
          // Les images de la bannière (SECTION 1)
          images : [
@@ -406,6 +417,8 @@
       this.timer = setInterval(this.updateCountdown, 60000);
 
       this.startBannerImageRotation();
+
+      this.fetchEmplacements();
    },
 
 
@@ -420,7 +433,21 @@
    methods: {
 
 
+      fetchEmplacements() {
+
+         axios.get('http://localhost:3001/carte/emplacements')  // Remplace par l'URL de ton API
+         .then(response => {
+            // Mettre à jour les données locales avec les emplacements récupérés
+            this.emplacements_prestataires = response.data;
+         })
+         .catch(error => {
+            console.error('Erreur lors de la récupération des emplacements:', error);
+         });
+      },
+
+
       getProgressPercentage() {
+
          const now = new Date();
          const totalDuration = this.targetDate - this.startDate;
          const elapsed = now - this.startDate;
@@ -471,8 +498,33 @@
       },
 
 
+      showTooltipPrestataire(emplacement) {
+
+         this.toolTipName = emplacement.nom_emplacement;
+         this.toolTipNomPrestataire = emplacement.nom_prestataire;
+         this.toolTipStatut = emplacement.statut;
+         this.toolTipTextTitle = 'Informations du prestataire :';
+         this.tooltipText = emplacement.presentation_service;
+         this.tooltipDetails = emplacement.description;
+         this.toolTipPrix = '💵 Prix moyen : ' + emplacement.prix_moyen,
+         this.toolTipCB = '💳 Carte banquaire : ' + emplacement.carte_banquaire,
+         this.tooltipVisible = true;
+
+      },
+
+
       hideTooltip() {
 
+         this.toolTipLogo = '',
+         this.toolTipName = '',
+         this.toolTipNomPrestataire = '',
+         this.toolTipStatut = '',
+         this.toolTipTextTitle = '',
+         this.tooltipText = '',
+         this.tooltipDetails = '',
+         this.tooltipImage = '',
+         this.toolTipPrix = '',
+         this.toolTipCB = '',
          this.tooltipVisible = false;
       },
 

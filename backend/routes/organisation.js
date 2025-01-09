@@ -346,9 +346,10 @@ router.get('/statistics', async (req, res) => {
     try {
         const totalEventsResult = await pool.query('SELECT COUNT(*) AS total FROM events');
         const totalParticipantsResult = await pool.query(
-            `SELECT COUNT(DISTINCT utilisateur_id) AS total
-             FROM billet
-             WHERE utilisateur_id IS NOT NULL`
+            `SELECT
+                 COUNT(DISTINCT id_utilisateur) AS total_participants
+             FROM
+                 liste_activite_client`
         );
         const totalTicketPrestataireResult = await pool.query(
             `SELECT COUNT(*) AS total
@@ -356,23 +357,23 @@ router.get('/statistics', async (req, res) => {
         );
 
         const participantsByEventResult = await pool.query(
-            `SELECT 
-                e.id AS event_id,
-                e.name AS event_name,
-                COUNT(lac.id_utilisateur) AS participants_count
-            FROM 
-                events e
-            LEFT JOIN 
-                liste_activite_client lac ON e.id = lac.id_event
-            GROUP BY 
-                e.id, e.name
-            ORDER BY 
-                e.id;`
+            `SELECT
+                 e.id AS event_id,
+                 e.name AS event_name,
+                 COUNT(lac.id_utilisateur) AS participants_count
+             FROM
+                 events e
+                     LEFT JOIN
+                 liste_activite_client lac ON e.id = lac.id_event
+             GROUP BY
+                 e.id, e.name
+             ORDER BY
+                 e.id;`
         );
 
         res.json({
             totalEvents: totalEventsResult.rows[0].total,
-            totalParticipants: totalParticipantsResult.rows[0].total,
+            totalParticipants: totalParticipantsResult.rows[0].total_participants,
             totalTicketPrestataire: totalTicketPrestataireResult.rows[0].total,
             participantsByEvent: participantsByEventResult.rows,
         });
@@ -381,6 +382,7 @@ router.get('/statistics', async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });
+
 
 /**
  * @swagger

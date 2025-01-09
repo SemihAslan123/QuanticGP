@@ -177,3 +177,26 @@ VALUES
     (4, 'Le service était bon mais quelques améliorations sont possibles.', 3),
     (5, 'Un peu déçu par la qualité du service, je mattendais à mieux.', 2),
     (6, 'Bon service, mais il manque un peu dinteraction avec les visiteurs.', 3);
+
+
+INSERT INTO liste_activite_client (id_utilisateur, id_event)
+VALUES
+    -- Participants pour le Concert de Musique Classique
+    (7, 1),
+    (8, 1),
+    (9, 1),
+
+    -- Participants pour le Festival de Jazz
+    (7, 2),
+    (8, 2),
+
+    -- Participants pour l'Exposition Art Moderne
+    (7, 3),
+    (9, 3),
+
+    -- Participants pour la Conférence sur l'Innovation Technologique
+    (8, 4),
+
+    -- Participants pour le Marché de Noël
+    (7, 5),
+    (9, 5);

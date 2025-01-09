@@ -32,7 +32,7 @@
                 :class="currentSection === 'events' ? 'active' : ''"
                 class="sidebar-item-orga"
             >
-              <i class="icon-list"></i> Liste des événements
+              <i class="icon-list"></i> Liste des activitées
             </button>
           </li>
           <li>
@@ -316,11 +316,11 @@
 
         <div class="stats-overview">
           <div class="stat-item">
-            <h3>Nombre total d'événements</h3>
+            <h3>Nombre total d'activitées</h3>
             <p>{{ totalEvents }}</p>
           </div>
           <div class="stat-item">
-            <h3>Nombre de participants</h3>
+            <h3>Nombre de participants total unique</h3>
             <p>{{ totalParticipants }}</p>
           </div>
           <div class="stat-item">
@@ -331,7 +331,7 @@
 
         <div class="stats-graphs">
           <div class="chart-container">
-            <h3 class="chart-title">Nombre de Participants par Événement</h3>
+            <h3 class="chart-title">Nombre de Participants par Activitées</h3>
             <canvas id="participantsChart"></canvas>
           </div>
         </div>

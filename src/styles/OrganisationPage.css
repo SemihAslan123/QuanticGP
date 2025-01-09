@@ -809,3 +809,44 @@ canvas {
     font-size: 16px;
     color: #777;
 }
+
+
+/* Conteneur pour le graphique */
+.chart-container {
+    background-color: #ffffff; /* Fond blanc pour contraster avec le thème général */
+    border-radius: 10px; /* Coins arrondis pour une finition propre */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Ombre pour donner de la profondeur */
+    padding: 20px; /* Espacement interne pour éviter que le contenu soit collé */
+    margin: 20px auto; /* Centré avec un espacement extérieur */
+    max-width: 800px; /* Largeur maximale pour éviter un trop grand graphique */
+    text-align: center; /* Centrage du contenu */
+}
+
+/* Canvas pour le graphique */
+canvas {
+    max-width: 100%; /* Adaptabilité pour les écrans plus petits */
+    height: auto; /* Ajustement automatique de la hauteur */
+    border: 2px solid #ddd; /* Bordure légère pour démarquer le graphique */
+    border-radius: 6px; /* Coins arrondis pour harmoniser avec le conteneur */
+}
+
+/* Titre du graphique */
+.chart-title {
+    font-size: 20px;
+    color: #1a2e41; /* Couleur principale du thème */
+    font-family: "Goldman", sans-serif; /* Police stylisée pour attirer l'attention */
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Amélioration pour mobile */
+@media (max-width: 768px) {
+    .chart-container {
+        padding: 15px;
+        margin: 10px auto;
+    }
+
+    .chart-title {
+        font-size: 18px;
+    }
+}

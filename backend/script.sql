@@ -158,13 +158,9 @@ VALUES
     (6, 1, '2024-12-08', '12:00', '16:00', 'refusée');
 
 -- Insertion dans la table events
-INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
-VALUES
-    ('Concert de Musique Classique', '2024-12-15', '19:00', '22:00', 50.00, 'Un concert de musique classique avec un orchestre symphonique.', '/assets/events/classic_concert.jpg'),
-    ('Festival de Jazz', '2024-11-30', '18:00', '23:00', 35.00, 'Un festival de jazz avec des artistes internationaux et des concerts en plein air.', '/assets/events/jazz_festival.jpg'),
-    ('Exposition Art Moderne', '2024-12-01', '10:00', '18:00', 20.00, 'Exposition dart moderne avec des œuvres dartistes contemporains.', '/assets/events/art_exhibition.jpg'),
-    ('Conférence sur lInnovation Technologique', '2024-12-10', '09:00', '12:00', 10.00, 'Une conférence sur les dernières avancées en technologie et innovation.', '/assets/events/tech_conference.jpg'),
-    ('Marché de Noël', '2024-12-20', '09:00', '18:00', 5.00, 'Un marché de Noël avec des produits artisanaux, des animations et des décorations festives.', '/assets/events/christmas_market.jpg');
+COPY events(id, name, date, heure_debut, heure_fin, prix, description, image)
+    FROM '/home/esteban/2emeAnnee/S3/devWeb/QuanticGP20/backend/events.csv'
+    DELIMITER ',' CSV HEADER;
 
 -- Insertion dans la table LivreOr
 INSERT INTO LivreOr (id_utilisateur, commentaire, note)
@@ -182,21 +178,23 @@ VALUES
 INSERT INTO liste_activite_client (id_utilisateur, id_event)
 VALUES
     -- Participants pour le Concert de Musique Classique
-    (7, 1),
-    (8, 1),
-    (9, 1),
+    (7, 7),
+    (8, 7),
+    (9, 7),
 
     -- Participants pour le Festival de Jazz
-    (7, 2),
-    (8, 2),
+    (7, 7),
+    (8, 7),
 
     -- Participants pour l'Exposition Art Moderne
-    (7, 3),
-    (9, 3),
+    (7, 7),
+    (9, 7),
 
     -- Participants pour la Conférence sur l'Innovation Technologique
-    (8, 4),
+    (8, 8),
 
     -- Participants pour le Marché de Noël
-    (7, 5),
-    (9, 5);
+    (7, 8),
+    (9, 8);
+
+

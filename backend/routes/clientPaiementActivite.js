@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
+const pool = require('../database/db');
 
 /**
  * @swagger
@@ -34,7 +34,7 @@ const pool = require('../database/db'); // Chemin vers votre configuration de la
  *       500:
  *         description: Erreur interne du serveur.
  */
-router.post('/clientPaiementActivite', async (req, res) => {
+router.post('/', async (req, res) => {
   const { userId, activities } = req.body;
 
   // Vérification des données reçues

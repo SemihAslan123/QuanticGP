@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'PaymentPage',
   data() {
@@ -58,11 +60,32 @@ export default {
         this.cart = cart ? JSON.parse(cart) : [];
       }
     },
-    processPayment() {
-      // Implémentez ici le traitement du paiement via une API (par exemple, Stripe)
-      alert('Paiement traité avec succès !');
-      this.clearCart();
-      this.$router.push('/');
+    async processPayment() {
+
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user && user.id) {
+        const activities = this.cart.map(item => ({
+          id_event: item.id,
+        }));
+
+        try {
+          const response = await axios.post('http://localhost:3001/clientPaiementActivite', {
+            userId: user.id,
+            activities: activities,
+          });
+
+          this.clearCart();
+          console.log('Réponse de l’API :', response.data);
+
+          alert('Le paiement a été effectué avec succès!');
+
+          this.$router.push({ name: 'Home' });
+
+        } catch (error) {
+          console.error('Erreur lors de l\'inscription aux activités:', error);
+          alert('Une erreur est survenue lors de l\'inscription aux activités.');
+        }
+      }
     },
     clearCart() {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -82,7 +105,7 @@ export default {
 <style scoped>
 .payment-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 100px auto;
   padding: 20px;
   background: #f8f9fa;
   border-radius: 8px;

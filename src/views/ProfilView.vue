@@ -1,25 +1,48 @@
 <template>
-  <div class="espace-au-dessus">
-    <div class="billet-container">
+  <div class="page-container">
+    <!-- Bloc Billets -->
+    <section class="section-container billets-section">
       <h1>Vos Billets</h1>
-      <div v-if="billets.length === 0" class="no-billets">
+      <div v-if="billets.length === 0" class="no-items">
         <p>Vous n'avez acheté aucun billet pour le moment.</p>
       </div>
-      <div v-else class="billets-list">
-        <div class="billet-card" v-for="billet in billets" :key="billet.id">
+      <div v-else class="cards-grid">
+        <div class="card" v-for="billet in billets" :key="billet.id">
           <h2>Billet #{{ billet.id }}</h2>
-          <p><strong>Course :</strong> {{ billet.course_nom || 'Non spécifiée' }}</p>
-          <p v-if="billet.hotel_nom"><strong>Hôtel :</strong> {{ billet.hotel_nom || 'Non spécifié' }}</p>
-          <p v-if="billet.date_debut_parking"><strong>Date de début du parking :</strong> {{ billet.date_debut_parking | formatDate }}</p>
-          <p v-if="billet.date_fin_parking"><strong>Date de fin du parking :</strong> {{ billet.date_fin_parking | formatDate }}</p>
-          <p v-if="billet.date_debut_hotel"><strong>Date de début de l'hôtel :</strong> {{ billet.date_debut_hotel | formatDate }}</p>
-          <p v-if="billet.date_fin_hotel"><strong>Date de fin de l'hôtel :</strong> {{ billet.date_fin_hotel | formatDate }}</p>
-          <p><strong>VIP :</strong> {{ billet.is_vip ? 'Oui' : 'Non' }}</p>
-          <p><strong>Prix total :</strong> {{ billet.prix_total }} €</p>
-          <p><strong>Date de paiement :</strong> {{ billet.date_paiement | formatDate }}</p>
+          <div class="card-details">
+            <p><strong>Course :</strong> {{ billet.course_nom || 'Non spécifiée' }}</p>
+            <p v-if="billet.hotel_nom"><strong>Hôtel :</strong> {{ billet.hotel_nom }}</p>
+            <p v-if="billet.date_debut_parking"><strong>Parking :</strong> {{ billet.date_debut_parking | formatDate }} - {{ billet.date_fin_parking | formatDate }}</p>
+            <p v-if="billet.date_debut_hotel"><strong>Hôtel :</strong> {{ billet.date_debut_hotel | formatDate }} - {{ billet.date_fin_hotel | formatDate }}</p>
+            <p><strong>VIP :</strong> {{ billet.is_vip ? 'Oui' : 'Non' }}</p>
+            <p><strong>Prix :</strong> {{ billet.prix_total }} €</p>
+            <p><strong>Date de paiement :</strong> {{ billet.date_paiement | formatDate }}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Bloc Activités -->
+    <section class="section-container activites-section">
+      <h1>Vos Activités</h1>
+      <div v-if="activites.length === 0" class="no-items">
+        <p>Vous n'êtes inscrit à aucune activité pour le moment.</p>
+      </div>
+      <div v-else class="cards-grid">
+        <div class="card" v-for="activite in activites" :key="activite.id">
+          <h2>{{ activite.name }}</h2>
+          <div class="card-details">
+            <p><strong>Date :</strong> {{ activite.date | formatDate }}</p>
+            <p><strong>Heure :</strong> {{ activite.heure_debut }} - {{ activite.heure_fin }}</p>
+            <p><strong>Prix :</strong> {{ activite.prix }} €</p>
+            <p><strong>Description :</strong> {{ activite.description }}</p>
+            <img v-if="activite.image" :src="activite.image" alt="Image de l'activité" class="activite-image" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Déconnexion -->
     <button class="logout-button" @click="logout">Se déconnecter</button>
   </div>
 </template>
@@ -31,18 +54,20 @@ export default {
   name: 'UserBilletsView',
   data() {
     return {
-      billets: [], // Initialiser billets comme un tableau vide
+      billets: [],
+      activites: []
     };
   },
   created() {
     this.fetchBillets();
+    this.fetchActivites();
   },
   methods: {
     logout() {
       localStorage.removeItem("user");
       this.isLoggedIn = false;
       this.user = null;
-      window.location.reload()
+      window.location.reload();
     },
     async fetchBillets() {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -53,13 +78,27 @@ export default {
 
       try {
         const response = await axios.get(`http://localhost:3001/profil/${user.id}/billets`);
-        this.billets = response.data; // Réponse attendue : une liste de billets, ou une liste vide
+        this.billets = response.data;
       } catch (error) {
         console.error('Erreur lors de la récupération des billets :', error);
-        // Pas besoin de message d'alerte, on gère uniquement l'affichage
         this.billets = [];
       }
     },
+    async fetchActivites() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        this.$router.push({ name: 'Login' });
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3001/profil/${user.id}/activites`);
+        this.activites = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des activités :', error);
+        this.activites = [];
+      }
+    }
   },
   filters: {
     formatDate(value) {
@@ -70,82 +109,102 @@ export default {
         month: 'long',
         day: 'numeric',
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
-
 <style scoped>
-.espace-au-dessus {
-  padding-top: 90px;
+.page-container {
+  padding: 50px;
+  max-width: 1200px;
+  margin: 50px auto;
 }
 
-/* Bouton de déconnexion */
+h1 {
+  font-size: 24px;
+  color: #bababb;
+  margin-bottom: 20px;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.3s ease;
+}
+
+.billets-section h1 {
+  border-bottom: 2px solid #3498db; /* Soulignement bleu */
+}
+
+.activites-section h1 {
+  border-bottom: 2px solid #e74c3c; /* Soulignement rouge */
+}
+
+.section-container {
+  margin-bottom: 40px;
+}
+
+.no-items {
+  text-align: center;
+  font-size: 1.1em;
+  color: #e74c3c;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.8); /* Carte avec transparence */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card h2 {
+  font-size: 20px;
+  color: #3498db;
+  margin-bottom: 15px;
+}
+
+.card-details p {
+  font-size: 1em;
+  color: #34495e;
+  margin: 10px 0;
+}
+
+.card-details strong {
+  font-weight: bold;
+}
+
+.activite-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
 .logout-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+  padding: 12px 24px;
   background-color: #f44336;
   color: white;
   font-weight: bold;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+  transition: background-color 0.3s;
 }
 
 .logout-button:hover {
   background-color: #e53935;
-}
-
-.billet-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-h1 {
-  text-align: center;
-  color: #3498db;
-  margin-bottom: 20px;
-}
-
-.loading {
-  text-align: center;
-  font-size: 1.2em;
-  color: #999;
-}
-
-.no-billets {
-  text-align: center;
-  font-size: 1.2em;
-  color: #e74c3c;
-}
-
-.billets-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.billet-card {
-  background-color: #ffffff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.billet-card h2 {
-  margin-bottom: 10px;
-  color: #2c3e50;
-}
-
-.billet-card p {
-  margin: 5px 0;
-  color: #34495e;
-  font-size: 1em;
 }
 </style>

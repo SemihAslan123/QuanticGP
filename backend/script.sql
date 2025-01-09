@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS reservation_stand CASCADE;
 DROP TABLE IF EXISTS Stands CASCADE;
 DROP TABLE IF EXISTS Utilisateurs CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS emplacements_prestataires CASCADE;
 
 -- Création de la table events
 CREATE TABLE events (

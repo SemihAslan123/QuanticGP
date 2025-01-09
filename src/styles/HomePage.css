@@ -62,6 +62,7 @@ body, html {
     white-space: nowrap;
     z-index: 10; /* S'assure que le tooltip soit au-dessus du SVG */
     white-space: pre-line;
+    max-width: 400px;
 }
 
 .tooltip div {
@@ -74,6 +75,11 @@ body, html {
   font-size: 18px;
 }
 
+.toolTipStatut {
+  font-weight: 800;
+  color: rgb(228, 186, 0);
+}
+
 .infosContainer {
   padding: 10px 0 10px 20px;
   border-left: #ffffffd3 4px solid;
@@ -83,12 +89,29 @@ body, html {
   text-align: left;
   font-size: 16px;
   color: #d4d4d4;
+  word-wrap: break-word;
+  padding-right: 15px;
 }
 
 .toolTipTextTitle {
   font-weight: 700;
   font-size: 17px;
   color: #ececec;
+}
+
+.toolTipNomPrestataire {
+  font-weight: 900;
+  font-size: 22px;
+  color: rgb(255, 255, 255);
+}
+
+.toolTipPrix {
+  padding-top: 15px;
+  font-weight: 600;
+}
+
+.toolTipCB {
+  font-weight: 600;
 }
 
 .toolTipDetails {

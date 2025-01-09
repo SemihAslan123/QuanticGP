@@ -115,6 +115,47 @@
         </form>
       </section>
 
+
+      <!-- Section pour modifier un événement -->
+      <section v-if="currentSection === 'modifyEvent'" class="event-form-orga">
+        <h2>Modifier l'activitée</h2>
+        <form @submit.prevent="saveEvent">
+          <div class="form-group-orga">
+            <label>Nom de l'activitée :</label>
+            <input type="text" v-model="courseName" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Date de l'activitée :</label>
+            <input type="date" v-model="eventDate" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Prix (en €) :</label>
+            <input type="number" v-model="eventPrice" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Horaire Début :</label>
+            <input type="time" v-model="horaireDebut" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Horaire Fin :</label>
+            <input type="time" v-model="horaireFin" required />
+          </div>
+          <div class="form-group-orga">
+            <label>Description :</label>
+            <div ref="editorContainer" class="editor-container-orga"></div>
+          </div>
+          <div class="form-group-orga">
+            <label>Image :</label>
+            <input type="file" @change="handleFileUpload" />
+            <img v-if="eventImage" :src="eventImage" alt="Image de l'événement" />
+          </div>
+          <button type="submit">Enregistrer</button>
+          <div class="actions-orga">
+            <button @click="showEvents">Voir les activitées</button>
+          </div>
+        </form>
+      </section>
+
       <section v-if="currentSection === 'events'" class="events-orga">
         <h2>Liste des activitées</h2>
         <div v-if="events.length > 0" class="events-grid-orga">
@@ -282,18 +323,21 @@
             <h3>Nombre de participants</h3>
             <p>{{ totalParticipants }}</p>
           </div>
-
           <div class="stat-item">
-            <h3>Nombre de ticket de réservation</h3>
+            <h3>Nombre de tickets de réservation</h3>
             <p>{{ totalTicketPrestataire }}</p>
           </div>
         </div>
 
         <div class="stats-graphs">
-          <h3>Participants par événement</h3>
-          <canvas id="participantsChart"></canvas>
+          <div class="chart-container">
+            <h3 class="chart-title">Nombre de Participants par Événement</h3>
+            <canvas id="participantsChart"></canvas>
+          </div>
         </div>
       </section>
+
+
 
 
     </main>
@@ -309,6 +353,11 @@
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import axios from 'axios';
+//import Chart from 'chart.js/auto';
+
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 
 export default {
   name: 'OrganisationView',
@@ -333,9 +382,16 @@ export default {
       editingPrestataireId: null,
       searchQuery: '',
       selectedFilter: '',
+      participantsData: [],
+      participantsChart: null,
     };
   },
   mounted() {
+
+
+    if (this.currentSection === 'statistiques') {
+      this.loadStatistics();
+    }
 
     this.quillEditor = new Quill(this.$refs.editorContainer, {
       theme: 'snow',
@@ -355,17 +411,20 @@ export default {
 
     // Récupérer la valeur initiale si nécessaire
     this.quillEditor.root.innerHTML = this.eventDescription;
-
-
-
-
   },
 
   // Pour edit
   watch: {
-    currentSection(newSection) {
-      if (newSection === 'event') {
-        this.recreateEditor();
+    currentSection(newSection, oldSection) {
+
+
+      if (oldSection === 'event' && this.quillEditor) {
+        this.dellEditor();
+      }
+      if (newSection === 'modifyEvent') {
+        if (!this.quillEditor) {
+          this.recreateEditor();
+        }
       }
     },
   },
@@ -387,9 +446,41 @@ export default {
     }
   },
 
+
   methods: {
 
+    renderParticipantsChart() {
+      const ctx = document.getElementById('participantsChart').getContext('2d');
 
+      // Assurez-vous que participantsData est un tableau valide
+      const labels = this.participantsData.map(item => item.event_name); // Utiliser le nom de l'événement
+      const data = this.participantsData.map(item => parseInt(item.participants_count, 10)); // Convertir le nombre de participants en entier
+
+      // Créer le graphique
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Nombre de Participants',
+              data: data,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    },
 
     async loadPrestataires() {
       try {
@@ -413,10 +504,24 @@ export default {
       try {
         const response = await axios.get('http://localhost:3001/organisation/statistics');
         const data = response.data;
+
         console.log("Statistiques récupérées :", data);
+
         this.totalEvents = data.totalEvents;
         this.totalParticipants = data.totalParticipants;
         this.totalTicketPrestataire = data.totalTicketPrestataire;
+
+        // Nettoyer les données participantsByEvent avant de les assigner à participantsData
+        if (data.participantsByEvent) {
+          // Crée une copie propre des données sans les objets internes Vue.js
+          this.participantsData = JSON.parse(JSON.stringify(data.participantsByEvent));
+        } else {
+          this.participantsData = [];
+        }
+
+        // Ensuite, vous pouvez continuer avec le rendu du graphique
+        this.renderParticipantsChart();
+
       } catch (error) {
         console.error('Erreur lors de la récupération des statistiques:', error);
         alert('Erreur lors de la récupération des statistiques.');
@@ -430,7 +535,7 @@ export default {
       this.horaireFin = event.heure_fin || '';
       this.eventPrice = event.prix || null;
       this.eventImage = event.image || null;
-      this.currentSection = 'event';
+      this.currentSection = 'modifyEvent';
       this.editingEventId = event.id;
 
       this.$nextTick(() => {
@@ -567,8 +672,11 @@ export default {
       this.horaireDebut = '';
       this.horaireFin = '';
       this.eventPrice = null;
-      this.quillEditor.setText('');
       this.eventImage = null;
+
+      if (this.quillEditor) {
+        this.quillEditor.setText('');
+      }
     },
 
 

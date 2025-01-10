@@ -100,10 +100,7 @@
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
-
 export default {
   name: 'PaiementView',
   data() {
@@ -124,6 +121,7 @@ export default {
       expiryDate: '',
       cvv: '',
       nameOnCard: '',
+      id: null, // Will hold user ID
     };
   },
   created() {
@@ -148,15 +146,24 @@ export default {
     if (this.startDate && this.endDate) {
       this.calculateParkingPrice();
     }
+
+    this.setUserId();
   },
   mounted() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      this.id = user.id;
-      console.log('ID Utilisateur récupéré :', this.id);
-    }
+    this.setUserId();
   },
   methods: {
+    setUserId() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        this.id = user.id;
+        this.email = user.email;
+      } else {
+        // Generate a unique user ID if not logged in
+        const storedBillets = JSON.parse(localStorage.getItem("billets")) || [];
+        this.id = storedBillets.length ? storedBillets[storedBillets.length - 1].userId + 1 : 1;
+      }
+    },
     calculateParkingPrice() {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
@@ -164,34 +171,37 @@ export default {
       const differenceInDays = (differenceInTime / (1000 * 3600 * 24)) + 1;
       this.parkingPrice = differenceInDays * 50;
     },
-    async handlePayment() {
-      try {
-        const response = await axios.post('http://localhost:3001/billets', {
-          prenom: this.prenom,
-          nom: this.nom,
-          email: this.email,
-          selectedCourses: this.selectedCourses,
-          selectedHotel: this.selectedHotel,
-          startDate: this.startDate,
-          endDate: this.endDate,
-          hotelStartDate: this.hotelStartDate,
-          hotelEndDate: this.hotelEndDate,
-          isVIP: this.isVIP,
-          totalPrice: this.totalPrice,
-          userId: this.id || null,
-        });
+    handlePayment() {
+      // Créer un nouvel objet billet avec toutes les informations, même si certaines sont nulles.
+      const newBillet = {
+        id: Date.now(),  // ID unique généré avec un timestamp
+        userId: this.id ?? null,  // Si 'this.id' est null, on garde 'null'
+        course_nom: this.selectedCourses?.map(course => course.nom).join(", ") ?? 'Aucune course sélectionnée',
+        is_vip: this.isVIP ?? false,
+        prix_total: this.totalPrice + (this.isVIP ? 100 : 0),
+        date_paiement: new Date().toISOString(),
+        hotel_nom: this.selectedHotel?.nom ?? 'Aucun hôtel sélectionné',
+        date_debut_hotel: this.hotelStartDate ?? null,
+        date_fin_hotel: this.hotelEndDate ?? null,
+        date_debut_parking: this.startDate ?? null,
+        date_fin_parking: this.endDate ?? null,
+      };
 
-        console.log('Réponse de l’API :', response.data);
-        alert('Le paiement a été effectué avec succès!');
-        this.$router.push({ name: 'Home' });
-      } catch (error) {
-        console.error('Erreur lors du paiement :', error);
-        alert('Une erreur est survenue lors du paiement.');
-      }
-    },
+      // Sauvegarder le billet dans localStorage
+      const billets = JSON.parse(localStorage.getItem("billets")) || [];
+      billets.push(newBillet);
+      localStorage.setItem("billets", JSON.stringify(billets));
+
+      alert('Le paiement a été effectué avec succès!');
+      this.$router.push({ name: 'Home' });
+    }
+
   },
 };
 </script>
+
+
+
 
 
 

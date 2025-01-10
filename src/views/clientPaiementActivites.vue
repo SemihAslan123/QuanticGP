@@ -1,17 +1,21 @@
 <template>
   <div class="payment-container">
-    <h1>Page de Paiement</h1>
-
+    <!-- Bloc récapitulatif avec fond blanc -->
     <div class="cart-summary">
       <h2>Résumé de votre commande</h2>
       <div v-for="item in cart" :key="item.id" class="cart-item">
         <p>{{ item.name }} - {{ item.prix }} €</p>
+        <p><strong>Heure : </strong>{{ item.heure_debut }} - {{ item.heure_fin }}</p>
+        <p><strong>Description : </strong>{{ item.description }}</p>
+        <p><strong>Date : </strong>{{ item.date | formatDate }}</p>
+        <img v-if="item.image" :src="item.image" alt="Image de l'activité" class="activite-image" />
       </div>
       <div class="total">
         <p><strong>Total : {{ totalPrice }} €</strong></p>
       </div>
     </div>
 
+    <!-- Bloc de paiement -->
     <div class="payment-form">
       <h2>Informations de Paiement</h2>
       <form @submit.prevent="processPayment">
@@ -33,15 +37,14 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios';
 
+<script>
 export default {
   name: 'PaymentPage',
   data() {
     return {
-      cart: [],
-      paymentDetails: {
+      cart: [],  // Panier
+      paymentDetails: {  // Détails de paiement
         cardName: '',
         cardNumber: '',
         expiryDate: '',
@@ -50,47 +53,45 @@ export default {
     };
   },
   created() {
-    this.loadCart();
+    this.loadCart();  // Charger le panier depuis localStorage
   },
   methods: {
     loadCart() {
-      const user = JSON.parse(localStorage.getItem('user'));
+      const user = JSON.parse(localStorage.getItem('user')); // Récupérer l'utilisateur depuis le localStorage
       if (user && user.id) {
-        const cart = localStorage.getItem(`cart_${user.id}`);
+        const cart = localStorage.getItem(`cart_${user.id}`);  // Charger le panier spécifique à l'utilisateur
         this.cart = cart ? JSON.parse(cart) : [];
       }
     },
-    async processPayment() {
-
-      const user = JSON.parse(localStorage.getItem('user'));
+    processPayment() {
+      const user = JSON.parse(localStorage.getItem('user'));  // Récupérer l'utilisateur
       if (user && user.id) {
-        const activities = this.cart.map(item => ({
-          id_event: item.id,
+        const userActivities = JSON.parse(localStorage.getItem(`activities_${user.id}`)) || [];
+        const activitiesToAdd = this.cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          prix: item.prix,
+          heure_debut: item.heure_debut,
+          heure_fin: item.heure_fin,
+          description: item.description,
+          date: item.date,
+          image: item.image,
         }));
 
-        try {
-          const response = await axios.post('http://localhost:3001/clientPaiementActivite', {
-            userId: user.id,
-            activities: activities,
-          });
+        localStorage.setItem(`activities_${user.id}`, JSON.stringify([...userActivities, ...activitiesToAdd]));
 
-          this.clearCart();
-          console.log('Réponse de l’API :', response.data);
+        // Vider le panier après paiement
+        this.clearCart();
 
-          alert('Le paiement a été effectué avec succès!');
-
-          this.$router.push({ name: 'Home' });
-
-        } catch (error) {
-          console.error('Erreur lors de l\'inscription aux activités:', error);
-          alert('Une erreur est survenue lors de l\'inscription aux activités.');
-        }
+        alert('Le paiement a été effectué avec succès!');
+        this.$router.push({ name: 'Home' });  // Rediriger vers la page d'accueil
       }
     },
     clearCart() {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && user.id) {
-        localStorage.removeItem(`cart_${user.id}`);
+        localStorage.removeItem(`cart_${user.id}`);  // Retirer le panier du localStorage
+        this.cart = [];  // Vider le panier dans l'état du composant
       }
     },
   },
@@ -99,31 +100,56 @@ export default {
       return this.cart.reduce((total, item) => total + parseFloat(item.prix), 0).toFixed(2);
     },
   },
+  filters: {
+    formatDate(value) {
+      if (!value) return 'Non spécifiée';
+      const date = new Date(value);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
 .payment-container {
-  max-width: 600px;
-  margin: 100px auto;
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;  /* Centrer les blocs horizontalement */
+  align-items: center;      /* Centrer les blocs verticalement */
+  gap: 30px;
   padding: 20px;
-  background: #f8f9fa;
+  height: calc(100vh - 100px); /* Pour s'assurer que les blocs sont centrés sur toute la hauteur de la page */
+}
+
+.cart-summary {
+  flex: 0 0 600px;
+  background-color: white;  /* Fond blanc pour le récapitulatif */
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.cart-summary {
+.cart-item {
   margin-bottom: 20px;
 }
 
-.cart-item {
-  margin: 5px 0;
+.activite-image {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
 }
 
-.total {
-  font-size: 1.2em;
-  margin-top: 10px;
-  font-weight: bold;
+.payment-form {
+  flex: 0 0 300px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .payment-form label {
@@ -133,24 +159,24 @@ export default {
 
 .payment-form input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 8px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
 button {
-  width: 100%;
-  padding: 10px;
-  background-color: #27ae60;
+  background-color: #3498db;
   color: white;
   border: none;
+  padding: 10px 15px;
   border-radius: 5px;
-  font-size: 1em;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 button:hover {
-  background-color: #2ecc71;
+  background-color: #2980b9;
 }
+
 </style>

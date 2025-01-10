@@ -23,6 +23,7 @@
     <!-- Liste des avis -->
     <div v-if="avis.length > 0" class="avis-list">
       <div v-for="avisItem in avis" :key="avisItem.id_avis" class="avis-item">
+        <!-- Affichage du nom et prénom de l'utilisateur qui a commenté -->
         <p><strong>{{ avisItem.nom_utilisateur }} {{ avisItem.prenom_utilisateur }}</strong> :</p>
         <p>{{ avisItem.commentaire }}</p>
         <p><strong>Date :</strong> {{ formatDate(avisItem.date_avis) }}</p>
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { avisData } from '/src/data/data.js';
 
 export default {
   data() {
@@ -51,53 +52,50 @@ export default {
       user: null,
     };
   },
-  async mounted() {
+  mounted() {
+    // Récupérer l'utilisateur connecté depuis localStorage
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       this.isLoggedIn = true;
       this.user = user;
     }
 
-    try {
-      const response = await axios.get('http://localhost:3001/livreDor');
-      this.avis = response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des avis :', error);
-    }
+    // Charger les avis depuis le localStorage ou initialiser avec les données de `data.js`
+    const storedAvis = JSON.parse(localStorage.getItem('avis')) || avisData;
+    this.avis = storedAvis;
   },
   methods: {
-    async soumettreAvis() {
+    soumettreAvis() {
+      // Vérifier si l'avis et la note sont renseignés
       if (!this.nouvelAvis.trim()) {
         alert('Veuillez écrire un avis avant de soumettre.');
         return;
       }
 
-      try {
-        const response = await axios.post('http://localhost:3001/livreDor', {
-          userId: this.user.id,
-          commentaire: this.nouvelAvis,
-          note: this.note,
-        });
-
-        if (response.data.success) {
-          this.avis.push({
-            id_avis: response.data.id,
-            nom_utilisateur: this.user.nom_utilisateur,
-            prenom_utilisateur: this.user.prenom_utilisateur,
-            commentaire: this.nouvelAvis,
-            note: this.note,
-            date_avis: new Date().toISOString(), // Format de la date ISO
-          });
-          this.nouvelAvis = '';
-          this.note = 1;
-          location.reload();
-        } else {
-          alert('Erreur lors de l\'envoi de votre avis.');
-        }
-      } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'avis :', error);
+      if (!this.note) {
+        alert('Veuillez choisir une note avant de soumettre.');
+        return;
       }
+
+      // Créer un nouvel avis avec le nom, prénom et les autres informations
+      const newAvis = {
+        id_avis: Date.now(), // Génère un ID unique basé sur le timestamp
+        nom_utilisateur: this.user.nom,
+        prenom_utilisateur: this.user.prenom,
+        commentaire: this.nouvelAvis,
+        note: this.note,
+        date_avis: new Date().toISOString(), // Format de la date ISO
+      };
+
+      // Ajouter l'avis dans la liste et le sauvegarder dans localStorage
+      this.avis.push(newAvis);
+      localStorage.setItem('avis', JSON.stringify(this.avis));
+
+      // Réinitialiser le formulaire
+      this.nouvelAvis = '';
+      this.note = '';
     },
+
 
     // Fonction pour formater la date
     formatDate(date) {
@@ -178,9 +176,9 @@ h1 {
   margin-bottom: 10px;
   border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  word-wrap: break-word; /* Pour que le texte ne dépasse pas */
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  max-width: 100%; /* S'assurer que l'élément reste à l'intérieur de son conteneur */
+  max-width: 100%;
 }
 
 .avis-item p {

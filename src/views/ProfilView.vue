@@ -48,56 +48,49 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { billets } from "@/data/billetsData";  // Assure-toi de bien importer les données des billets externes
+import { activites } from "@/data/activitesClientData";  // Idem pour les activités externes
 
 export default {
-  name: 'UserBilletsView',
+  name: 'ProfilView',
   data() {
     return {
-      billets: [],
-      activites: []
+      billets: [],  // Liste des billets
+      activites: []  // Liste des activités
     };
   },
   created() {
-    this.fetchBillets();
-    this.fetchActivites();
+    this.fetchUserData();
   },
   methods: {
     logout() {
       localStorage.removeItem("user");
-      this.isLoggedIn = false;
-      this.user = null;
-      window.location.reload();
+      this.$router.push({ name: 'Login' });
     },
-    async fetchBillets() {
+    fetchUserData() {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) {
         this.$router.push({ name: 'Login' });
         return;
       }
 
-      try {
-        const response = await axios.get(`http://localhost:3001/profil/${user.id}/billets`);
-        this.billets = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des billets :', error);
-        this.billets = [];
-      }
-    },
-    async fetchActivites() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        this.$router.push({ name: 'Login' });
-        return;
-      }
+      // Récupérer les billets stockés dans localStorage
+      const storedBillets = JSON.parse(localStorage.getItem('billets')) || [];
 
-      try {
-        const response = await axios.get(`http://localhost:3001/profil/${user.id}/activites`);
-        this.activites = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des activités :', error);
-        this.activites = [];
-      }
+      // Fusionner les billets externes avec ceux stockés dans localStorage
+      this.billets = [
+        ...billets.filter(billet => billet.userId === user.id), // Billets externes
+        ...storedBillets.filter(billet => billet.userId === user.id) // Billets dans localStorage
+      ];
+
+      // Récupérer les activités stockées dans localStorage
+      const storedActivities = JSON.parse(localStorage.getItem(`activities_${user.id}`)) || [];
+
+      // Fusionner les activités externes avec celles stockées dans localStorage
+      this.activites = [
+        ...activites.filter(activite => activite.userId === user.id), // Activités externes
+        ...storedActivities // Activités dans localStorage
+      ];
     }
   },
   filters: {

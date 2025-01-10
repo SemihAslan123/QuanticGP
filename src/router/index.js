@@ -53,18 +53,11 @@ export default new Router({
       name: 'Login',
       component: Login,
     },
+
     {
       path: '/profil',
       name: 'Profil',
       component: Profil,
-      beforeEnter: (to, from, next) => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          next();
-        } else {
-          next({ name: 'Login' });
-        }
-      }
     },
     {
       path: '/prestataire',
@@ -112,9 +105,9 @@ export default new Router({
       component: ClientActivite,
     },
     {
-     path: '/clientPaiementActivite',
-     name: 'ClientPaiementActivite',
-     component: ClientPaiementActivites,
+      path: '/clientPaiementActivite',
+      name: 'ClientPaiementActivite',
+      component: ClientPaiementActivites,
     }
   ],
 });

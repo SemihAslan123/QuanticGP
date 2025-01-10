@@ -410,4 +410,29 @@ router.get('/prestataires', async (req, res) => {
     }
 });
 
+router.patch('/prestataires/:id', async (req, res) => {
+    const { id } = req.params;
+    const { type_utilisateur } = req.body;
+
+    console.log("ID reçu:", id); // Ajout de logs pour debug
+    console.log("type_utilisateur reçu:", type_utilisateur);
+
+    // Validation des entrées
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "ID invalide ou manquant." });
+    }
+    if (!type_utilisateur) {
+        return res.status(400).json({ error: "type_utilisateur est requis." });
+    }
+
+    try {
+        const query = 'UPDATE Utilisateurs SET type_utilisateur = $1 WHERE id_utilisateur = $2';
+        await pool.query(query, [type_utilisateur, id]);
+        res.status(200).json({ message: "Type utilisateur mis à jour avec succès." });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour :", error);
+        res.status(500).send({ message: "Erreur serveur lors de la mise à jour du type utilisateur." });
+    }
+});
+
 module.exports = router;

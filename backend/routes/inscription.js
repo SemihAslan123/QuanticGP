@@ -25,7 +25,7 @@ const pool = require("../database/db"); // Chemin vers votre configuration de la
  *                 type: string
  *               typeUtilisateur:
  *                 type: string
- *                 enum: ['admin', 'prestataire', 'client']
+ *                 enum: ['organisateur', 'prestataire', 'client']
  *     responses:
  *       201:
  *         description: Utilisateur créé avec succès.

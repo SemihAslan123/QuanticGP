@@ -354,10 +354,12 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 //import axios from 'axios';
 //import Chart from 'chart.js/auto';
-import eventData from '@/data/eventData';
+import { activities } from '@/data/activitesData';
 import prestatairesData from '@/data/prestatairesData'
-import reservationData from "@/data/reservationData";
-import { statisticsData } from "@/data/statistics";
+import reservationData from '@/data/reservationData';
+import { listeActiviteClient } from '@/data/listActiviteClient';
+
+//import { statisticsData } from "@/data/statistics";
 //import users from '@/data/users'
 
 import { Chart, registerables } from 'chart.js';
@@ -537,33 +539,48 @@ export default {
     loadStatistics() {
       try {
 
-        const data = statisticsData;
+        this.totalEvents = activities.length;
+        console.log(`Nombre total d'activités : ${this.totalEvents}`);
+        this.totalTicketPrestataire = reservationData.length;
+        // Liste des événements uniques avec leurs participants
+        const participantsByEvent = {};
 
-        console.log("Statistiques récupérées :", data);
 
-
-        this.totalEvents = data.totalEvents;
-        this.totalTicketPrestataire = data.totalTicketPrestataire;
-
-        // Calculer le total des participants uniques
-        const uniqueParticipants = new Set();
-        data.participantsByEvent.forEach(event => {
-          uniqueParticipants.add(event.eventId);
+        // Traiter la liste des activités client
+        listeActiviteClient.forEach(({ id_utilisateur, id_event }) => {
+          if (!participantsByEvent[id_event]) {
+            participantsByEvent[id_event] = new Set(); // Ensemble pour éviter les doublons
+          }
+          participantsByEvent[id_event].add(id_utilisateur);
         });
-        this.totalParticipants = uniqueParticipants.size;
 
+        // Construire les données pour le graphique
+        this.participantsData = Object.keys(participantsByEvent).map(eventId => {
+          const event = activities.find(activity => activity.id === parseInt(eventId, 10));
+          const participantCount = participantsByEvent[eventId].size;
 
-        this.participantsData = data.participantsByEvent;
+          return {
+            eventName: event ? event.name : `Événement #${eventId}`,
+            participants: participantCount,
+          };
+        });
 
+        // Calculer le nombre total de participants uniques
+        const allParticipants = new Set();
+        Object.values(participantsByEvent).forEach(participantSet => {
+          participantSet.forEach(participant => allParticipants.add(participant));
+        });
 
+        this.totalParticipants = allParticipants.size;
+        console.log(`Nombre total de participants uniques : ${this.totalParticipants}`);
+
+        // Rendre le graphique
         this.renderParticipantsChart();
       } catch (error) {
-        console.error("Erreur lors de la récupération des statistiques :", error);
-        alert("Erreur lors de la récupération des statistiques.");
+        console.error("Erreur lors du calcul des statistiques :", error);
+        alert("Erreur lors du calcul des statistiques.");
       }
     },
-
-
 
 
     editEvent(event) {
@@ -638,7 +655,7 @@ export default {
       try {
 
         const response = await new Promise((resolve) => {
-          setTimeout(() => resolve(eventData), 500);
+          setTimeout(() => resolve(activities), 500);
         });
 
         this.events = response;

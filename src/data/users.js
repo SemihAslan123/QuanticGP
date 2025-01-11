@@ -5,7 +5,7 @@ export const users = [
     password: "password123",
     prenom: "Jean",
     nom: "Dupont",  // Nom ajouté
-    type: "client",
+    type: "organisateur",
     sessionId: "12345"
   },
   {

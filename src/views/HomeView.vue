@@ -281,13 +281,13 @@
 
             <!-- Les groupes ci-dessous seront opérationnels seulement si withStands = true -->
                <g v-if="withStands">
-                  <g v-for="emplacement in emplacements_prestataires" :key="emplacement.id_emplacement"
+                  <g v-for="emplacement in emplacementsPrestataires" :key="emplacement.id" 
                      @mouseover="showTooltipPrestataire(emplacement)"
                      @mouseleave="hideTooltip"
                      @mousemove="moveTooltip">
                      <path
                         style="display:inline;opacity:0;fill:#000000;cursor:pointer;"
-                        :d="emplacement.coordonnees_svg"
+                        :d="emplacement.path"
                      />
                   </g>
                </g>
@@ -309,7 +309,7 @@
 
             <div class="toolTipStatut">{{ toolTipStatut }}</div>
 
-            <div class="infosContainer">
+            <div class="infosContainer" v-if="tooltipText">
 
                <div class="toolTipTextTitle">{{ toolTipTextTitle }}</div>
 
@@ -317,9 +317,10 @@
 
             </div>
 
-            <div class="toolTipPrix">{{ toolTipPrix }}</div>
+            <div class="toolTipPrix" v-if="toolTipPrix">{{ toolTipPrix }}</div>
 
-            <div class="toolTipCB">{{ toolTipCB }}</div>
+            <div class="toolTipCB" v-if="toolTipCB">{{ toolTipCB }}</div>
+
 
             <div class="toolTipDetails">{{ tooltipDetails }}</div>
 
@@ -356,7 +357,6 @@
 
 
    import homePageMap from '@/data/homePageMap.json';
-   import axios from 'axios';
 
    export default {
 
@@ -379,8 +379,7 @@
          currentImageMap: '/assets/homePage/CarteEvenementAvecStands.png',
          withStands: true,
          emplacementsPrincipaux: homePageMap.emplacementsPrincipaux,
-
-         emplacements_prestataires: [], 
+         emplacementsPrestataires: homePageMap.emplacementsPrestataires,
 
          // Les images de la bannière (SECTION 1)
          images : [
@@ -417,8 +416,6 @@
       this.timer = setInterval(this.updateCountdown, 60000);
 
       this.startBannerImageRotation();
-
-      this.fetchEmplacements();
    },
 
 
@@ -431,19 +428,6 @@
 
 
    methods: {
-
-
-      fetchEmplacements() {
-
-         axios.get('http://localhost:3001/carte/emplacements')  // Remplace par l'URL de ton API
-         .then(response => {
-            // Mettre à jour les données locales avec les emplacements récupérés
-            this.emplacements_prestataires = response.data;
-         })
-         .catch(error => {
-            console.error('Erreur lors de la récupération des emplacements:', error);
-         });
-      },
 
 
       getProgressPercentage() {
@@ -500,17 +484,18 @@
 
       showTooltipPrestataire(emplacement) {
 
-         this.toolTipName = emplacement.nom_emplacement;
-         this.toolTipNomPrestataire = emplacement.nom_prestataire;
+         this.toolTipName = emplacement.name;
+         this.toolTipNomPrestataire = emplacement.prestataire_name;
          this.toolTipStatut = emplacement.statut;
          this.toolTipTextTitle = 'Informations du prestataire :';
          this.tooltipText = emplacement.presentation_service;
-         this.tooltipDetails = emplacement.description;
-         this.toolTipPrix = '💵 Prix moyen : ' + emplacement.prix_moyen,
-         this.toolTipCB = '💳 Carte banquaire : ' + emplacement.carte_banquaire,
+         this.tooltipDetails = emplacement.details;
+         this.toolTipPrix = emplacement.prix_moyen ? '💵 Prix moyen : ' + emplacement.prix_moyen : '';
+         this.toolTipCB = emplacement.carte_banquaire ? '💳 Carte banquaire : ' + emplacement.carte_banquaire : '';
          this.tooltipVisible = true;
 
       },
+
 
 
       hideTooltip() {

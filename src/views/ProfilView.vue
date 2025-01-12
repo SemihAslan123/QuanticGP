@@ -66,6 +66,7 @@ export default {
     logout() {
       localStorage.removeItem("user");
       this.$router.push({ name: 'Login' });
+      window.location.reload();
     },
     fetchUserData() {
       const user = JSON.parse(localStorage.getItem('user'));

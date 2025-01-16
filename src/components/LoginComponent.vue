@@ -18,22 +18,9 @@
 
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-      <!-- Section lorsque l'utilisateur est connecté -->
       <div v-if="isLoggedIn" class="welcome-box">
-        <p>Bienvenue, {{ user?.prenom || "Utilisateur" }} {{ user?.nom || "" }} !</p> <!-- Affichage du prénom et du nom -->
-        <p><strong>Type d'utilisateur :</strong> {{ user?.type }}</p>
+        <p>Bienvenue, {{ user?.prenom || "Utilisateur" }} !</p>
         <p>Session ID : {{ user?.sessionId }}</p>
-
-        <div v-if="user?.type === 'client'">
-          <p>Vous êtes un <strong>Client</strong>.</p>
-        </div>
-        <div v-if="user?.type === 'organisateur'">
-          <p>Vous êtes un <strong>Organisateur</strong>.</p>
-        </div>
-        <div v-if="user?.type === 'prestataire'">
-          <p>Vous êtes un <strong>Prestataire</strong>.</p>
-        </div>
-
         <button class="logout-button" @click="logout">Se déconnecter</button>
       </div>
     </div>
@@ -41,8 +28,6 @@
 </template>
 
 <script>
-import { users } from '/src/data/users.js';
-
 export default {
   data() {
     return {
@@ -54,38 +39,44 @@ export default {
     };
   },
   mounted() {
-    // Vérifier si un utilisateur est déjà connecté en récupérant depuis localStorage
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
       this.isLoggedIn = true;
-      this.user = storedUser;
+      this.user = user;
     }
   },
   methods: {
     goToInscription() {
-      alert("Redirection vers la page d'inscription (à implémenter).");
+      this.$router.push({ name: "InscriptionView" });
     },
     logout() {
-      // Déconnexion : effacer l'utilisateur du localStorage et réinitialiser l'état
       localStorage.removeItem("user");
       this.isLoggedIn = false;
       this.user = null;
-      window.location.reload(); // Recharger la page pour rediriger l'utilisateur
+      window.location.reload()
     },
-    submitForm() {
-      // Recherche de l'utilisateur dans la liste des utilisateurs
-      const foundUser = users.find(user => user.email === this.email && user.password === this.password);
+    async submitForm() {
+      try {
+        const response = await fetch('http://localhost:3001/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: this.email, password: this.password }),
+        });
 
-      if (foundUser) {
-        // Si l'utilisateur est trouvé, on le stocke dans localStorage
-        localStorage.setItem('user', JSON.stringify(foundUser));
-        this.isLoggedIn = true;
-        this.user = foundUser;  // Mettre à jour l'objet utilisateur
-        this.errorMessage = '';  // Réinitialiser les erreurs
-        window.location.reload(); // Recharger la page pour appliquer l'état connecté
-      } else {
-        // Si l'utilisateur n'est pas trouvé
-        this.errorMessage = 'Email ou mot de passe incorrect.';
+        const data = await response.json();
+
+        if (data.success) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+          this.isLoggedIn = true;
+          this.user = data.user;
+          this.errorMessage = '';
+          window.location.reload()
+        } else {
+          this.errorMessage = 'Email ou mot de passe incorrect.';
+        }
+      } catch (error) {
+        console.error('Erreur lors de la connexion:', error);
+        this.errorMessage = 'Erreur du serveur, veuillez réessayer plus tard.';
       }
     },
   },
@@ -178,4 +169,5 @@ export default {
 .welcome-box {
   margin-top: 20px;
 }
+
 </style>

@@ -352,18 +352,10 @@
 <script>
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-//import axios from 'axios';
+import axios from 'axios';
 //import Chart from 'chart.js/auto';
-import { activities } from '@/data/activitesData';
-import prestatairesData from '@/data/prestatairesData'
-import reservationData from '@/data/reservationData';
-import { listeActiviteClient } from '@/data/listActiviteClient';
-
-//import { statisticsData } from "@/data/statistics";
-//import users from '@/data/users'
 
 import { Chart, registerables } from 'chart.js';
-
 Chart.register(...registerables);
 
 
@@ -380,9 +372,9 @@ export default {
       horaireFin: '',
       eventDescription: '',
       eventImage: null,
-      events: [],
-      reservations: [],
-      quillEditor: null,
+      events: [], // Liste des événements récupérés
+      reservations: [], // list des réservations stand
+      quillEditor: null, // Instance de l'éditeur Quill
       totalEvents: 0,
       totalParticipants: 0,
       totalTicketPrestataire: 0,
@@ -394,15 +386,6 @@ export default {
       participantsChart: null,
     };
   },
-
-  created() {
-    this.loadReservations(); // Charger les réservations
-    this.loadStatistics(); // Charger les stats
-    this.showEvents(); // Charger les events
-    this.loadPrestataires(); // Charger les prestataire
-  },
-
-
   mounted() {
 
 
@@ -467,23 +450,14 @@ export default {
   methods: {
 
     renderParticipantsChart() {
-      console.log("Démarrage du rendu du graphique...");
-      const chartElement = document.getElementById('participantsChart');
-      if (!chartElement) {
-        console.error('Élément du graphique introuvable.');
-        return;
-      }
+      const ctx = document.getElementById('participantsChart').getContext('2d');
 
-      const ctx = chartElement.getContext('2d');
+      // Assurez-vous que participantsData est un tableau valide
+      const labels = this.participantsData.map(item => item.event_name); // Utiliser le nom de l'événement
+      const data = this.participantsData.map(item => parseInt(item.participants_count, 10)); // Convertir le nombre de participants en entier
 
-      if (this.participantsChart) {
-        this.participantsChart.destroy();
-      }
-
-      const labels = this.participantsData.map(item => item.eventName);
-      const data = this.participantsData.map(item => parseInt(item.participants, 10));
-
-      this.participantsChart = new Chart(ctx, {
+      // Créer le graphique
+      new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
@@ -506,82 +480,53 @@ export default {
           },
         },
       });
-
-      console.log("Graphique rendu avec succès !");
     },
 
-
-    loadPrestataires() {
+    async loadPrestataires() {
       try {
-        // Charger les données locales
-        this.prestataires = prestatairesData;
-        console.log("Prestataires chargés localement :", JSON.stringify(this.prestataires, null, 2));
+        const response = await axios.get('http://localhost:3001/organisation/prestataires');
+        this.prestataires = response.data;
+        console.log("Données récupérées :", JSON.stringify(response.data, null, 2));
       } catch (error) {
-        console.error('Erreur lors du chargement des prestataires :', error);
-        alert('Erreur lors du chargement des prestataires.');
+        console.error('Erreur lors de la récupération des prestataires :', error);
+        alert('Erreur lors de la récupération des prestataires.');
       }
     },
-
 
 
 
     chargeStat() {
-      console.log("Changement de section : statistiques");
       this.currentSection = 'statistiques';
-
-      this.$nextTick(() => {
-        console.log("Vérification de l'élément canvas...");
-        this.loadStatistics();
-      });
+      this.loadStatistics();
     },
 
-
-    loadStatistics() {
+    async loadStatistics() {
       try {
+        const response = await axios.get('http://localhost:3001/organisation/statistics');
+        const data = response.data;
 
-        this.totalEvents = activities.length;
-        console.log(`Nombre total d'activités : ${this.totalEvents}`);
-        this.totalTicketPrestataire = reservationData.length;
-        // Liste des événements uniques avec leurs participants
-        const participantsByEvent = {};
+        console.log("Statistiques récupérées :", data);
 
+        this.totalEvents = data.totalEvents;
+        this.totalParticipants = data.totalParticipants;
+        this.totalTicketPrestataire = data.totalTicketPrestataire;
 
-        // Traiter la liste des activités client
-        listeActiviteClient.forEach(({ id_utilisateur, id_event }) => {
-          if (!participantsByEvent[id_event]) {
-            participantsByEvent[id_event] = new Set(); // Ensemble pour éviter les doublons
-          }
-          participantsByEvent[id_event].add(id_utilisateur);
-        });
+        // Nettoyer les données participantsByEvent avant de les assigner à participantsData
+        if (data.participantsByEvent) {
+          // Crée une copie propre des données sans les objets internes Vue.js
+          this.participantsData = JSON.parse(JSON.stringify(data.participantsByEvent));
+        } else {
+          this.participantsData = [];
+        }
 
-        // Construire les données pour le graphique
-        this.participantsData = Object.keys(participantsByEvent).map(eventId => {
-          const event = activities.find(activity => activity.id === parseInt(eventId, 10));
-          const participantCount = participantsByEvent[eventId].size;
-
-          return {
-            eventName: event ? event.name : `Événement #${eventId}`,
-            participants: participantCount,
-          };
-        });
-
-        // Calculer le nombre total de participants uniques
-        const allParticipants = new Set();
-        Object.values(participantsByEvent).forEach(participantSet => {
-          participantSet.forEach(participant => allParticipants.add(participant));
-        });
-
-        this.totalParticipants = allParticipants.size;
-        console.log(`Nombre total de participants uniques : ${this.totalParticipants}`);
-
-        // Rendre le graphique
+        // Ensuite, vous pouvez continuer avec le rendu du graphique
         this.renderParticipantsChart();
+
       } catch (error) {
-        console.error("Erreur lors du calcul des statistiques :", error);
-        alert("Erreur lors du calcul des statistiques.");
+        console.error('Erreur lors de la récupération des statistiques:', error);
+        alert('Erreur lors de la récupération des statistiques.');
       }
     },
-
 
     editEvent(event) {
       this.courseName = event.name || '';
@@ -602,18 +547,18 @@ export default {
     },
 
 
-    deleteEvent(eventId) {
-      if (confirm("Êtes-vous sûr de vouloir supprimer cette activité ?")) {
-        const eventIndex = this.events.findIndex(event => event.id === eventId);
-        if (eventIndex !== -1) {
-          this.events.splice(eventIndex, 1);
-          alert("Activité supprimée avec succès.");
-        } else {
-          alert("Activité non trouvée.");
+    async deleteEvent(eventId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet activitée ?")) {
+        try {
+          await axios.delete(`http://localhost:3001/organisation/events/${eventId}`);
+          alert("Activitée supprimé avec succès.");
+          this.showEvents();
+        } catch (error) {
+          console.error("Erreur lors de la suppression :", error);
+          alert("Erreur lors de la suppression de l'activitée.");
         }
       }
     },
-
 
     toggleDropdown() {
       this.dropdownVisible = !this.dropdownVisible;
@@ -653,16 +598,12 @@ export default {
     // Méthode pour afficher les événements
     async showEvents() {
       try {
-
-        const response = await new Promise((resolve) => {
-          setTimeout(() => resolve(activities), 500);
-        });
-
-        this.events = response;
-        this.currentSection = 'events';
+        const response = await axios.get('http://localhost:3001/organisation/events');  // URL pour récupérer les événements
+        this.events = response.data; // Enregistrer les événements dans la variable `events`
+        this.currentSection = 'events'; // Afficher la section des événements
       } catch (error) {
-        console.error("Erreur lors de la récupération des activités :", error);
-        alert("Erreur lors de la récupération des activités.");
+        console.error("Erreur lors de la récupération des activitées :", error);
+        alert("Erreur lors de la récupération des activitées.");
       }
     },
     goBackToCreateEvent() {
@@ -678,41 +619,42 @@ export default {
 
 
 
-    saveEvent() {
+    async saveEvent() {
       if (!this.courseName || !this.eventDate || !this.horaireDebut || !this.horaireFin || !this.eventPrice || !this.quillEditor.getText().trim() || !this.eventImage) {
         alert("Veuillez remplir tous les champs avant de sauvegarder.");
         return;
       }
 
       const eventDescription = this.quillEditor.getText().trim();
-      const newEventData = {
-        id: this.editingEventId || Date.now(),
-        name: this.courseName,
-        date: this.eventDate,
-        heure_debut: this.horaireDebut,
-        heure_fin: this.horaireFin,
-        prix: this.eventPrice,
-        description: eventDescription,
-        image: this.eventImage,
+      const eventData = {
+        courseName: this.courseName,
+        eventDate: this.eventDate,
+        horaireDebut: this.horaireDebut,
+        horaireFin: this.horaireFin,
+        eventPrice: this.eventPrice,
+        eventDescription: eventDescription,
+        eventImage: this.eventImage,
       };
 
-      if (this.editingEventId) {
-        const index = this.events.findIndex(event => event.id === this.editingEventId);
-        if (index !== -1) {
-          this.events.splice(index, 1, newEventData); // Remplacez l'ancien événement
-          alert("Événement mis à jour avec succès.");
+      try {
+        if (this.editingEventId) {
+          // Mise à jour d'un événement existant
+          const response = await axios.put(`http://localhost:3001/organisation/events/${this.editingEventId}`, eventData);
+          alert(response.data.message);
         } else {
-          alert("Événement non trouvé.");
+          // Création d'un nouvel événement
+          const response = await axios.post('http://localhost:3001/organisation/', eventData);
+          alert(response.data.message);
         }
-      } else {
-        this.events.push(newEventData); // Ajoutez un nouvel événement
-        alert("Événement créé avec succès.");
+
+        // Réinitialise le formulaire
+        this.resetForm();
+        this.showEvents();
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement :", error);
+        alert("Erreur lors de l'enregistrement de l'événement.");
       }
-
-      this.resetForm(); // Réinitialisez le formulaire
-      this.currentSection = 'events';
     },
-
 
     handleFileUpload(event) {
       const file = event.target.files[0];
@@ -741,65 +683,35 @@ export default {
     // voir les réservations
     async loadReservations() {
       try {
-        // Charge les données locales de réservation
-        this.reservations = reservationData.map((reservation) => {
-          // Trouver l'utilisateur correspondant à l'id_utilisateur
-          const utilisateur = prestatairesData.find(
-              (user) => user.id_utilisateur === reservation.id_utilisateur
-          );
-
-          return {
-            ...reservation,
-            nom_utilisateur: utilisateur ? utilisateur.nom_utilisateur : "Inconnu",
-            prenom_utilisateur: utilisateur ? utilisateur.prenom_utilisateur : "Inconnu",
-          };
-        });
-
-        console.log("Réservations enrichies :", this.reservations);
+        const response = await axios.get('http://localhost:3001/organisation/stands');
+        console.log("Données récupérées :", JSON.stringify(response.data, null, 2));
+        this.reservations = response.data;
       } catch (error) {
-        console.error("Erreur lors du chargement des réservations :", error);
-        alert("Erreur lors du chargement des réservations.");
+        console.error('Erreur lors de la récupération des réservations :', error);
+        alert('Erreur lors de la récupération des réservations.');
       }
     },
 
 
-
     //changer le statue d'une réservation
-    changeStatus(reservationId, newStatus) {
+    async changeStatus(reservationId, newStatus) {
       if (!["en attente", "acceptée", "refusée"].includes(newStatus)) {
         alert("Statut invalide.");
         return;
       }
 
       try {
-        // Trouver la réservation par son ID
-        const reservationIndex = this.reservations.findIndex(
-            (reservation) => reservation.id_reservation === reservationId
-        );
-
-        if (reservationIndex === -1) {
-          alert("Réservation non trouvée.");
-          return;
-        }
-
-        // Mettre à jour le statut de la réservation
-        this.reservations[reservationIndex].statut = newStatus;
+        await axios.patch(`http://localhost:3001/organisation/stands/${reservationId}`, {statut: newStatus});
         alert("Statut mis à jour avec succès.");
-
-
-        console.log(
-            `Statut de la réservation ID ${reservationId} mis à jour :`,
-            this.reservations[reservationIndex]
-        );
+        this.loadReservations(); // Recharge les données
       } catch (error) {
         console.error("Erreur lors de la mise à jour du statut :", error);
         alert("Erreur lors de la mise à jour du statut.");
       }
     },
 
-
-    changeService(prestataireId, newService) {
-      console.log("ID du prestataire :", prestataireId);
+    async changeService(prestataireId, newService) {
+      console.log("ID du prestataire:", prestataireId);
 
       if (!["prestataire", "client", "organisateur"].includes(newService)) {
         alert("Service invalide.");
@@ -807,18 +719,9 @@ export default {
       }
 
       try {
-        // Trouver le prestataire par ID
-        const prestataireIndex = this.prestataires.findIndex(p => p.id_utilisateur === prestataireId);
-
-        if (prestataireIndex !== -1) {
-          // Mettre à jour le type d'utilisateur
-          this.prestataires[prestataireIndex].type_utilisateur = newService;
-          alert("Service mis à jour avec succès.");
-        } else {
-          alert("Prestataire non trouvé.");
-        }
-
-        console.log("Prestataires après mise à jour :", JSON.stringify(this.prestataires, null, 2));
+        await axios.patch(`http://localhost:3001/organisation/prestataires/${prestataireId}`, { type_utilisateur: newService });
+        alert("Service mis à jour avec succès.");
+        this.loadPrestataires();
       } catch (error) {
         console.error("Erreur lors de la mise à jour du service :", error);
         alert("Erreur lors de la mise à jour du service.");
@@ -828,23 +731,16 @@ export default {
 
 
 
-
     //supprimer une réservation
-    deleteReservation(reservationId) {
+    async deleteReservation(reservationId) {
       if (confirm("Êtes-vous sûr de vouloir supprimer cette réservation ?")) {
-        // Trouver l'index de la réservation
-        const reservationIndex = this.reservations.findIndex(
-            (r) => r.id_reservation === reservationId
-        );
-
-        if (reservationIndex !== -1) {
-          // Supprimer la réservation de la liste
-          this.reservations.splice(reservationIndex, 1);
-          alert("Réservation supprimée localement.");
-
-          console.log(`Réservation avec ID ${reservationId} supprimée.`);
-        } else {
-          alert("Réservation non trouvée.");
+        try {
+          await axios.delete(`http://localhost:3001/organisation/stands/${reservationId}`);
+          alert("Réservation supprimée avec succès.");
+          this.loadReservations(); // Recharge les données
+        } catch (error) {
+          console.error("Erreur lors de la suppression :", error);
+          alert("Erreur lors de la suppression.");
         }
       }
     },

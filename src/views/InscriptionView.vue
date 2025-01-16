@@ -6,44 +6,44 @@
       <div class="form-group">
         <label for="prenomUtilisateur">Prénom</label>
         <input
-          v-model="prenomUtilisateur"
-          type="text"
-          id="prenomUtilisateur"
-          placeholder="John"
-          required
+            v-model="prenomUtilisateur"
+            type="text"
+            id="prenomUtilisateur"
+            placeholder="John"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="nomUtilisateur">Nom</label>
         <input
-          v-model="nomUtilisateur"
-          type="text"
-          id="nomUtilisateur"
-          placeholder="Doe"
-          required
+            v-model="nomUtilisateur"
+            type="text"
+            id="nomUtilisateur"
+            placeholder="Doe"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="emailUtilisateur">Email</label>
         <input
-          v-model="emailUtilisateur"
-          type="email"
-          id="emailUtilisateur"
-          placeholder="exemple@mail.com"
-          required
+            v-model="emailUtilisateur"
+            type="email"
+            id="emailUtilisateur"
+            placeholder="exemple@mail.com"
+            required
         />
       </div>
 
       <div class="form-group">
         <label for="motDePasse">Mot de passe</label>
         <input
-          v-model="motDePasse"
-          type="password"
-          id="motDePasse"
-          placeholder="********"
-          required
+            v-model="motDePasse"
+            type="password"
+            id="motDePasse"
+            placeholder="********"
+            required
         />
       </div>
 
@@ -59,11 +59,13 @@
       <button type="submit">S'inscrire</button>
     </form>
     <br>
-    <button class="login-button" @click="goToLogin">Se connecter</button>
+    <button class="login-button" type="submit" @click="goToLogin">Se connecter</button>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -75,40 +77,45 @@ export default {
     };
   },
   methods: {
-    goToLogin() {
+        goToLogin() {
       this.$router.push({ name: "Login" });
     },
-    handleRegistration() {
-      const newUser = {
-        prenomUtilisateur: this.prenomUtilisateur,
-        nomUtilisateur: this.nomUtilisateur,
-        emailUtilisateur: this.emailUtilisateur,
-        motDePasse: this.motDePasse,
-        typeUtilisateur: this.typeUtilisateur,
-      };
+    async handleRegistration() {
+      try {
+        const response = await axios.post("http://localhost:3001/inscription", {
+          prenomUtilisateur: this.prenomUtilisateur,
+          nomUtilisateur: this.nomUtilisateur,
+          emailUtilisateur: this.emailUtilisateur,
+          motDePasse: this.motDePasse,
+          typeUtilisateur: this.typeUtilisateur,
+        });
 
-      // Récupérer les utilisateurs existants depuis le localStorage
-      const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-      const emailExists = existingUsers.some(user => user.emailUtilisateur === newUser.emailUtilisateur);
-
-      if (emailExists) {
-        alert("Cet email est déjà utilisé. Veuillez en essayer un autre.");
-        return;
+        console.log("Réponse de l’API : ", response.data);
+        alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        this.$router.push({ name: "Login" }); // Redirige vers la page de connexion
+      } catch (error) {
+        console.error("Erreur lors de l'inscription : ", error);
+        alert("Une erreur est survenue lors de l'inscription.");
       }
-
-      // Ajouter le nouvel utilisateur et sauvegarder
-      existingUsers.push(newUser);
-      localStorage.setItem("users", JSON.stringify(existingUsers));
-
-      alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-      this.$router.push({ name: "Login" });
     },
   },
 };
 </script>
 
 <style scoped>
-/* Styles similaires à la version précédente */
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .registration-container {
   width: 100%;
   max-width: 600px;
@@ -158,17 +165,5 @@ button {
 
 button:hover {
   background-color: #c0392b;
-}
-
-.login-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 </style>

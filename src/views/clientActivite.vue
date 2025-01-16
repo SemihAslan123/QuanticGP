@@ -54,6 +54,7 @@
         <p><strong>Description :</strong> {{ activity.description }}</p>
         <img :src="activity.image" alt="Image de l'activité" class="activity-image" />
 
+        <!-- Condition pour désactiver le bouton si l'activité est déjà dans le panier -->
         <button
             :disabled="isActivityInCart(activity)"
             :class="{'disabled-button': isActivityInCart(activity)}"
@@ -64,6 +65,7 @@
       </div>
     </div>
 
+    <!-- Affichage du Panier à droite -->
     <div class="cart-container">
       <h2>Panier</h2>
       <div v-if="cart.length === 0" class="empty-cart">
@@ -85,15 +87,15 @@
 </template>
 
 <script>
-import { activities } from '/src/data/activitesData.js'; // Importer les données statiques
+import axios from 'axios';
 
 export default {
   name: 'ClientActiviteView',
   data() {
     return {
-      activities, // Utiliser directement les données statiques
-      cart: [],
-      filters: {
+      activities: [], // Toutes les activités récupérées
+      cart: [], // Panier vide
+      filters: { // Critères de filtrage
         name: '',
         date: '',
         minPrice: 0,
@@ -101,39 +103,49 @@ export default {
       },
     };
   },
+  created() {
+    this.fetchActivities(); // Appel à la méthode pour récupérer les activités
+    this.loadCart(); // Charger le panier de l'utilisateur connecté
+  },
   methods: {
+    async fetchActivities() {
+      try {
+        const response = await axios.get('http://localhost:3001/clientActivite');
+        this.activities = response.data; // Remplir le tableau avec les événements récupérés
+      } catch (error) {
+        console.error('Erreur lors de la récupération des événements :', error);
+        this.activities = []; // En cas d'erreur, afficher un tableau vide
+      }
+    },
     addToCart(activity) {
       if (!this.isActivityInCart(activity)) {
-        this.cart.push(activity);
-        this.saveCart();
+        this.cart.push(activity); // Ajouter l'activité au panier
+        this.saveCart(); // Sauvegarder le panier dans localStorage
       }
     },
     removeFromCart(activity) {
-      this.cart = this.cart.filter(item => item.id !== activity.id);
-      this.saveCart();
+      this.cart = this.cart.filter(item => item.id !== activity.id); // Retirer l'activité du panier
+      this.saveCart(); // Sauvegarder le panier dans localStorage
     },
     checkout() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user && user.id) {
-        localStorage.setItem(`cart_${user.id}`, JSON.stringify(this.cart)); // Sauvegarder le panier dans localStorage
-      }
-      this.$router.push('/clientPaiementActivite');  // Rediriger vers la page de paiement
+      this.$router.push('/clientPaiementActivite');
     },
+
     loadCart() {
-      const user = JSON.parse(localStorage.getItem('user'));
+      const user = JSON.parse(localStorage.getItem('user')); // Récupérer les infos de l'utilisateur connecté
       if (user && user.id) {
         const cart = localStorage.getItem(`cart_${user.id}`);
-        this.cart = cart ? JSON.parse(cart) : [];
+        this.cart = cart ? JSON.parse(cart) : []; // Charger le panier pour cet utilisateur
       }
     },
     saveCart() {
-      const user = JSON.parse(localStorage.getItem('user'));
+      const user = JSON.parse(localStorage.getItem('user')); // Récupérer l'utilisateur connecté
       if (user && user.id) {
-        localStorage.setItem(`cart_${user.id}`, JSON.stringify(this.cart));
+        localStorage.setItem(`cart_${user.id}`, JSON.stringify(this.cart)); // Sauvegarder le panier avec une clé unique à l'utilisateur
       }
     },
     isActivityInCart(activity) {
-      return this.cart.some(item => item.id === activity.id);
+      return this.cart.some(item => item.id === activity.id); // Vérifier si l'activité est déjà dans le panier
     },
   },
   computed: {
@@ -143,11 +155,15 @@ export default {
         const matchesDate = this.filters.date ? new Date(activity.date).toLocaleDateString() === new Date(this.filters.date).toLocaleDateString() : true;
         const matchesMinPrice = parseFloat(activity.prix) >= this.filters.minPrice;
         const matchesMaxPrice = parseFloat(activity.prix) <= this.filters.maxPrice;
+
         return matchesName && matchesDate && matchesMinPrice && matchesMaxPrice;
       });
     },
     totalPrice() {
-      return this.cart.reduce((total, item) => total + parseFloat(item.prix), 0).toFixed(2);
+      if (!Array.isArray(this.cart) || this.cart.length === 0) {
+        return 0; // Si le panier est vide ou mal initialisé, retourner 0
+      }
+      return this.cart.reduce((total, item) => total + parseFloat(item.prix), 0).toFixed(2); // Calculer la somme totale
     },
   },
   filters: {

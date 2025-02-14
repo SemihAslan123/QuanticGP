@@ -19,7 +19,7 @@
       <!-- Affiche l'onglet Activités si l'utilisateur est un client -->
       <router-link v-if="isLoggedIn && user?.type === 'client' || user?.type === 'organisateur'" to="/clientactivite" exact-active-class="active-link">ACTIVITÉS</router-link>
 
-      <!-- Affiche "Connexion" si l'utilisateur n'est pas connecté -->
+      <!-- Afficfhe "Connexion" si l'utilisateur n'est pas connecté -->
       <router-link v-if="!isLoggedIn" to="/login" class="login-link" exact-active-class="active-link">CONNEXION</router-link>
 
       <!-- Affiche "Profil" si l'utilisateur est connecté -->

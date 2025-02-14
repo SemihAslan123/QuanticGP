@@ -1,5 +1,31 @@
 <template>
   <div class="page-container">
+
+    <!-- Nouveau Bloc Planning -->
+    <section class="section-container planning-section">
+      <h1>Votre Planning</h1>
+      <div v-if="groupedPlanning.length === 0" class="no-items">
+        <p>Aucun événement prévu pour le moment.</p>
+      </div>
+      <div v-else class="planning-container">
+        <div v-for="group in groupedPlanning" :key="group.date" class="planning-day">
+          <h2>{{ group.date | formatDate }}</h2>
+          <ul class="planning-list">
+            <li v-for="item in group.items" :key="item.id">
+              <!-- Affichage différent selon le type -->
+              <div v-if="item.type === 'activite'" class="planning-item activite-item">
+                <strong>Activité :</strong> {{ item.name }} ({{ item.heure_debut }} - {{ item.heure_fin }})
+              </div>
+              <div v-else-if="item.type === 'billet'" class="planning-item billet-item">
+                <strong>Billet :</strong> {{ item.titre || ('Billet #' + item.id) }}
+                <span v-if="item.course_nom"> - Course : {{ item.course_nom }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- Bloc Billets -->
     <section class="section-container billets-section">
       <h1>Vos Billets</h1>
@@ -12,8 +38,14 @@
           <div class="card-details">
             <p><strong>Course :</strong> {{ billet.course_nom || 'Non spécifiée' }}</p>
             <p v-if="billet.hotel_nom"><strong>Hôtel :</strong> {{ billet.hotel_nom }}</p>
-            <p v-if="billet.date_debut_parking"><strong>Parking :</strong> {{ billet.date_debut_parking | formatDate }} - {{ billet.date_fin_parking | formatDate }}</p>
-            <p v-if="billet.date_debut_hotel"><strong>Hôtel :</strong> {{ billet.date_debut_hotel | formatDate }} - {{ billet.date_fin_hotel | formatDate }}</p>
+            <p v-if="billet.date_debut_parking">
+              <strong>Parking :</strong> {{ billet.date_debut_parking | formatDate }} -
+              {{ billet.date_fin_parking | formatDate }}
+            </p>
+            <p v-if="billet.date_debut_hotel">
+              <strong>Hôtel :</strong> {{ billet.date_debut_hotel | formatDate }} -
+              {{ billet.date_fin_hotel | formatDate }}
+            </p>
             <p><strong>VIP :</strong> {{ billet.is_vip ? 'Oui' : 'Non' }}</p>
             <p><strong>Prix :</strong> {{ billet.prix_total }} €</p>
             <p><strong>Date de paiement :</strong> {{ billet.date_paiement | formatDate }}</p>
@@ -36,11 +68,13 @@
             <p><strong>Heure :</strong> {{ activite.heure_debut }} - {{ activite.heure_fin }}</p>
             <p><strong>Prix :</strong> {{ activite.prix }} €</p>
             <p><strong>Description :</strong> {{ activite.description }}</p>
-            <img v-if="activite.image" :src="activite.image" alt="Image de l'activité" class="activite-image" />
+            <img v-if="activite.image" :src="activite.image" alt="Image de l'activité" class="activite-image"/>
           </div>
         </div>
       </div>
     </section>
+
+
 
     <!-- Déconnexion -->
     <button class="logout-button" @click="logout">Se déconnecter</button>
@@ -66,7 +100,7 @@ export default {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) {
         // Rediriger si pas connecté
-        this.$router.push({ name: 'Login' });
+        this.$router.push({name: 'Login'});
         return;
       }
       try {
@@ -83,6 +117,51 @@ export default {
     logout() {
       localStorage.removeItem("user");
       window.location.reload();
+    }
+  },
+  computed: {
+    // Fusionne billets et activites en ajoutant une propriété "planningDate"
+    mergedPlanning() {
+      const planningItems = [];
+
+      // Pour les activités, on utilise directement la date de l'événement
+      this.activites.forEach(act => {
+        planningItems.push({
+          ...act,
+          type: 'activite',
+          planningDate: act.date
+        });
+      });
+
+      // Pour les billets, on utilise la date (si présente) sinon la date de paiement
+      this.billets.forEach(b => {
+        const planningDate = b.date || b.date_paiement;
+        planningItems.push({
+          ...b,
+          type: 'billet',
+          planningDate
+        });
+      });
+
+      // Tri par date croissante
+      planningItems.sort((a, b) => new Date(a.planningDate) - new Date(b.planningDate));
+      return planningItems;
+    },
+    // Regroupe les éléments fusionnés par jour (clé formatée en YYYY-MM-DD)
+    groupedPlanning() {
+      const groups = {};
+      this.mergedPlanning.forEach(item => {
+        if (!item.planningDate) return;
+        const dateKey = new Date(item.planningDate).toISOString().split('T')[0];
+        if (!groups[dateKey]) {
+          groups[dateKey] = [];
+        }
+        groups[dateKey].push(item);
+      });
+      // Conversion de l'objet en tableau trié par date
+      return Object.keys(groups)
+          .sort()
+          .map(date => ({date, items: groups[date]}));
     }
   },
   filters: {
@@ -106,6 +185,7 @@ export default {
   margin: 50px auto;
 }
 
+/* Styles existants */
 h1 {
   font-size: 24px;
   color: #bababb;
@@ -141,7 +221,7 @@ h1 {
 }
 
 .card {
-  background-color: rgba(255, 255, 255, 0.8); /* Carte avec transparence */
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -154,7 +234,6 @@ h1 {
 
 .card h2 {
   font-size: 20px;
-  color: #3498db;
   margin-bottom: 15px;
 }
 
@@ -174,6 +253,7 @@ h1 {
   margin-top: 15px;
 }
 
+/* Bouton Déconnexion */
 .logout-button {
   padding: 12px 24px;
   background-color: #f44336;
@@ -191,5 +271,55 @@ h1 {
 
 .logout-button:hover {
   background-color: #e53935;
+}
+
+/* Nouvelles styles pour le bloc Planning */
+.planning-section h1 {
+  border-bottom: 2px solid #27ae60; /* Soulignement vert */
+}
+
+.planning-container {
+  margin-top: 20px;
+}
+
+.planning-day {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.8); /* Fond blanc transparent */
+  border-left: 4px solid #27ae60;
+  border-radius: 4px;
+}
+
+.planning-day h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #27ae60;
+}
+
+/* Suppression des puces de la liste */
+.planning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.planning-item {
+  margin-bottom: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.8); /* Fond blanc transparent */
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.planning-item.activite-item {
+  border-left: 4px solid #e74c3c;
+}
+
+.planning-item.billet-item {
+  border-left: 4px solid #3498db;
+}
+
+.planning-item strong {
+  margin-right: 5px;
 }
 </style>

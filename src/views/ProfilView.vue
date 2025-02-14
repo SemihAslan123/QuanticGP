@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import userService from '@/services/profilService';
 
 export default {
   name: 'UserBilletsView',
@@ -59,45 +59,30 @@ export default {
     };
   },
   created() {
-    this.fetchBillets();
-    this.fetchActivites();
+    this.loadData();
   },
   methods: {
+    async loadData() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        // Rediriger si pas connecté
+        this.$router.push({ name: 'Login' });
+        return;
+      }
+      try {
+        const [billets, activites] = await Promise.all([
+          userService.fetchBillets(user.id),
+          userService.fetchActivites(user.id)
+        ]);
+        this.billets = billets;
+        this.activites = activites;
+      } catch (error) {
+        console.error('Erreur lors du chargement des données :', error);
+      }
+    },
     logout() {
       localStorage.removeItem("user");
-      this.isLoggedIn = false;
-      this.user = null;
       window.location.reload();
-    },
-    async fetchBillets() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        this.$router.push({ name: 'Login' });
-        return;
-      }
-
-      try {
-        const response = await axios.get(`http://localhost:3001/profil/${user.id}/billets`);
-        this.billets = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des billets :', error);
-        this.billets = [];
-      }
-    },
-    async fetchActivites() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        this.$router.push({ name: 'Login' });
-        return;
-      }
-
-      try {
-        const response = await axios.get(`http://localhost:3001/profil/${user.id}/activites`);
-        this.activites = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des activités :', error);
-        this.activites = [];
-      }
     }
   },
   filters: {

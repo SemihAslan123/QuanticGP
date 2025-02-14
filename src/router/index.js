@@ -5,7 +5,7 @@ import Reservation from '../views/ReservationBilletView.vue';
 import FAQ from '../views/FAQView.vue';
 import Paiement from '../views/PaiementBilletView.vue';
 import Organisation from '../views/OrganisationView.vue';
-import Login from '../components/LoginComponent.vue';
+import Login from '../views/LoginView.vue';
 import Profil from "@/views/ProfilView.vue";
 import PrestataireView from "@/views/PrestataireView.vue";
 import ArticleHistoireCircuit from '../views/ArticleHistoireCircuit.vue';

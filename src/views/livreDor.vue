@@ -2,19 +2,15 @@
   <div class="livre-dor">
     <h1>Livre d'Or</h1>
 
-    <!-- Formulaire d'avis (en haut) -->
+    <!-- Formulaire d'avis (affiché si l'utilisateur est connecté) -->
     <div v-if="isLoggedIn" class="avis-form">
       <h2>Donnez votre avis</h2>
       <textarea v-model="nouvelAvis" placeholder="Écrivez votre avis ici..."></textarea>
 
-      <!-- Ajout d'un champ pour la note -->
+      <!-- Sélection de la note -->
       <select v-model="note" required>
-        <option value="" disabled selected>Sélectionner une note</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        <option value="" disabled>Sélectionner une note</option>
+        <option v-for="n in [1,2,3,4,5]" :key="n" :value="n">{{ n }}</option>
       </select>
 
       <button @click="soumettreAvis">Envoyer</button>
@@ -31,7 +27,7 @@
       </div>
     </div>
 
-    <!-- Message s'il n'y a pas encore d'avis -->
+    <!-- Message si aucun avis n'est présent -->
     <div v-else>
       <p>Aucun avis pour l'instant. Soyez le premier à donner votre avis !</p>
     </div>
@@ -39,9 +35,10 @@
 </template>
 
 <script>
-import axios from 'axios';
+import livreDorService from '@/services/livreDorService';
 
 export default {
+  name: 'LivreDorView',
   data() {
     return {
       avis: [],
@@ -52,15 +49,16 @@ export default {
     };
   },
   async mounted() {
+    // Vérifie la connexion utilisateur via localStorage
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       this.isLoggedIn = true;
       this.user = user;
     }
 
+    // Récupère les avis via le service
     try {
-      const response = await axios.get('http://localhost:3001/livreDor');
-      this.avis = response.data;
+      this.avis = await livreDorService.getAvis();
     } catch (error) {
       console.error('Erreur lors de la récupération des avis :', error);
     }
@@ -68,38 +66,42 @@ export default {
   methods: {
     async soumettreAvis() {
       if (!this.nouvelAvis.trim()) {
-        alert('Veuillez écrire un avis avant de soumettre.');
+        alert("Veuillez écrire un avis avant de soumettre.");
         return;
       }
 
       try {
-        const response = await axios.post('http://localhost:3001/livreDor', {
+        // Prépare le payload pour l'API
+        const payload = {
           userId: this.user.id,
           commentaire: this.nouvelAvis,
           note: this.note,
-        });
+        };
 
-        if (response.data.success) {
+        const response = await livreDorService.submitAvis(payload);
+
+        if (response.success) {
+          // Ajoute le nouvel avis à la liste et réinitialise le formulaire
           this.avis.push({
-            id_avis: response.data.id,
+            id_avis: response.id,
             nom_utilisateur: this.user.nom_utilisateur,
             prenom_utilisateur: this.user.prenom_utilisateur,
             commentaire: this.nouvelAvis,
             note: this.note,
-            date_avis: new Date().toISOString(), // Format de la date ISO
+            date_avis: new Date().toISOString(),
           });
           this.nouvelAvis = '';
-          this.note = 1;
-          location.reload();
+          this.note = '';
+          // Optionnel : recharger les avis ou notifier l'utilisateur
         } else {
-          alert('Erreur lors de l\'envoi de votre avis.');
+          alert("Erreur lors de l'envoi de votre avis.");
         }
       } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'avis :', error);
+        console.error("Erreur lors de l'envoi de l'avis :", error);
       }
     },
 
-    // Fonction pour formater la date
+    // Formate la date en affichant jour, mois, année, heure et minute
     formatDate(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
       return new Date(date).toLocaleDateString('fr-FR', options);
@@ -178,9 +180,8 @@ h1 {
   margin-bottom: 10px;
   border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  word-wrap: break-word; /* Pour que le texte ne dépasse pas */
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  max-width: 100%; /* S'assurer que l'élément reste à l'intérieur de son conteneur */
 }
 
 .avis-item p {

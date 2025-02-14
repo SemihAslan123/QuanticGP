@@ -58,15 +58,20 @@
 
       <button type="submit">S'inscrire</button>
     </form>
+
+    <!-- Message d'erreur affiché si un email est déjà utilisé ou autre erreur -->
+    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+
     <br>
-    <button class="login-button" type="submit" @click="goToLogin">Se connecter</button>
+    <button class="login-button" @click="goToLogin">Se connecter</button>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import inscriptionService from '@/services/inscriptionService';
 
 export default {
+  name: 'RegistrationView',
   data() {
     return {
       prenomUtilisateur: "",
@@ -74,56 +79,46 @@ export default {
       emailUtilisateur: "",
       motDePasse: "",
       typeUtilisateur: "client", // Valeur par défaut
+      errorMessage: "", // Pour afficher les erreurs d'inscription
     };
   },
   methods: {
-        goToLogin() {
+    goToLogin() {
       this.$router.push({ name: "Login" });
     },
     async handleRegistration() {
+      const userData = {
+        prenomUtilisateur: this.prenomUtilisateur,
+        nomUtilisateur: this.nomUtilisateur,
+        emailUtilisateur: this.emailUtilisateur,
+        motDePasse: this.motDePasse,
+        typeUtilisateur: this.typeUtilisateur,
+      };
+      console.log("Données envoyées :", userData);
       try {
-        const response = await axios.post("http://localhost:3001/inscription", {
-          prenomUtilisateur: this.prenomUtilisateur,
-          nomUtilisateur: this.nomUtilisateur,
-          emailUtilisateur: this.emailUtilisateur,
-          motDePasse: this.motDePasse,
-          typeUtilisateur: this.typeUtilisateur,
-        });
-
-        console.log("Réponse de l’API : ", response.data);
+        const response = await inscriptionService.register(userData);
+        console.log("Réponse de l’API : ", response);
         alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-        this.$router.push({ name: "Login" }); // Redirige vers la page de connexion
+        this.errorMessage = "";
+        await this.$router.push({name: "Login"}); // Redirection vers la page de connexion
       } catch (error) {
-        console.error("Erreur lors de l'inscription : ", error);
-        alert("Une erreur est survenue lors de l'inscription.");
+        console.error("Erreur lors de l'inscription : ", error.response?.data || error);
+        // Affiche le message d'erreur envoyé par le backend (ex: "L'email est déjà utilisé.")
+        this.errorMessage = error.response?.data?.error || "Une erreur est survenue lors de l'inscription.";
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-
-.login-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 .registration-container {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 90px auto 0;
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  margin-top: 90px;
 }
 
 h1 {
@@ -165,5 +160,22 @@ button {
 
 button:hover {
   background-color: #c0392b;
+}
+
+.login-button {
+  margin-top: 15px;
+  background-color: #4caf50;
+}
+
+.login-button:hover {
+  background-color: #45a049;
+}
+
+/* Style pour le message d'erreur */
+.error-message {
+  margin-top: 15px;
+  color: #e74c3c;
+  font-weight: bold;
+  text-align: center;
 }
 </style>

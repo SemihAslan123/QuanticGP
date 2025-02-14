@@ -22,11 +22,17 @@
 
         <!-- Hôtel sélectionné -->
         <p v-if="selectedHotel">
-          <strong>Hôtel choisi:</strong> {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }} - {{ selectedHotel.prix }}€
+          <strong>Hôtel choisi:</strong>
+          {{ selectedHotel.nom }} - {{ selectedHotel.emplacement }} - {{ selectedHotel.prix }}€
         </p>
+
         <!-- Affichage des dates de l'hôtel -->
-        <p v-if="hotelStartDate"><strong>Date d'arrivée à l'hôtel:</strong> {{ hotelStartDate }}</p>
-        <p v-if="hotelEndDate"><strong>Date de départ de l'hôtel:</strong> {{ hotelEndDate }}</p>
+        <p v-if="hotelStartDate">
+          <strong>Date d'arrivée à l'hôtel:</strong> {{ hotelStartDate }}
+        </p>
+        <p v-if="hotelEndDate">
+          <strong>Date de départ de l'hôtel:</strong> {{ hotelEndDate }}
+        </p>
 
         <!-- Affichage des dates de parking si sélectionnées -->
         <div v-if="startDate && endDate">
@@ -100,47 +106,56 @@
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import billetService from '@/services/billetService';
 
 export default {
   name: 'PaiementView',
   data() {
     return {
+      // Données client
       prenom: '',
       nom: '',
       email: '',
+      // Sélection(s)
       selectedHotel: null,
       selectedCourses: [],
-      startDate: null, // Parking start date
-      endDate: null, // Parking end date
-      hotelStartDate: null, // Hotel start date
-      hotelEndDate: null, // Hotel end date
+      // Dates
+      startDate: null,     // Parking start date
+      endDate: null,       // Parking end date
+      hotelStartDate: null,
+      hotelEndDate: null,
+      // Autres champs
       isVIP: false,
       totalPrice: 0,
       parkingPrice: 0,
+      // Champs de paiement
       cardNumber: '',
       expiryDate: '',
       cvv: '',
       nameOnCard: '',
+      // ID de l'utilisateur (si connecté)
+      id: null
     };
   },
   created() {
     const {
-      prenom, nom, email, selectedCourses, selectedHotel,
-      startDate, endDate, hotelStartDate, hotelEndDate,
+      prenom, nom, email,
+      selectedCourses, selectedHotel,
+      startDate, endDate,
+      hotelStartDate, hotelEndDate,
       isVIP, totalPrice
     } = this.$route.params;
 
+    // On stocke les infos reçues dans le data
     this.prenom = prenom;
     this.nom = nom;
     this.email = email;
     this.selectedCourses = selectedCourses || [];
     this.selectedHotel = selectedHotel;
-    this.startDate = startDate; // Parking dates
+    this.startDate = startDate;
     this.endDate = endDate;
-    this.hotelStartDate = hotelStartDate; // Hotel dates
+    this.hotelStartDate = hotelStartDate;
     this.hotelEndDate = hotelEndDate;
     this.isVIP = isVIP;
     this.totalPrice = totalPrice;
@@ -150,6 +165,7 @@ export default {
     }
   },
   mounted() {
+    // Récupérer éventuellement l'ID utilisateur stocké en localStorage
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       this.id = user.id;
@@ -165,25 +181,29 @@ export default {
       this.parkingPrice = differenceInDays * 50;
     },
     async handlePayment() {
-      try {
-        const response = await axios.post('http://localhost:3001/billets', {
-          prenom: this.prenom,
-          nom: this.nom,
-          email: this.email,
-          selectedCourses: this.selectedCourses,
-          selectedHotel: this.selectedHotel,
-          startDate: this.startDate,
-          endDate: this.endDate,
-          hotelStartDate: this.hotelStartDate,
-          hotelEndDate: this.hotelEndDate,
-          isVIP: this.isVIP,
-          totalPrice: this.totalPrice,
-          userId: this.id || null,
-        });
+      // On prépare le payload pour l'API
+      const payload = {
+        prenom: this.prenom,
+        nom: this.nom,
+        email: this.email,
+        selectedCourses: this.selectedCourses,
+        selectedHotel: this.selectedHotel,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        hotelStartDate: this.hotelStartDate,
+        hotelEndDate: this.hotelEndDate,
+        isVIP: this.isVIP,
+        totalPrice: this.totalPrice,
+        userId: this.id || null
+      };
 
-        console.log('Réponse de l’API :', response.data);
+      try {
+        // On appelle la méthode createBillet du service
+        const responseData = await billetService.createBillet(payload);
+        console.log('Réponse de l’API :', responseData);
+
         alert('Le paiement a été effectué avec succès!');
-        this.$router.push({ name: 'Home' });
+        this.$router.push({ name: 'Home' }); // Redirection vers la page d’accueil
       } catch (error) {
         console.error('Erreur lors du paiement :', error);
         alert('Une erreur est survenue lors du paiement.');
@@ -193,12 +213,8 @@ export default {
 };
 </script>
 
-
-
-
 <style scoped>
-
-.espace-au-dessus{
+.espace-au-dessus {
   padding-top: 90px;
 }
 

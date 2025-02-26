@@ -10,12 +10,12 @@
         <p><strong>Nom:</strong> {{ nom }}</p>
         <p><strong>Email:</strong> {{ email }}</p>
 
-        <!-- Liste des courses sélectionnées -->
+        <!-- Liste des courses sélectionnées avec leur date -->
         <div v-if="selectedCourses.length">
           <h3>Courses choisies :</h3>
           <ul>
             <li v-for="course in selectedCourses" :key="course.id">
-              {{ course.nom }} - {{ course.prix }}€
+              {{ course.nom }} ({{ course.date }}) - {{ course.prix }}€
             </li>
           </ul>
         </div>
@@ -55,47 +55,47 @@
           <div class="form-group">
             <label for="cardNumber">Numéro de carte</label>
             <input
-                v-model="cardNumber"
-                type="text"
-                id="cardNumber"
-                placeholder="1234 5678 9012 3456"
-                maxlength="19"
-                required
+              v-model="cardNumber"
+              type="text"
+              id="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              required
             />
           </div>
 
           <div class="form-group">
             <label for="expiryDate">Date d'expiration</label>
             <input
-                v-model="expiryDate"
-                type="text"
-                id="expiryDate"
-                placeholder="MM/AA"
-                maxlength="5"
-                required
+              v-model="expiryDate"
+              type="text"
+              id="expiryDate"
+              placeholder="MM/AA"
+              maxlength="5"
+              required
             />
           </div>
 
           <div class="form-group">
             <label for="cvv">Code de sécurité (CVV)</label>
             <input
-                v-model="cvv"
-                type="password"
-                id="cvv"
-                placeholder="XXX"
-                maxlength="3"
-                required
+              v-model="cvv"
+              type="password"
+              id="cvv"
+              placeholder="XXX"
+              maxlength="3"
+              required
             />
           </div>
 
           <div class="form-group">
             <label for="nameOnCard">Nom sur la carte</label>
             <input
-                v-model="nameOnCard"
-                type="text"
-                id="nameOnCard"
-                placeholder="John Doe"
-                required
+              v-model="nameOnCard"
+              type="text"
+              id="nameOnCard"
+              placeholder="John Doe"
+              required
             />
           </div>
 
@@ -147,7 +147,7 @@ export default {
       isVIP, totalPrice
     } = this.$route.params;
 
-    // On stocke les infos reçues dans le data
+    // Stockage des infos reçues dans le data
     this.prenom = prenom;
     this.nom = nom;
     this.email = email;
@@ -165,7 +165,7 @@ export default {
     }
   },
   mounted() {
-    // Récupérer éventuellement l'ID utilisateur stocké en localStorage
+    // Récupération de l'ID utilisateur stocké en localStorage, le cas échéant
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       this.id = user.id;
@@ -181,7 +181,7 @@ export default {
       this.parkingPrice = differenceInDays * 50;
     },
     async handlePayment() {
-      // On prépare le payload pour l'API
+      // Préparation du payload pour l'API incluant toutes les informations de réservation
       const payload = {
         prenom: this.prenom,
         nom: this.nom,
@@ -198,7 +198,7 @@ export default {
       };
 
       try {
-        // On appelle la méthode createBillet du service
+        // Appel de la méthode createBillet du service
         const responseData = await billetService.createBillet(payload);
         console.log('Réponse de l’API :', responseData);
 

@@ -32,6 +32,9 @@ const pool = require('../database/db'); // Chemin vers votre configuration de la
  *                     nom:
  *                       type: string
  *                       description: Nom du cours sélectionné.
+ *                     date:
+ *                       type: string
+ *                       description: Date du cours (format YYYY-MM-DD).
  *               selectedHotel:
  *                 type: object
  *                 properties:
@@ -81,11 +84,11 @@ router.post('/', async (req, res) => {
         selectedHotel,
         startDate,
         endDate,
-        hotelStartDate, // Nouvelle donnée ajoutée
-        hotelEndDate,   // Nouvelle donnée ajoutée
+        hotelStartDate,
+        hotelEndDate,
         isVIP,
         totalPrice,
-        userId,  // Ajout de userId dans le corps de la requête
+        userId,
     } = req.body;
 
     if (!prenom || !nom || !email || !totalPrice) {
@@ -108,26 +111,31 @@ router.post('/', async (req, res) => {
             `;
             const valuesAcheteur = [prenom, nom, email];
             const acheteurResult = await pool.query(queryAcheteur, valuesAcheteur);
-            acheteurId = acheteurResult.rows[0].id; // L'ID de l'acheteur non inscrit
+            acheteurId = acheteurResult.rows[0].id;
         }
 
-        // Insertion dans la table billet
+        // On récupère le nom de toutes les courses et la date de la première course
+        const courseNom = selectedCourses.map(course => course.nom).join(', ');
+        const courseDate = selectedCourses.length ? selectedCourses[0].date : null; // Doit être au format YYYY-MM-DD
+
+        // Insertion dans la table billet avec la date de la première course dans course_date
         const queryBillet = `
             INSERT INTO billet (
-                acheteur_id, utilisateur_id, course_nom, hotel_nom, date_debut_parking,
+                acheteur_id, utilisateur_id, course_nom, course_date, hotel_nom, date_debut_parking,
                 date_fin_parking, date_debut_hotel, date_fin_hotel, is_vip, prix_total
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
         `;
         const valuesBillet = [
-            acheteurId || null,   // Si l'utilisateur est connecté, acheteurId est null
-            utilisateurId || null,  // Si l'acheteur est non inscrit, utilisateurId est null
-            selectedCourses.map(course => course.nom).join(', '),
+            acheteurId || null,                      // Si l'utilisateur est connecté, acheteurId est null
+            utilisateurId || null,                     // Sinon, utilisateurId est null
+            courseNom,
+            courseDate,
             selectedHotel ? selectedHotel.nom : null,
             startDate,
             endDate,
-            hotelStartDate,   // Ajout des dates d'hôtel
-            hotelEndDate,     // Ajout des dates d'hôtel
+            hotelStartDate,
+            hotelEndDate,
             isVIP,
             totalPrice,
         ];

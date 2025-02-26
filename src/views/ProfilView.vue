@@ -4,27 +4,12 @@
     <!-- Nouveau Bloc Planning -->
     <section class="section-container planning-section">
       <h1>Votre Planning</h1>
-      <div v-if="groupedPlanning.length === 0" class="no-items">
-        <p>Aucun événement prévu pour le moment.</p>
-      </div>
-      <div v-else class="planning-container">
-        <div v-for="group in groupedPlanning" :key="group.date" class="planning-day">
-          <h2>{{ group.date | formatDate }}</h2>
-          <ul class="planning-list">
-            <li v-for="item in group.items" :key="item.id">
-              <!-- Affichage différent selon le type -->
-              <div v-if="item.type === 'activite'" class="planning-item activite-item">
-                <strong>Activité :</strong> {{ item.name }} ({{ item.heure_debut }} - {{ item.heure_fin }})
-              </div>
-              <div v-else-if="item.type === 'billet'" class="planning-item billet-item">
-                <strong>Billet :</strong> {{ item.titre || ('Billet #' + item.id) }}
-                <span v-if="item.course_nom"> - Course : {{ item.course_nom }}</span>
-              </div>
-            </li>
-          </ul>
-        </div>
+      <div>
+        <Calendar />
       </div>
     </section>
+
+
 
     <!-- Bloc Billets -->
     <section class="section-container billets-section">
@@ -37,6 +22,9 @@
           <h2>Billet #{{ billet.id }}</h2>
           <div class="card-details">
             <p><strong>Course :</strong> {{ billet.course_nom || 'Non spécifiée' }}</p>
+            <p v-if="billet.course_date">
+              <strong>Date de la course :</strong> {{ billet.course_date | formatDate }}
+            </p>
             <p v-if="billet.hotel_nom"><strong>Hôtel :</strong> {{ billet.hotel_nom }}</p>
             <p v-if="billet.date_debut_parking">
               <strong>Parking :</strong> {{ billet.date_debut_parking | formatDate }} -
@@ -74,8 +62,6 @@
       </div>
     </section>
 
-
-
     <!-- Déconnexion -->
     <button class="logout-button" @click="logout">Se déconnecter</button>
   </div>
@@ -83,9 +69,11 @@
 
 <script>
 import userService from '@/services/profilService';
+import Calendar from "@/components/CalendarVue.vue";
 
 export default {
   name: 'UserBilletsView',
+  components: { Calendar },
   data() {
     return {
       billets: [],
@@ -100,7 +88,7 @@ export default {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) {
         // Rediriger si pas connecté
-        this.$router.push({name: 'Login'});
+        this.$router.push({ name: 'Login' });
         return;
       }
       try {
@@ -133,9 +121,9 @@ export default {
         });
       });
 
-      // Pour les billets, on utilise la date (si présente) sinon la date de paiement
+      // Pour les billets, on utilise course_date (si présente) sinon la date de paiement
       this.billets.forEach(b => {
-        const planningDate = b.date || b.date_paiement;
+        const planningDate = b.course_date || b.date_paiement;
         planningItems.push({
           ...b,
           type: 'billet',
@@ -161,7 +149,7 @@ export default {
       // Conversion de l'objet en tableau trié par date
       return Object.keys(groups)
           .sort()
-          .map(date => ({date, items: groups[date]}));
+          .map(date => ({ date, items: groups[date] }));
     }
   },
   filters: {
@@ -185,7 +173,6 @@ export default {
   margin: 50px auto;
 }
 
-/* Styles existants */
 h1 {
   font-size: 24px;
   color: #bababb;
@@ -197,11 +184,11 @@ h1 {
 }
 
 .billets-section h1 {
-  border-bottom: 2px solid #3498db; /* Soulignement bleu */
+  border-bottom: 2px solid #3498db;
 }
 
 .activites-section h1 {
-  border-bottom: 2px solid #e74c3c; /* Soulignement rouge */
+  border-bottom: 2px solid #e74c3c;
 }
 
 .section-container {
@@ -253,7 +240,6 @@ h1 {
   margin-top: 15px;
 }
 
-/* Bouton Déconnexion */
 .logout-button {
   padding: 12px 24px;
   background-color: #f44336;
@@ -273,9 +259,9 @@ h1 {
   background-color: #e53935;
 }
 
-/* Nouvelles styles pour le bloc Planning */
+/* Bloc Planning */
 .planning-section h1 {
-  border-bottom: 2px solid #27ae60; /* Soulignement vert */
+  border-bottom: 2px solid #27ae60;
 }
 
 .planning-container {
@@ -285,7 +271,7 @@ h1 {
 .planning-day {
   margin-bottom: 30px;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.8); /* Fond blanc transparent */
+  background: rgba(255, 255, 255, 0.8);
   border-left: 4px solid #27ae60;
   border-radius: 4px;
 }
@@ -296,7 +282,6 @@ h1 {
   color: #27ae60;
 }
 
-/* Suppression des puces de la liste */
 .planning-list {
   list-style: none;
   padding: 0;
@@ -306,7 +291,7 @@ h1 {
 .planning-item {
   margin-bottom: 8px;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.8); /* Fond blanc transparent */
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

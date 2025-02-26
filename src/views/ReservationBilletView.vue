@@ -2,74 +2,68 @@
   <div class="conteneur-reservation-billet">
     <h1>Réservation de billet</h1>
     <form @submit.prevent="submitReservation">
-
-      <!-- Afficher les champs prénom, nom et email uniquement si l'utilisateur n'est pas connecté -->
+      <!-- Champs utilisateur si non connecté -->
       <div v-if="!isLoggedIn">
         <div>
           <label for="prenom">Prénom:</label>
           <input type="text" v-model="prenom" required />
         </div>
-
         <div>
           <label for="nom">Nom:</label>
           <input type="text" v-model="nom" required />
         </div>
-
         <div>
           <label for="email">Email:</label>
           <input type="text" v-model="email" required />
         </div>
       </div>
 
-      <!-- Affichage des courses sous forme de cartes -->
+      <!-- Courses -->
       <h2>Choisissez vos courses :</h2>
       <div class="course-cards">
         <div
-            v-for="course in courses"
-            :key="course.id"
-            class="course-card"
-            @click="toggleCourseSelection(course)"
-            :class="{ selected: selectedCourses.includes(course) }"
+          v-for="course in courses"
+          :key="course.id"
+          class="course-card"
+          @click="toggleCourseSelection(course)"
+          :class="{ selected: selectedCourses.includes(course) }"
         >
           <img :src="course.image" alt="Image de la course" class="course-image" />
           <h3>{{ course.nom }}</h3>
+          <p>Date : {{ course.date }}</p>
           <p>{{ course.description }}</p>
           <p>Prix : {{ course.prix }}€</p>
         </div>
       </div>
 
-      <!-- Sélection des dates de parking -->
+      <!-- Dates de parking -->
       <h2>Choisissez vos dates de parking :</h2>
       <div class="parking-dates">
         <label for="startDate">Date de début du parking :</label>
         <input
-            type="date"
-            id="startDate"
-            v-model="startDate"
-            :min="'2025-06-15'"
-            :max="'2025-06-19'"
-            @change="updateMaxEndDate"
+          type="date"
+          id="startDate"
+          v-model="startDate"
+          :min="'2025-06-15'"
+          :max="'2025-06-19'"
+          @change="updateMaxEndDate"
         />
-
-        <!-- Affichage conditionnel de la date de fin -->
         <label v-if="startDate" for="endDate">Date de fin du parking :</label>
         <input
-            v-if="startDate"
-            type="date"
-            id="endDate"
-            v-model="endDate"
-            :min="startDate"
-            :max="'2025-06-19'"
-            @change="calculateTotal"
+          v-if="startDate"
+          type="date"
+          id="endDate"
+          v-model="endDate"
+          :min="startDate"
+          :max="'2025-06-19'"
+          @change="calculateTotal"
         />
       </div>
-
-      <!-- Affichage du bouton d'annulation de parking si des dates sont choisies -->
       <div v-if="startDate || endDate">
         <button id="annulation" type="button" @click="cancelParkingSelection">Annuler la sélection de parking</button>
       </div>
 
-      <!-- Case à cocher pour un billet VIP -->
+      <!-- Billet VIP -->
       <h2>Souhaitez-vous un billet VIP ?</h2>
       <div class="checkbox-group">
         <label for="vip" class="checkbox-label">
@@ -77,73 +71,62 @@
           <span class="checkbox-custom"></span> Billet VIP (+100€)
         </label>
       </div>
-
-      <!-- Bouton "C'est quoi VIP ?" pour afficher plus d'informations -->
       <div class="vip-info">
         <button type="button" @click="toggleVipInfo" id="info-button">C'est quoi VIP ?</button>
         <p v-if="isVipInfoVisible" class="vip-description">
           Le billet VIP offre une expérience premium, y compris un accès exclusif aux zones réservées, des boissons gratuites, et des sièges prioritaires.
-          Profitez de votre événement dans les meilleures conditions.
         </p>
       </div>
 
-      <!-- Affichage des hôtels sous forme de cartes -->
+      <!-- Hôtels -->
       <h2>Choisissez un hôtel :</h2>
       <div class="hotel-cards">
         <div
-            v-for="hotel in hotels"
-            :key="hotel.id"
-            class="hotel-card"
-            @click="selectHotel(hotel)"
-            :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
+          v-for="hotel in hotels"
+          :key="hotel.id"
+          class="hotel-card"
+          @click="selectHotel(hotel)"
+          :class="{ selected: selectedHotel && selectedHotel.id === hotel.id }"
         >
           <img :src="hotel.image" alt="Image de l'hôtel" class="hotel-image" />
           <h3>{{ hotel.nom }}</h3>
           <p>Emplacement : {{ hotel.emplacement }}</p>
-          <p> Prix : {{ hotel.prix }}€</p>
+          <p>Prix : {{ hotel.prix }}€</p>
         </div>
       </div>
-
-      <!-- Sélection des dates pour l'hôtel -->
       <h2>Choisissez vos dates pour l'hôtel :</h2>
       <div class="hotel-dates" v-if="selectedHotel">
         <label for="hotelStartDate">Date de début :</label>
         <input
-            type="date"
-            id="hotelStartDate"
-            v-model="hotelStartDate"
-            :min="'2025-06-15'"
-            :max="'2025-06-19'"
-            @change="updateMaxHotelEndDate"
+          type="date"
+          id="hotelStartDate"
+          v-model="hotelStartDate"
+          :min="'2025-06-15'"
+          :max="'2025-06-19'"
+          @change="updateMaxHotelEndDate"
         />
-
         <label v-if="hotelStartDate" for="hotelEndDate">Date de fin :</label>
         <input
-            v-if="hotelStartDate"
-            type="date"
-            id="hotelEndDate"
-            v-model="hotelEndDate"
-            :min="hotelStartDate"
-            :max="'2025-06-19'"
-            @change="calculateTotal"
+          v-if="hotelStartDate"
+          type="date"
+          id="hotelEndDate"
+          v-model="hotelEndDate"
+          :min="hotelStartDate"
+          :max="'2025-06-19'"
+          @change="calculateTotal"
         />
       </div>
-
-      <!-- Bouton pour annuler la sélection de l'hôtel -->
       <div v-if="selectedHotel">
         <button id="annulation" @click="cancelHotelSelection">Annuler la sélection de l'hôtel</button>
       </div>
 
-      <!-- Affichage du prix total -->
+      <!-- Prix total -->
       <div>
         <h2>Prix Total: {{ totalPrice }}€</h2>
       </div>
-
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-
-      <!-- Bouton pour soumettre le formulaire -->
       <button type="submit">Payer</button>
     </form>
   </div>
@@ -168,24 +151,28 @@ export default {
         { id: 1, nom: "Riviera Marriott", emplacement: "Ouest", image: "/assets/hotels/hotel1.jpeg", prix: 600 },
         { id: 2, nom: "Fairmont Monte Carlo", emplacement: "Est", image: "/assets/hotels/hotel2.jpg", prix: 700 },
       ],
+      // Mise à jour des dates au format ISO
       courses: [
         {
           id: 1,
-          nom: "Course 1 Jour 1",
+          nom: "Course 1",
+          date: "2025-07-17",  // format ISO (YYYY-MM-DD)
           prix: 500,
           description: "Course de Formule 1 standard en journée, idéale pour les amateurs souhaitant profiter de l'action à moindre coût.",
           image: "/assets/courses/course1.jpeg"
         },
         {
           id: 2,
-          nom: "Course 2 Jour 2",
+          nom: "Course 2",
+          date: "2025-07-18",  // format ISO
           prix: 850,
           description: "Course en fin de journée, incluant un accès VIP aux zones de ravitaillement et des stands pour observer les équipes de près.",
           image: "/assets/courses/course2.png"
         },
         {
           id: 3,
-          nom: "Course 3 Jour 3",
+          nom: "Course 3",
+          date: "2025-07-19",  // format ISO
           prix: 1200,
           description: "Course nocturne spectaculaire avec accès exclusif aux coulisses et une rencontre avec les pilotes après la course.",
           image: "/assets/courses/course3.png"
@@ -313,8 +300,6 @@ export default {
 </script>
 
 
-
-
 <style scoped>
 /* Style du bouton d'information "C'est quoi VIP ?" */
 .vip-info {
@@ -347,7 +332,6 @@ export default {
   max-width: 30%;
   margin: 10px auto;
 }
-
 
 .error-message {
   color: #e74c3c;
@@ -564,7 +548,6 @@ form {
   border-color: #06be06;
 }
 
-
 .checkbox-label input:checked + .checkbox-custom::after {
   transform: scale(180%);
 }
@@ -576,7 +559,7 @@ form {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: -18px;
-  border: 1px solid black; /* Ajoute une bordure rouge fine autour de l'image */
+  border: 1px solid black; /* Ajoute une bordure noire fine autour de l'image */
 }
 
 /* Style des boutons de navigation (flèches) */
@@ -663,6 +646,4 @@ button[type="button"]:active {
   color: #fff;
   font-size: 0.9em;
 }
-
-
 </style>

@@ -84,6 +84,7 @@ CREATE TABLE billet (
     acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
     utilisateur_id INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
     course_nom VARCHAR(100),
+    course_date DATE,
     hotel_nom VARCHAR(100),
     date_debut_parking DATE,
     date_fin_parking DATE,
@@ -167,10 +168,10 @@ VALUES
     (6, 'Assistance client', 'Service', 'Aide et informations aux visiteurs', '2024-11-22', '11:00', 1);
 
 -- Insertion dans la table billet
-INSERT INTO billet (utilisateur_id, course_nom, hotel_nom, date_debut_parking, date_fin_parking, date_debut_hotel, date_fin_hotel, prix_total)
+INSERT INTO billet (utilisateur_id, course_nom, course_date, hotel_nom, date_debut_parking, date_fin_parking, date_debut_hotel, date_fin_hotel, prix_total)
 VALUES
-    (7, 'Course A', 'Hotel ABC', '2024-12-01', '2024-12-05', '2024-12-01', '2024-12-05', 120.50),
-    (8, 'Course B', NULL, NULL, NULL, NULL, NULL, 150.00);
+    (7, 'Course A','2025-12-02', 'Hotel ABC', '2024-12-01', '2024-12-05', '2024-12-01', '2024-12-05', 120.50),
+    (8, 'Course B','2025-10-02', NULL, NULL, NULL, NULL, NULL, 150.00);
 
 -- Insertion dans la table reservation_stand
 INSERT INTO reservation_stand (id_utilisateur, id_stand, date_reservation, heure_debut, heure_fin, statut)
@@ -197,7 +198,7 @@ VALUES
 -- Insertion dans la table events
 INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
 VALUES
-    ('Karting enfant', '2025-01-10', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
+    ('Karting enfant', '2025-07-17', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
     ('Simulateur F1', '2025-01-10', '11:30', '12:30', 25.00, 'Expérience immersive dans un simulateur F1', '/assets/events/simulateur_f1.jpg'),
     ('Rencontre avec Charles Leclerc', '2025-01-10', '09:00', '10:00', 15.00, 'Rencontre exclusive avec Charles Leclerc', '/assets/events/rencontre_leclerc.jpg'),
     ('Rencontre avec Max Verstappen', '2025-01-10', '10:00', '11:00', 15.00, 'Rencontre exclusive avec Max Verstappen', '/assets/events/rencontre_verstappen.jpg'),

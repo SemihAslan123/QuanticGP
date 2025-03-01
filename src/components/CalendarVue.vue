@@ -16,6 +16,8 @@ import FullCalendar from '@fullcalendar/vue';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import userService from '@/services/profilService';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 
 export default {
   components: {
@@ -29,9 +31,25 @@ export default {
         initialDate: new Date(),
         selectable: true,
         editable: false,
+        displayEventTime: false,
         events: [],
+        // Lorsque l'on survole une cellule de jour, on affiche la liste complète des événements
+        dayCellDidMount(info) {
+          const calendarApi = info.view.calendar;
+          const eventsOfDay = calendarApi.getEvents().filter(event =>
+            event.start.toISOString().split('T')[0] === info.date.toISOString().split('T')[0]
+          );
+          if (eventsOfDay.length) {
+            const tooltipContent = eventsOfDay.map(e => e.title).join('<br>');
+            tippy(info.el, {
+              content: tooltipContent,
+              allowHTML: true,
+              placement: 'top'
+            });
+          }
+        }
       },
-      eventDates: [], // Stocke les dates des événements pour la navigation
+      eventDates: []
     };
   },
   computed: {
@@ -49,16 +67,13 @@ export default {
     async loadEvents() {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) return;
-
       try {
         const [billets, activites] = await Promise.all([
           userService.fetchBillets(user.id),
           userService.fetchActivites(user.id)
         ]);
-
         const formattedEvents = [];
         this.eventDates = [];
-
         // Ajouter les billets
         billets.forEach(billet => {
           formattedEvents.push({
@@ -69,7 +84,6 @@ export default {
           });
           this.eventDates.push(new Date(billet.course_date).toISOString().split("T")[0]);
         });
-
         // Ajouter les activités
         activites.forEach(activite => {
           formattedEvents.push({
@@ -80,12 +94,9 @@ export default {
           });
           this.eventDates.push(new Date(activite.date).toISOString().split("T")[0]);
         });
-
         this.calendarOptions.events = formattedEvents;
-
         // Supprime les doublons et trie les dates
         this.eventDates = [...new Set(this.eventDates)].sort();
-
       } catch (error) {
         console.error('Erreur lors du chargement des événements:', error);
       }
@@ -125,6 +136,8 @@ export default {
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  width: 1000px;
+  margin: 0 auto;
 }
 
 /* Barre de navigation */

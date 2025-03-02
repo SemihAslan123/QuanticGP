@@ -1,65 +1,92 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db');
-const cors = require("cors");
-const {join} = require("path"); // Chemin vers db.js
+const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
 
-// Configuration de CORS pour permettre les requêtes provenant de votre frontend (port 8080)
-router.use(cors({
-    origin: 'http://localhost:8080'  // Frontend autorisé à interagir avec l'API
-}));
-
-//router.use('/assets/prestataire', express.static(join(__dirname, '../frontend/src/assets/prestataires/image')));
-
-// Exemple de route pour récupérer des données depuis PostgreSQL
-router.get('/', async (req, res) => {
-    try {
-        // Effectuer une requête SQL
-        const result = await pool.query("SELECT * FROM Utilisateurs JOIN servicePrestataire ON Utilisateurs.id_utilisateur = servicePrestataire.id_utilisateur WHERE Utilisateurs.type_utilisateur='prestataire'"); // Remplacez 'votre_table' par le nom de votre table
-        res.json(result.rows); // Envoyer les données sous forme de JSON
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des données' });
-    }
+/**
+ * GET /prestataire/services
+ * Récupérer la liste de tous les services pour les clients
+ */
+router.get('/services', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_stand
+       FROM servicePrestataire`
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des services pour client :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
 });
 
-router.get('/service/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        // Effectuer une requête SQL
-        const result = await pool.query("SELECT * FROM servicePrestataire WHERE id_service = $1", [id]);
-        console.log("Résultat de la requête SQL:", result.rows);
-        res.json(result.rows); // Envoyer les données sous forme de JSON
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des données' });
+/**
+ * GET /prestataire/:id
+ * Récupérer les informations du prestataire connecté
+ */
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire 
+       FROM Utilisateurs 
+       WHERE id_utilisateur = $1 AND type_utilisateur = 'prestataire'`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Prestataire non trouvé" });
     }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Erreur lors de la récupération du prestataire :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
 });
 
-router.post('/inscription', async (req, res) => {
-    const { nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire } = req.body;
-
-    if (!nom_utilisateur || !prenom_utilisateur || !mail_utilisateur || !mot_de_passe || !type_utilisateur) {
-        return res.status(400).json({ error: 'Tous les champs obligatoires doivent être remplis.' });
+/**
+ * POST /prestataire/update
+ * Mettre à jour les informations du prestataire
+ */
+router.post('/update', async (req, res) => {
+  const { id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire } = req.body;
+  if (!id_utilisateur) {
+    return res.status(400).json({ error: "ID du prestataire manquant" });
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE Utilisateurs
+       SET nom_utilisateur = $1, prenom_utilisateur = $2, mail_utilisateur = $3, image_prestataire = $4
+       WHERE id_utilisateur = $5 AND type_utilisateur = 'prestataire'
+       RETURNING id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire`,
+      [nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire, id_utilisateur]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Prestataire non trouvé ou aucune modification apportée" });
     }
-
-
-    try {
-        // Effectuer une requête SQL
-        const result = await pool.query(
-            `INSERT INTO Utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire) 
-             VALUES ($1, $2, $3, $4, $5, $6) 
-             RETURNING *`, // RETURNING * permet de renvoyer les données insérées
-            [nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur, image_prestataire]
-        );
-        res.status(201).json({
-            message: 'Utilisateur inscrit avec succès.',
-            utilisateur: result.rows[0], // Retourne la première (et seule) ligne insérée
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des données' });
-    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du prestataire :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
 });
 
-module.exports = router; // Exporter le router pour pouvoir l'utiliser dans index.js
+/**
+ * GET /prestataire/:id/services
+ * Récupérer la liste des services proposés par le prestataire connecté
+ */
+router.get('/:id/services', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_stand
+       FROM servicePrestataire
+       WHERE id_utilisateur = $1`,
+      [id]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des services du prestataire :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+});
+
+module.exports = router;

@@ -47,7 +47,7 @@ router.get('/:id', async (req, res) => {
  * Mettre à jour les informations du prestataire
  */
 router.post('/update', async (req, res) => {
-  const { id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire } = req.body;
+  const { id_utilisateur, nom, prenom, mail, image } = req.body;
   if (!id_utilisateur) {
     return res.status(400).json({ error: "ID du prestataire manquant" });
   }
@@ -56,8 +56,14 @@ router.post('/update', async (req, res) => {
       `UPDATE Utilisateurs
        SET nom_utilisateur = $1, prenom_utilisateur = $2, mail_utilisateur = $3, image_prestataire = $4
        WHERE id_utilisateur = $5 AND type_utilisateur = 'prestataire'
-       RETURNING id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire`,
-      [nom_utilisateur, prenom_utilisateur, mail_utilisateur, image_prestataire, id_utilisateur]
+       RETURNING 
+         id_utilisateur as id, 
+         nom_utilisateur as nom, 
+         prenom_utilisateur as prenom, 
+         mail_utilisateur as mail, 
+         image_prestataire as image,
+         type_utilisateur as type`,
+      [nom, prenom, mail, image, id_utilisateur]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Prestataire non trouvé ou aucune modification apportée" });
@@ -68,6 +74,9 @@ router.post('/update', async (req, res) => {
     res.status(500).json({ error: "Erreur interne du serveur" });
   }
 });
+
+
+
 
 /**
  * GET /prestataire/:id/services

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/db');
 const { v4: uuidv4 } = require('uuid');
+const util = require("util");
 
 /**
  * @swagger
@@ -93,6 +94,7 @@ router.post('/', async (req, res) => {
                 prenom: utilisateur.prenom_utilisateur,
                 mail: utilisateur.mail_utilisateur,
                 type: utilisateur.type_utilisateur,
+                image: utilisateur.image_prestataire,
                 sessionId, // Retourner le sessionId
             },
         });

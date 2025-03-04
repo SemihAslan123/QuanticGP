@@ -1,81 +1,81 @@
 -- 1. Trigger sur INSERT : Marquer l'emplacement comme "RÉSERVÉ"
 CREATE OR REPLACE FUNCTION set_emplacement_reserve()
-RETURNS trigger AS $$
+    RETURNS trigger AS $$
 BEGIN
-  IF NEW.id_emplacement IS NOT NULL THEN
-    UPDATE emplacements_prestataires
-    SET statut = 'RÉSERVÉ'
-    WHERE id_emplacement = NEW.id_emplacement;
-  END IF;
-  RETURN NEW;
+    IF NEW.id_emplacement IS NOT NULL THEN
+        UPDATE emplacements_prestataires
+        SET statut = 'RÉSERVÉ'
+        WHERE id_emplacement = NEW.id_emplacement;
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_set_emplacement_reserve
-AFTER INSERT ON servicePrestataire
-FOR EACH ROW
-WHEN (NEW.id_emplacement IS NOT NULL)
+    AFTER INSERT ON servicePrestataire
+    FOR EACH ROW
+    WHEN (NEW.id_emplacement IS NOT NULL)
 EXECUTE FUNCTION set_emplacement_reserve();
 
 
 -- 2. Trigger sur DELETE : Remettre l'emplacement à "LIBRE" s'il n'est plus occupé
 CREATE OR REPLACE FUNCTION reset_emplacement_status()
-RETURNS trigger AS $$
+    RETURNS trigger AS $$
 BEGIN
-  IF OLD.id_emplacement IS NOT NULL THEN
-    -- Si aucun autre service n'occupe cet emplacement
-    IF NOT EXISTS (
-      SELECT 1 FROM servicePrestataire WHERE id_emplacement = OLD.id_emplacement
-    ) THEN
-      UPDATE emplacements_prestataires
-      SET statut = 'LIBRE'
-      WHERE id_emplacement = OLD.id_emplacement;
+    IF OLD.id_emplacement IS NOT NULL THEN
+        -- Si aucun autre service n'occupe cet emplacement
+        IF NOT EXISTS (
+            SELECT 1 FROM servicePrestataire WHERE id_emplacement = OLD.id_emplacement
+        ) THEN
+            UPDATE emplacements_prestataires
+            SET statut = 'LIBRE'
+            WHERE id_emplacement = OLD.id_emplacement;
+        END IF;
     END IF;
-  END IF;
-  RETURN OLD;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_reset_emplacement_status
-AFTER DELETE ON servicePrestataire
-FOR EACH ROW
-WHEN (OLD.id_emplacement IS NOT NULL)
+    AFTER DELETE ON servicePrestataire
+    FOR EACH ROW
+    WHEN (OLD.id_emplacement IS NOT NULL)
 EXECUTE FUNCTION reset_emplacement_status();
 
 
 -- 3. Trigger sur UPDATE de id_emplacement : gérer le changement d'affectation
 CREATE OR REPLACE FUNCTION update_emplacement_status_on_service_update()
-RETURNS trigger AS $$
+    RETURNS trigger AS $$
 BEGIN
-  -- Si l'emplacement a changé
-  IF NEW.id_emplacement <> OLD.id_emplacement THEN
-    -- Ancien emplacement : le remettre à LIBRE s'il n'est plus occupé
-    IF OLD.id_emplacement IS NOT NULL THEN
-      IF NOT EXISTS (
-        SELECT 1 FROM servicePrestataire
-        WHERE id_emplacement = OLD.id_emplacement
-          AND id_service <> OLD.id_service
-      ) THEN
-        UPDATE emplacements_prestataires
-        SET statut = 'LIBRE'
-        WHERE id_emplacement = OLD.id_emplacement;
-      END IF;
-    END IF;
+    -- Si l'emplacement a changé
+    IF NEW.id_emplacement <> OLD.id_emplacement THEN
+        -- Ancien emplacement : le remettre à LIBRE s'il n'est plus occupé
+        IF OLD.id_emplacement IS NOT NULL THEN
+            IF NOT EXISTS (
+                SELECT 1 FROM servicePrestataire
+                WHERE id_emplacement = OLD.id_emplacement
+                  AND id_service <> OLD.id_service
+            ) THEN
+                UPDATE emplacements_prestataires
+                SET statut = 'LIBRE'
+                WHERE id_emplacement = OLD.id_emplacement;
+            END IF;
+        END IF;
 
-    -- Nouvel emplacement : le marquer comme RÉSERVÉ
-    IF NEW.id_emplacement IS NOT NULL THEN
-      UPDATE emplacements_prestataires
-      SET statut = 'RÉSERVÉ'
-      WHERE id_emplacement = NEW.id_emplacement;
+        -- Nouvel emplacement : le marquer comme RÉSERVÉ
+        IF NEW.id_emplacement IS NOT NULL THEN
+            UPDATE emplacements_prestataires
+            SET statut = 'RÉSERVÉ'
+            WHERE id_emplacement = NEW.id_emplacement;
+        END IF;
     END IF;
-  END IF;
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_update_emplacement_status
-AFTER UPDATE OF id_emplacement ON servicePrestataire
-FOR EACH ROW
+    AFTER UPDATE OF id_emplacement ON servicePrestataire
+    FOR EACH ROW
 EXECUTE FUNCTION update_emplacement_status_on_service_update();
 
 -- ===================================================================================
@@ -141,22 +141,22 @@ CREATE TABLE emplacements_prestataires (
 
 
 CREATE TABLE servicePrestataire (
-			    id_service SERIAL PRIMARY KEY,
-			    id_utilisateur INT NOT NULL,
-			    id_emplacement INT,  -- lien optionnel vers un emplacement
-			    nom_service VARCHAR(50),
-			    type_service VARCHAR(50),
-			    presentation_service VARCHAR(255),
-			    description_service VARCHAR(255),
-			    image_prestataire TEXT,
-			    date_service DATE,
-			    heure_service TIME,
-			    visibilite BOOLEAN,
-			    statut_service_prestataire VARCHAR(50),
-			    prix_moyen VARCHAR(15) CHECK (prix_moyen IN ('0-10€', '10-20€', '20€-30€', '30€+', 'Non spécifié')),
-			    carte_banquaire VARCHAR(20) CHECK (carte_banquaire IN ('Acceptée', 'Refusée', 'Non spécifié')),
-			    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
-			    FOREIGN KEY (id_emplacement) REFERENCES emplacements_prestataires(id_emplacement) ON DELETE SET NULL
+                                    id_service SERIAL PRIMARY KEY,
+                                    id_utilisateur INT NOT NULL,
+                                    id_emplacement INT,  -- lien optionnel vers un emplacement
+                                    nom_service VARCHAR(50),
+                                    type_service VARCHAR(50),
+                                    presentation_service VARCHAR(255),
+                                    description_service VARCHAR(255),
+                                    image_prestataire TEXT,
+                                    date_service DATE,
+                                    heure_service TIME,
+                                    visibilite BOOLEAN,
+                                    statut_service_prestataire VARCHAR(50),
+                                    prix_moyen VARCHAR(15) CHECK (prix_moyen IN ('0-10€', '10-20€', '20€-30€', '30€+', 'Non spécifié')),
+                                    carte_banquaire VARCHAR(20) CHECK (carte_banquaire IN ('Acceptée', 'Refusée', 'Non spécifié')),
+                                    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+                                    FOREIGN KEY (id_emplacement) REFERENCES emplacements_prestataires(id_emplacement) ON DELETE SET NULL
 );
 
 
@@ -165,6 +165,7 @@ CREATE TABLE billet (
                         acheteur_id INT REFERENCES acheteurnoninscrit(id) ON DELETE CASCADE,
                         utilisateur_id INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
                         course_nom VARCHAR(100),
+                        course_date DATE,
                         hotel_nom VARCHAR(100),
                         date_debut_parking DATE,
                         date_fin_parking DATE,

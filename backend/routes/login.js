@@ -74,6 +74,7 @@ router.post('/', async (req, res) => {
         const result = await pool.query(query, [email]);
 
         if (result.rows.length === 0) {
+            // Message d'erreur lorsque l'utilisateur n'est pas trouvé
             return res.status(401).json({ error: 'Utilisateur non trouvé.' });
         }
 
@@ -94,7 +95,6 @@ router.post('/', async (req, res) => {
                 prenom: utilisateur.prenom_utilisateur,
                 mail: utilisateur.mail_utilisateur,
                 type: utilisateur.type_utilisateur,
-                image: utilisateur.image_prestataire,
                 sessionId, // Retourner le sessionId
             },
         });

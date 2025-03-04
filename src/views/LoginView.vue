@@ -16,6 +16,7 @@
       <br>
       <button v-if="!isLoggedIn" @click="goToInscription">S'inscrire</button>
 
+      <!-- Affichage du message d'erreur en rouge -->
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
       <div v-if="isLoggedIn" class="welcome-box">
@@ -61,7 +62,6 @@ export default {
     async submitForm() {
       try {
         const data = await authService.login(this.email, this.password);
-
         if (data.success) {
           localStorage.setItem('user', JSON.stringify(data.user));
           this.isLoggedIn = true;
@@ -69,7 +69,8 @@ export default {
           this.errorMessage = '';
           window.location.reload();
         } else {
-          this.errorMessage = 'Email ou mot de passe incorrect.';
+          // Affichage du message d'erreur retourné par le backend (ex: "Utilisateur non trouvé.")
+          this.errorMessage = data.error;
         }
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);
@@ -155,7 +156,7 @@ export default {
   background-color: #e53935;
 }
 
-/* Message d'erreur */
+/* Message d'erreur en rouge */
 .error {
   margin-top: 15px;
   color: #e74c3c;

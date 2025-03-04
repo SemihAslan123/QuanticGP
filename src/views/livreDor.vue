@@ -13,6 +13,9 @@
         <option v-for="n in [1,2,3,4,5]" :key="n" :value="n">{{ n }}</option>
       </select>
 
+      <!-- Message d'erreur affiché en rouge -->
+      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+
       <button @click="soumettreAvis">Envoyer</button>
     </div>
 
@@ -46,6 +49,7 @@ export default {
       note: '',
       isLoggedIn: false,
       user: null,
+      errorMessage: '', // Variable pour stocker le message d'erreur
     };
   },
   async mounted() {
@@ -65,10 +69,14 @@ export default {
   },
   methods: {
     async soumettreAvis() {
-      if (!this.nouvelAvis.trim()) {
-        alert("Veuillez écrire un avis avant de soumettre.");
+      // Vérifier que le commentaire et la note sont renseignés
+      if (!this.nouvelAvis.trim() || !this.note) {
+        this.errorMessage = "Veuillez écrire un avis et sélectionner une note.";
         return;
       }
+
+      // Réinitialise le message d'erreur s'il y en avait un
+      this.errorMessage = "";
 
       try {
         // Prépare le payload pour l'API
@@ -81,23 +89,17 @@ export default {
         const response = await livreDorService.submitAvis(payload);
 
         if (response.success) {
-          // Ajoute le nouvel avis à la liste et réinitialise le formulaire
-          this.avis.push({
-            id_avis: response.id,
-            nom_utilisateur: this.user.nom_utilisateur,
-            prenom_utilisateur: this.user.prenom_utilisateur,
-            commentaire: this.nouvelAvis,
-            note: this.note,
-            date_avis: new Date().toISOString(),
-          });
+          // Réinitialise le formulaire
           this.nouvelAvis = '';
           this.note = '';
-          // Optionnel : recharger les avis ou notifier l'utilisateur
+          // Rafraîchit la page pour afficher le nouvel avis
+          window.location.reload();
         } else {
-          alert("Erreur lors de l'envoi de votre avis.");
+          this.errorMessage = "Erreur lors de l'envoi de votre avis.";
         }
       } catch (error) {
         console.error("Erreur lors de l'envoi de l'avis :", error);
+        this.errorMessage = "Erreur lors de l'envoi de l'avis.";
       }
     },
 
@@ -152,6 +154,13 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1em;
+}
+
+/* Style pour le message d'erreur en rouge */
+.error {
+  color: #e74c3c;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
 .avis-form button {

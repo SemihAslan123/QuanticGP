@@ -33,7 +33,7 @@ export default {
         editable: false,
         displayEventTime: false,
         events: [],
-        // Lorsque l'on survole une cellule de jour, on affiche la liste complète des événements
+        // Lors du survol d'une cellule, affiche les événements du jour
         dayCellDidMount(info) {
           const calendarApi = info.view.calendar;
           const eventsOfDay = calendarApi.getEvents().filter(event =>
@@ -78,7 +78,7 @@ export default {
         billets.forEach(billet => {
           formattedEvents.push({
             id: `billet-${billet.id}`,
-            title: `Billet: ${billet.course_nom || 'N°' + billet.id}`,
+            title: `Billet: ${billet.course_nom || ('N°' + billet.id)}`,
             start: billet.course_date,
             color: '#3498db'
           });
@@ -205,17 +205,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-}
-
-/* Couleurs spécifiques aux événements */
-.fc-event[style*="background-color: rgb(52, 152, 219)"] {
-  background-color: #3498db !important;
-  border-color: #2980b9 !important;
-}
-
-.fc-event[style*="background-color: rgb(231, 76, 60)"] {
-  background-color: #e74c3c !important;
-  border-color: #c0392b !important;
 }
 
 /* Week-ends en fond légèrement gris */

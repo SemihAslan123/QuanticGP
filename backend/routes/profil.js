@@ -27,9 +27,9 @@ const pool = require('../database/db'); // Chemin vers votre configuration de la
  *                 properties:
  *                   id:
  *                     type: integer
- *                   titre:
+ *                   course_nom:
  *                     type: string
- *                   date:
+ *                   course_date:
  *                     type: string
  *       400:
  *         description: ID utilisateur manquant.
@@ -144,6 +144,5 @@ router.get('/:userId/activites', async (req, res) => {
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
-
 
 module.exports = router;

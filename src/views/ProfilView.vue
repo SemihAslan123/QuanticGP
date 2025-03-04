@@ -9,8 +9,6 @@
       </div>
     </section>
 
-
-
     <!-- Bloc Billets -->
     <section class="section-container billets-section">
       <h1>Vos Billets</h1>

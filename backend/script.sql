@@ -133,7 +133,7 @@ CREATE TABLE emplacements_prestataires (
                                            nom_emplacement VARCHAR(255) NOT NULL,
                                            coordonnees_svg VARCHAR(255) NOT NULL,
                                            utilisateur_id INT DEFAULT NULL,
-                                           statut VARCHAR(10) DEFAULT 'libre' CHECK (statut IN ('LIBRE', 'RÉSERVÉ')),
+                                           statut VARCHAR(10) DEFAULT 'libre' CHECK (statut IN ('LIBRE','EN ATTENTE', 'RÉSERVÉ')),
                                            date_reservation TIMESTAMP DEFAULT NULL,
                                            description TEXT DEFAULT NULL,
                                            FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id_utilisateur)
@@ -271,10 +271,7 @@ VALUES
     (6, 5, '👕 F1 Style', 'Merchandising', '', 'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.', NULL, '2024-11-22', '11:00', true, 'CONFIRMÉ', '20€-30€', 'Acceptée');
 
 
-INSERT INTO billet (utilisateur_id, course_nom, hotel_nom, date_debut_parking, date_fin_parking, date_debut_hotel, date_fin_hotel, prix_total)
-VALUES
-    (7, 'Course A', 'Hotel ABC', '2024-12-01', '2024-12-05', '2024-12-01', '2024-12-05', 120.50),
-    (8, 'Course B', NULL, NULL, NULL, NULL, NULL, 150.00);
+
 
 
 INSERT INTO LivreOr (id_utilisateur, commentaire, note)
@@ -304,3 +301,10 @@ VALUES
     (7, 4),
     (9, 1);
 
+
+select * from emplacements_prestataires;
+UPDATE emplacements_prestataires
+SET statut = 'RÉSERVÉ'
+WHERE utilisateur_id = 2;
+
+select * from servicePrestataire;

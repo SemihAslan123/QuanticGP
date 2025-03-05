@@ -37,6 +37,24 @@ export default {
       throw error;
     }
   },
+  async deleteService(serviceId) {
+    try {
+      const response = await api.delete(`/prestataire/service/${serviceId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur deleteService :', error);
+      throw error;
+    }
+  },
+  async deleteServiceRequest(serviceId) {
+    try {
+      const response = await api.delete(`/prestataire/service/request/${serviceId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur deleteServiceRequest :', error);
+      throw error;
+    }
+  },
   async fetchAvailableEmplacements(searchParams) {
     try {
       const response = await api.get('/prestataire/emplacements/available', { params: searchParams });

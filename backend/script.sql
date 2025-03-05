@@ -1,4 +1,4 @@
--- 1. Trigger sur INSERT : Marquer l'emplacement comme "RÉSERVÉ"
+-- 1. TRIGGERS (inchangés)
 CREATE OR REPLACE FUNCTION set_emplacement_reserve()
     RETURNS trigger AS $$
 BEGIN
@@ -18,12 +18,10 @@ CREATE TRIGGER trg_set_emplacement_reserve
 EXECUTE FUNCTION set_emplacement_reserve();
 
 
--- 2. Trigger sur DELETE : Remettre l'emplacement à "LIBRE" s'il n'est plus occupé
 CREATE OR REPLACE FUNCTION reset_emplacement_status()
     RETURNS trigger AS $$
 BEGIN
     IF OLD.id_emplacement IS NOT NULL THEN
-        -- Si aucun autre service n'occupe cet emplacement
         IF NOT EXISTS (
             SELECT 1 FROM servicePrestataire WHERE id_emplacement = OLD.id_emplacement
         ) THEN
@@ -43,13 +41,10 @@ CREATE TRIGGER trg_reset_emplacement_status
 EXECUTE FUNCTION reset_emplacement_status();
 
 
--- 3. Trigger sur UPDATE de id_emplacement : gérer le changement d'affectation
 CREATE OR REPLACE FUNCTION update_emplacement_status_on_service_update()
     RETURNS trigger AS $$
 BEGIN
-    -- Si l'emplacement a changé
     IF NEW.id_emplacement <> OLD.id_emplacement THEN
-        -- Ancien emplacement : le remettre à LIBRE s'il n'est plus occupé
         IF OLD.id_emplacement IS NOT NULL THEN
             IF NOT EXISTS (
                 SELECT 1 FROM servicePrestataire
@@ -62,7 +57,6 @@ BEGIN
             END IF;
         END IF;
 
-        -- Nouvel emplacement : le marquer comme RÉSERVÉ
         IF NEW.id_emplacement IS NOT NULL THEN
             UPDATE emplacements_prestataires
             SET statut = 'RÉSERVÉ'
@@ -79,9 +73,8 @@ CREATE TRIGGER trg_update_emplacement_status
 EXECUTE FUNCTION update_emplacement_status_on_service_update();
 
 -- ===================================================================================
--- ==================================== DROP TABLE ===================================
+-- DROP TABLES (inchangé)
 -- ===================================================================================
-
 
 DROP TABLE IF EXISTS emplacements_prestataires CASCADE;
 DROP TABLE IF EXISTS liste_activite_client CASCADE;
@@ -92,11 +85,9 @@ DROP TABLE IF EXISTS Utilisateurs CASCADE;
 DROP TABLE IF EXISTS acheteurnoninscrit CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 
-
--- ===============================================================================================
--- ==================================== REALISATION DES TABLES ===================================
--- ===============================================================================================
-
+-- ===================================================================================
+-- CREATION DES TABLES
+-- ===================================================================================
 
 CREATE TABLE events (
                         id SERIAL PRIMARY KEY,
@@ -109,14 +100,12 @@ CREATE TABLE events (
                         image TEXT NOT NULL
 );
 
-
 CREATE TABLE acheteurnoninscrit (
                                     id SERIAL PRIMARY KEY,
                                     prenom VARCHAR(50) NOT NULL,
                                     nom VARCHAR(50) NOT NULL,
                                     email VARCHAR(100) NOT NULL
 );
-
 
 CREATE TABLE Utilisateurs (
                               id_utilisateur SERIAL PRIMARY KEY,
@@ -127,23 +116,21 @@ CREATE TABLE Utilisateurs (
                               type_utilisateur VARCHAR(50) CHECK (type_utilisateur IN ('organisateur', 'prestataire', 'client'))
 );
 
-
 CREATE TABLE emplacements_prestataires (
                                            id_emplacement SERIAL PRIMARY KEY,
                                            nom_emplacement VARCHAR(255) NOT NULL,
                                            coordonnees_svg VARCHAR(255) NOT NULL,
                                            utilisateur_id INT DEFAULT NULL,
-                                           statut VARCHAR(10) DEFAULT 'libre' CHECK (statut IN ('LIBRE','EN ATTENTE', 'RÉSERVÉ')),
+                                           statut VARCHAR(10) DEFAULT 'LIBRE' CHECK (statut IN ('LIBRE','EN ATTENTE', 'RÉSERVÉ', 'UTILISÉ')),
                                            date_reservation TIMESTAMP DEFAULT NULL,
                                            description TEXT DEFAULT NULL,
                                            FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id_utilisateur)
 );
 
-
 CREATE TABLE servicePrestataire (
                                     id_service SERIAL PRIMARY KEY,
                                     id_utilisateur INT NOT NULL,
-                                    id_emplacement INT,  -- lien optionnel vers un emplacement
+                                    id_emplacement INT,
                                     nom_service VARCHAR(50),
                                     type_service VARCHAR(50),
                                     presentation_service VARCHAR(255),
@@ -153,12 +140,13 @@ CREATE TABLE servicePrestataire (
                                     heure_service TIME,
                                     visibilite BOOLEAN,
                                     statut_service_prestataire VARCHAR(50),
+    -- Ajout de la colonne "statut" avec une valeur par défaut
+                                    statut VARCHAR(10) DEFAULT 'EN ATTENTE' CHECK (statut IN ('EN ATTENTE','ACCEPTÉ')),
                                     prix_moyen VARCHAR(15) CHECK (prix_moyen IN ('0-10€', '10-20€', '20€-30€', '30€+', 'Non spécifié')),
                                     carte_banquaire VARCHAR(20) CHECK (carte_banquaire IN ('Acceptée', 'Refusée', 'Non spécifié')),
                                     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
                                     FOREIGN KEY (id_emplacement) REFERENCES emplacements_prestataires(id_emplacement) ON DELETE SET NULL
 );
-
 
 CREATE TABLE billet (
                         id SERIAL PRIMARY KEY,
@@ -176,7 +164,6 @@ CREATE TABLE billet (
                         date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE LivreOr (
                          id_avis SERIAL PRIMARY KEY,
                          id_utilisateur INT REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
@@ -184,7 +171,6 @@ CREATE TABLE LivreOr (
                          date_avis TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                          note INT CHECK (note BETWEEN 1 AND 5)
 );
-
 
 CREATE TABLE liste_activite_client (
                                        id SERIAL PRIMARY KEY,
@@ -195,12 +181,11 @@ CREATE TABLE liste_activite_client (
                                        FOREIGN KEY (id_event) REFERENCES events(id) ON DELETE CASCADE
 );
 
+-- ===================================================================================
+-- INSERTION DES DONNÉES
+-- ===================================================================================
 
--- ==============================================================================================
--- ==================================== INSERTION DES DONNEES ===================================
--- ==============================================================================================
-
-
+-- Insertion dans events
 INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
 VALUES
     ('Karting enfant', '2025-01-10', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
@@ -209,8 +194,7 @@ VALUES
     ('Rencontre avec Max Verstappen', '2025-01-10', '10:00', '11:00', 15.00, 'Rencontre exclusive avec Max Verstappen', '/assets/events/rencontre_verstappen.jpg'),
     ('Exposition F1', '2025-01-10', '13:00', '18:00', 10.00, 'Exposition des voitures de F1', '/assets/events/exposition_f1.jpg');
 
-
-
+-- Insertion dans Utilisateurs
 INSERT INTO Utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
 VALUES
     ('Dupont', 'Jean', 'jean.dupont@example.com', 'password123', 'organisateur'),
@@ -223,6 +207,7 @@ VALUES
     ('Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client'),
     ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client');
 
+-- Insertion dans emplacements_prestataires
 INSERT INTO emplacements_prestataires (nom_emplacement, coordonnees_svg, description, statut)
 VALUES
     ('Zone A - Emplacement n°1', 'm 478.86837,453.3347 -6.49541,84.88826 26.20561,3.13572 6.49541,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
@@ -261,19 +246,47 @@ VALUES
     ('Zone E - Emplacement n°7', 'm 1666.7647,677.85565 15.6794,59.07481 40.0695,-10.6113 -15.6794,-58.44129 -38.8025,9.66103 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
     ('Zone E - Emplacement n°8', 'm 1682.4441,750.7093 c 0,0 -2.8508,60.97533 -1.9006,60.97533 0.9503,0 41.0198,2.8508 41.0198,2.8508 l 2.3757,-62.08398 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE');
 
-
-INSERT INTO servicePrestataire (id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service, image_prestataire, date_service, heure_service, visibilite, statut_service_prestataire, prix_moyen, carte_banquaire)
+-- Insertion dans servicePrestataire
+-- Notez ici l'ajout explicite de la colonne "statut" avec la valeur 'EN ATTENTE'
+INSERT INTO servicePrestataire (
+    id_utilisateur,
+    id_emplacement,
+    nom_service,
+    type_service,
+    presentation_service,
+    description_service,
+    image_prestataire,
+    date_service,
+    heure_service,
+    visibilite,
+    statut_service_prestataire,
+    statut,
+    prix_moyen,
+    carte_banquaire
+)
 VALUES
-    (2, 1, '🥩 Grill’n’Go', 'Restauration', 'Barbecue gourmet avec burgers et hot-dogs maison. Produits frais et locaux. Options végétariennes et sans viande disponibles.', 'Service de restauration rapide', NULL, '2024-11-20', '12:00', true, 'CONFIRMÉ', '0-10€', 'Acceptée'),
-    (3, 2, '🍕 PitStop Pizza', 'Restauration', '', 'Pizzas artisanales préparées sur place dans un four mobile. Choix varié de garnitures, avec options végétariennes. Idéal pour un repas rapide entre deux tours.', NULL, '2024-11-21', '09:00', false, 'CONFIRMÉ', '10-20€', 'Acceptée'),
-    (4, 3, '🌮 TurboTacos', 'Restauration', '', 'Tacos frais et savoureux avec des ingrédients locaux. Recettes personnalisables selon vos goûts.',NULL, '2024-11-20', '14:00', true, 'CONFIRMÉ', '0-10€', 'Refusée'),
-    (5, 4, '🛍️ Racing Memorabilia', 'Merchandising', '', 'Produits officiels des écuries de F1 : casquettes, posters et accessoires. Collection spéciale limitée.', NULL, '2024-11-21', '10:00', false, 'CONFIRMÉ', '10-20€', 'Acceptée'),
-    (6, 5, '👕 F1 Style', 'Merchandising', '', 'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.', NULL, '2024-11-22', '11:00', true, 'CONFIRMÉ', '20€-30€', 'Acceptée');
+    (2, 1, '🥩 Grill’n’Go', 'Restauration',
+     'Barbecue gourmet avec burgers et hot-dogs maison. Produits frais et locaux. Options végétariennes et sans viande disponibles.',
+     'Service de restauration rapide',
+     NULL, '2024-11-20', '12:00', true, 'CONFIRMÉ', 'EN ATTENTE', '0-10€', 'Acceptée'),
+    (3, 2, '🍕 PitStop Pizza', 'Restauration',
+     '',
+     'Pizzas artisanales préparées sur place dans un four mobile. Choix varié de garnitures, avec options végétariennes. Idéal pour un repas rapide entre deux tours.',
+     NULL, '2024-11-21', '09:00', false, 'CONFIRMÉ', 'EN ATTENTE', '10-20€', 'Acceptée'),
+    (4, 3, '🌮 TurboTacos', 'Restauration',
+     '',
+     'Tacos frais et savoureux avec des ingrédients locaux. Recettes personnalisables selon vos goûts.',
+     NULL, '2024-11-20', '14:00', true, 'CONFIRMÉ', 'EN ATTENTE', '0-10€', 'Refusée'),
+    (5, 4, '🛍️ Racing Memorabilia', 'Merchandising',
+     '',
+     'Produits officiels des écuries de F1 : casquettes, posters et accessoires. Collection spéciale limitée.',
+     NULL, '2024-11-21', '10:00', false, 'CONFIRMÉ', 'EN ATTENTE', '10-20€', 'Acceptée'),
+    (6, 5, '👕 F1 Style', 'Merchandising',
+     '',
+     'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.',
+     NULL, '2024-11-22', '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
 
-
-
-
-
+-- Insertion dans LivreOr
 INSERT INTO LivreOr (id_utilisateur, commentaire, note)
 VALUES
     (7, 'Très bon service et expérience générale agréable. Je recommande!', 5),
@@ -285,7 +298,7 @@ VALUES
     (5, 'Un peu déçu par la qualité du service, je mattendais à mieux.', 2),
     (6, 'Bon service, mais il manque un peu dinteraction avec les visiteurs.', 3);
 
-
+-- Insertion dans liste_activite_client
 INSERT INTO liste_activite_client (id_utilisateur, id_event)
 VALUES
     (7, 1),
@@ -301,10 +314,15 @@ VALUES
     (7, 4),
     (9, 1);
 
-
-select * from emplacements_prestataires;
+-- Exemple de mise à jour : marquer un emplacement comme "RÉSERVÉ" pour un utilisateur donné
 UPDATE emplacements_prestataires
 SET statut = 'RÉSERVÉ'
 WHERE utilisateur_id = 2;
 
-select * from servicePrestataire;
+-- Affichage de quelques données pour vérification
+SELECT * FROM emplacements_prestataires;
+SELECT * FROM servicePrestataire;
+
+update servicePrestataire
+set statut = 'ACCEPTÉ'
+where id_utilisateur = 2;

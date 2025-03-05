@@ -1,6 +1,6 @@
 <template>
   <div class="user-service-view">
-    <!-- Vue pour les clients : affiche simplement la liste des services -->
+    <!-- Vue pour les clients : affiche simplement la liste des services validés -->
     <div v-if="userType === 'client'">
       <h1>Liste des Services</h1>
       <div v-if="services.length === 0" class="no-items">
@@ -77,7 +77,12 @@
               <p>Aucun service enregistré.</p>
             </div>
             <div v-else class="services-grid">
-              <div class="service-card" v-for="service in services" :key="service.id_service">
+              <div
+                class="service-card"
+                :class="{ pending: service.statut === 'EN ATTENTE' }"
+                v-for="service in services"
+                :key="service.id_service"
+              >
                 <h3>{{ service.nom_service }}</h3>
                 <p><strong>Type :</strong> {{ service.type_service }}</p>
                 <p><strong>Description :</strong> {{ service.description_service }}</p>
@@ -87,16 +92,19 @@
                 <p v-if="service.heure_service">
                   <strong>Heure :</strong> {{ service.heure_service }}
                 </p>
-                <p>
-                  <strong>Accessible au public :</strong>
-                  <span>{{ service.visibilite ? 'Oui' : 'Non' }}</span>
+                <p v-if="service.statut === 'EN ATTENTE'" class="status-label">
+                  <strong>Statut :</strong> En attente
                 </p>
                 <div class="service-actions">
-                  <button @click="toggleServiceVisibility(service)">
-                    {{ service.visibilite ? 'Désactiver' : 'Activer' }}
+                  <!-- Pour un service en attente, seule l'annulation est autorisée -->
+                  <button v-if="service.statut === 'EN ATTENTE'" @click="deleteService(service.id_service)">
+                    Annuler la demande
                   </button>
-                  <button @click="configureService(service)">Configurer</button>
-                  <button @click="deleteService(service.id_service)">Supprimer</button>
+                  <!-- Pour les autres services, seuls les boutons 'Configurer' et 'Supprimer' sont affichés -->
+                  <template v-else>
+                    <button @click="configureService(service)">Configurer</button>
+                    <button @click="deleteService(service.id_service)">Supprimer</button>
+                  </template>
                 </div>
               </div>
             </div>
@@ -145,27 +153,24 @@
           <!-- Onglet Réservation d'Emplacement -->
           <div v-if="activeTab === 'reservation'">
             <h2>Réservation d'Emplacement</h2>
-            <!-- Affichage des messages d'erreur ou de succès -->
             <div v-if="reservationError" class="error-message">{{ reservationError }}</div>
             <div v-if="reservationSuccess" class="success-message">{{ reservationSuccess }}</div>
 
             <div class="reservation-container">
-              <!-- Colonne de gauche : filtre par nom d'emplacement -->
               <div class="reservation-filters">
                 <h3>Filtrer les emplacements</h3>
                 <div class="form-group">
                   <label for="nom_emplacement">Nom de l'emplacement</label>
                   <input
-                      id="nom_emplacement"
-                      v-model="searchEmplacement.nom_emplacement"
-                      @input="searchEmplacements"
-                      type="text"
-                      placeholder="Filtrer par nom"
+                    id="nom_emplacement"
+                    v-model="searchEmplacement.nom_emplacement"
+                    @input="searchEmplacements"
+                    type="text"
+                    placeholder="Filtrer par nom"
                   />
                 </div>
               </div>
 
-              <!-- Colonne du milieu : liste des emplacements disponibles -->
               <div class="available-emplacements">
                 <h3>Emplacements Disponibles</h3>
                 <div v-if="availableEmplacements.length > 0">
@@ -180,7 +185,6 @@
                 </div>
               </div>
 
-              <!-- Colonne de droite : détails de la réservation -->
               <div class="reservation-details" v-if="selectedEmplacement">
                 <h3>Détails de la Réservation</h3>
                 <p><strong>Emplacement sélectionné :</strong> {{ selectedEmplacement.nom_emplacement }}</p>
@@ -196,15 +200,11 @@
               </div>
             </div>
 
-            <!-- Section des demandes en attente -->
             <div class="my-reservations">
               <h3>Mes demandes en attente</h3>
               <div v-if="myReservations.length > 0">
                 <div class="reservation-card" v-for="reservation in myReservations" :key="reservation.id_emplacement">
-                  <p>
-                    <strong>Emplacement :</strong>
-                    {{ reservation.nom_emplacement }}
-                  </p>
+                  <p><strong>Emplacement :</strong> {{ reservation.nom_emplacement }}</p>
                   <p><strong>Date :</strong> {{ reservation.date_reservation | formatDate }}</p>
                   <p><strong>Description :</strong> {{ reservation.description }}</p>
                   <button @click="cancelReservation(reservation)">Annuler la demande</button>
@@ -227,7 +227,6 @@
 </template>
 
 <script>
-// Correction : Import de l’éditeur via l’export par défaut
 import Editor from '@tinymce/tinymce-vue';
 import prestataireService from '@/services/prestataires';
 
@@ -241,7 +240,6 @@ export default {
       userType: '',
       services: [],
       presentationContent: '',
-      // Demande de service
       newService: {
         id_emplacement: '',
         nom_service: '',
@@ -252,7 +250,6 @@ export default {
         heure_service: ''
       },
       validatedEmplacements: [],
-      // Pour la réservation d'emplacement
       availableEmplacements: [],
       selectedEmplacement: null,
       myReservations: [],
@@ -274,7 +271,7 @@ export default {
           'insertdatetime media table paste code help wordcount'
         ],
         toolbar:
-            'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+          'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
       }
     };
   },
@@ -343,18 +340,16 @@ export default {
         alert('Erreur lors de la sauvegarde de la présentation');
       }
     },
-    async toggleServiceVisibility(service) {
-      try {
-        service.visibilite = !service.visibilite;
-        alert(`Le service "${service.nom_service}" est désormais ${service.visibilite ? 'accessible au public' : 'privé'}.`);
-      } catch (error) {
-        console.error('Erreur lors de la modification de la visibilité du service :', error);
-        alert('Erreur lors de la modification de la visibilité du service');
-      }
-    },
     async deleteService(serviceId) {
       try {
-        this.services = this.services.filter(service => service.id_service !== serviceId);
+        // Pour un service en attente, on appelle l'API d'annulation de demande
+        const service = this.services.find(s => s.id_service === serviceId);
+        if (service && service.statut === 'EN ATTENTE') {
+          await prestataireService.deleteServiceRequest(serviceId);
+        } else {
+          await prestataireService.deleteService(serviceId);
+        }
+        this.services = this.services.filter(s => s.id_service !== serviceId);
         alert('Service supprimé avec succès !');
       } catch (error) {
         console.error('Erreur lors de la suppression du service :', error);
@@ -368,13 +363,11 @@ export default {
       try {
         const payload = {
           ...this.newService,
-          id_utilisateur: this.user.id_utilisateur  // Ajout de l'id_utilisateur
+          id_utilisateur: this.user.id_utilisateur
         };
         await prestataireService.requestService(payload);
         alert('Demande de service envoyée avec succès !');
-        // Actualiser la liste des services
         this.fetchPrestataireServices();
-        // Réinitialiser le formulaire
         this.newService = {
           id_emplacement: '',
           nom_service: '',
@@ -389,7 +382,6 @@ export default {
         alert('Erreur lors de la demande de service');
       }
     },
-
     async fetchValidatedEmplacements() {
       try {
         const data = await prestataireService.fetchValidatedEmplacements(this.user.id_utilisateur);
@@ -453,8 +445,8 @@ export default {
         this.fetchMyReservations();
         this.searchEmplacements();
       } catch (error) {
-        console.error('Erreur lors de l\'annulation de la demande :', error);
-        alert('Erreur lors de l\'annulation de la demande');
+        console.error("Erreur lors de l'annulation de la demande :", error);
+        alert("Erreur lors de l'annulation de la demande");
       }
     }
   },
@@ -529,6 +521,13 @@ export default {
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.service-card.pending {
+  background-color: #fff8b3; /* fond jaune pour les demandes en attente */
+}
+.status-label {
+  color: #e67e22;
+  font-weight: bold;
 }
 .service-actions {
   margin-top: 10px;

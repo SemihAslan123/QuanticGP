@@ -1,5 +1,7 @@
 <template>
   <div class="page-container">
+    <!-- Déconnexion -->
+    <button class="logout-button" @click="logout">Se déconnecter</button>
 
     <!-- Nouveau Bloc Planning -->
     <section class="section-container planning-section">
@@ -60,8 +62,7 @@
       </div>
     </section>
 
-    <!-- Déconnexion -->
-    <button class="logout-button" @click="logout">Se déconnecter</button>
+
   </div>
 </template>
 
@@ -246,11 +247,10 @@ h1 {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
+  width: 150px;
   display: block;
   transition: background-color 0.3s;
+  margin-left: 100%;
 }
 
 .logout-button:hover {

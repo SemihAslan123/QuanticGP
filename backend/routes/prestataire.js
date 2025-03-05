@@ -4,13 +4,14 @@ const pool = require('../database/db');
 
 /**
  * GET /prestataire/services
- * Récupérer la liste de tous les services pour les clients
+ * Récupérer la liste des services validés pour les clients (statut = 'ACCEPTÉ')
  */
 router.get('/services', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite
-       FROM servicePrestataire`
+      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite, statut
+       FROM servicePrestataire
+       WHERE statut = 'ACCEPTÉ'`
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -82,7 +83,7 @@ router.get('/:id/services', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite
+      `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite, statut
        FROM servicePrestataire
        WHERE id_utilisateur = $1`,
       [id]
@@ -96,7 +97,9 @@ router.get('/:id/services', async (req, res) => {
 
 /**
  * POST /prestataire/service/request
- * Créer une demande de service prestataire
+ * Créer une demande de service prestataire avec un emplacement validé.
+ * La demande est enregistrée avec statut 'EN ATTENTE'
+ * et l'emplacement est mis à jour en 'UTILISÉ'
  */
 router.post('/service/request', async (req, res) => {
   const {
@@ -113,11 +116,26 @@ router.post('/service/request', async (req, res) => {
     return res.status(400).json({ error: "Paramètres manquants pour la demande de service" });
   }
   try {
+    // Vérifier que l'emplacement est validé (statut 'RÉSERVÉ')
+    const empResult = await pool.query(
+      `SELECT * FROM emplacements_prestataires WHERE id_emplacement = $1 AND statut = 'RÉSERVÉ'`,
+      [id_emplacement]
+    );
+    if (empResult.rows.length === 0) {
+      return res.status(400).json({ error: "Emplacement non validé ou indisponible" });
+    }
+    // Insertion du service avec statut 'EN ATTENTE'
     const result = await pool.query(
-      `INSERT INTO servicePrestataire (id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service, date_service, heure_service, visibilite)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
+      `INSERT INTO servicePrestataire 
+       (id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service, date_service, heure_service, visibilite, statut)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, 'EN ATTENTE')
        RETURNING *`,
-      [id_utilisateur, id_emplacement || null, nom_service, type_service, presentation_service, description_service || '', date_service, heure_service]
+      [id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service || '', date_service, heure_service]
+    );
+    // Mettre à jour l'emplacement en 'UTILISÉ'
+    await pool.query(
+      `UPDATE emplacements_prestataires SET statut = 'UTILISÉ' WHERE id_emplacement = $1`,
+      [id_emplacement]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -127,8 +145,71 @@ router.post('/service/request', async (req, res) => {
 });
 
 /**
+ * DELETE /prestataire/service/request/:id
+ * Annuler une demande de service (uniquement si son statut est 'EN ATTENTE').
+ * Après annulation, si aucun autre service n'utilise l'emplacement, celui-ci est remis en 'RÉSERVÉ'
+ */
+router.delete('/service/request/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Vérifier que le service existe et est en attente
+    const serviceResult = await pool.query(
+      `SELECT * FROM servicePrestataire WHERE id_service = $1 AND statut = 'EN ATTENTE'`,
+      [id]
+    );
+    if (serviceResult.rows.length === 0) {
+      return res.status(404).json({ error: "Service non trouvé ou non annulable" });
+    }
+    const service = serviceResult.rows[0];
+    // Supprimer la demande
+    await pool.query(
+      `DELETE FROM servicePrestataire WHERE id_service = $1`,
+      [id]
+    );
+    // Si aucun autre service n'utilise cet emplacement, remettre le statut en 'RÉSERVÉ'
+    if (service.id_emplacement) {
+      const countResult = await pool.query(
+        `SELECT COUNT(*) FROM servicePrestataire WHERE id_emplacement = $1`,
+        [service.id_emplacement]
+      );
+      if (parseInt(countResult.rows[0].count, 10) === 0) {
+        await pool.query(
+          `UPDATE emplacements_prestataires SET statut = 'RÉSERVÉ' WHERE id_emplacement = $1`,
+          [service.id_emplacement]
+        );
+      }
+    }
+    res.status(200).json({ message: "Service annulé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de l'annulation du service :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+});
+
+/**
+ * DELETE /prestataire/service/:id
+ * Supprimer un service (cas non 'EN ATTENTE')
+ */
+router.delete('/service/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      `DELETE FROM servicePrestataire WHERE id_service = $1`,
+      [id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Service non trouvé" });
+    }
+    res.status(200).json({ message: "Service supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du service :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+});
+
+/**
  * GET /prestataire/emplacements/available
- * Récupérer la liste des emplacements disponibles (statut = 'LIBRE') avec filtrage par nom_emplacement
+ * Récupérer la liste des emplacements disponibles (statut = 'LIBRE')
  */
 router.get('/emplacements/available', async (req, res) => {
   try {
@@ -138,7 +219,6 @@ router.get('/emplacements/available', async (req, res) => {
     `;
     let values = [];
     let filters = [];
-
     if (req.query.nom_emplacement) {
       filters.push("nom_emplacement ILIKE $" + (values.length + 1));
       values.push(`%${req.query.nom_emplacement}%`);
@@ -146,7 +226,6 @@ router.get('/emplacements/available', async (req, res) => {
     if (filters.length > 0) {
       query += " AND " + filters.join(" AND ");
     }
-
     const result = await pool.query(query, values);
     res.status(200).json(result.rows);
   } catch (error) {
@@ -165,7 +244,6 @@ router.post('/emplacements/reservation', async (req, res) => {
     return res.status(400).json({ error: "Paramètres manquants pour la réservation" });
   }
   try {
-    // Mettre à jour l'emplacement pour réserver
     const result = await pool.query(
       `UPDATE emplacements_prestataires
        SET utilisateur_id = $1, date_reservation = $2, description = $3, statut = 'EN ATTENTE'
@@ -209,7 +287,6 @@ router.get('/emplacements/myrequests/:id', async (req, res) => {
 router.delete('/emplacements/reservation/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    // Pour annuler, on remet l'emplacement en LIBRE et on efface l'utilisateur, la date et la description
     const result = await pool.query(
       `UPDATE emplacements_prestataires
        SET utilisateur_id = NULL, date_reservation = NULL, description = NULL, statut = 'LIBRE'

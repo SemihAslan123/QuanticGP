@@ -66,7 +66,12 @@
           <!-- Onglet Présentation -->
           <div v-if="activeTab === 'presentation'">
             <h2>Modifier Présentation</h2>
-            <Editor v-model="presentationContent" :init="editorInit" />
+            <!-- Ajout de la clé API ici -->
+            <Editor
+              api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
+              v-model="presentationContent"
+              :init="editorInit"
+            />
             <button @click="savePresentation">Sauvegarder la présentation</button>
           </div>
 
@@ -467,7 +472,13 @@ export default {
 <style scoped>
 .user-service-view {
   padding: 20px;
+  margin-top: 70px;
 }
+
+h1{
+  color: #b9b8b8;
+}
+
 .menu {
   display: flex;
   gap: 10px;

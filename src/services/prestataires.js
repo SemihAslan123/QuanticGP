@@ -99,5 +99,14 @@ export default {
       console.error('Erreur fetchValidatedEmplacements :', error);
       throw error;
     }
+  },
+  async updateService(serviceData) {
+    try {
+      const response = await api.post('/prestataire/service/update', serviceData);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur updateService :', error);
+      throw error;
+    }
   }
 };

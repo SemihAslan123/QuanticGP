@@ -63,16 +63,33 @@
             </form>
           </div>
 
-          <!-- Onglet Présentation -->
+          <!-- Onglet Présentation : modification d'un service validé -->
           <div v-if="activeTab === 'presentation'">
-            <h2>Modifier Présentation</h2>
-            <!-- Ajout de la clé API ici -->
-            <Editor
-              api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
-              v-model="presentationContent"
-              :init="editorInit"
-            />
-            <button @click="savePresentation">Sauvegarder la présentation</button>
+            <h2>Modifier la présentation d'un service validé</h2>
+            <div class="form-group">
+              <label for="serviceSelect">Sélectionner un service validé :</label>
+              <select id="serviceSelect" v-model="selectedServiceId" @change="loadSelectedService">
+                <option disabled value="">-- Choisir un service --</option>
+                <option v-for="service in validatedServices" :key="service.id_service" :value="service.id_service">
+                  {{ service.nom_service }}
+                </option>
+              </select>
+            </div>
+            <div v-if="selectedServiceId">
+              <div class="form-group">
+                <label for="presentationEditor">Modifier la présentation :</label>
+                <Editor
+                  api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
+                  v-model="servicePresentationContent"
+                  :init="editorInit"
+                />
+              </div>
+              <div class="form-group">
+                <label for="imageInput">Modifier l'URL de l'image :</label>
+                <input id="imageInput" v-model="serviceImage" type="text" placeholder="URL de l'image" />
+              </div>
+              <button @click="updateServicePresentation">Sauvegarder les modifications</button>
+            </div>
           </div>
 
           <!-- Onglet Gestion des Services -->
@@ -101,11 +118,9 @@
                   <strong>Statut :</strong> En attente
                 </p>
                 <div class="service-actions">
-                  <!-- Pour un service en attente, seule l'annulation est autorisée -->
                   <button v-if="service.statut === 'EN ATTENTE'" @click="deleteService(service.id_service)">
                     Annuler la demande
                   </button>
-                  <!-- Pour les autres services, seuls les boutons 'Configurer' et 'Supprimer' sont affichés -->
                   <template v-else>
                     <button @click="configureService(service)">Configurer</button>
                     <button @click="deleteService(service.id_service)">Supprimer</button>
@@ -245,6 +260,9 @@ export default {
       userType: '',
       services: [],
       presentationContent: '',
+      selectedServiceId: '',
+      servicePresentationContent: '',
+      serviceImage: '',
       newService: {
         id_emplacement: '',
         nom_service: '',
@@ -279,6 +297,11 @@ export default {
           'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
       }
     };
+  },
+  computed: {
+    validatedServices() {
+      return this.services.filter(service => service.statut === 'ACCEPTÉ');
+    }
   },
   created() {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -347,7 +370,6 @@ export default {
     },
     async deleteService(serviceId) {
       try {
-        // Pour un service en attente, on appelle l'API d'annulation de demande
         const service = this.services.find(s => s.id_service === serviceId);
         if (service && service.statut === 'EN ATTENTE') {
           await prestataireService.deleteServiceRequest(serviceId);
@@ -453,6 +475,37 @@ export default {
         console.error("Erreur lors de l'annulation de la demande :", error);
         alert("Erreur lors de l'annulation de la demande");
       }
+    },
+    loadSelectedService() {
+      const service = this.services.find(s => s.id_service === this.selectedServiceId);
+      if (service) {
+        this.servicePresentationContent = service.presentation_service;
+        this.serviceImage = service.image_prestataire;
+      }
+    },
+    updateServicePresentation() {
+      if (!this.selectedServiceId) {
+        alert("Veuillez sélectionner un service.");
+        return;
+      }
+      const payload = {
+        id_service: this.selectedServiceId,
+        id_utilisateur: this.user.id_utilisateur,
+        presentation_service: this.servicePresentationContent,
+        image_prestataire: this.serviceImage
+      };
+      prestataireService.updateService(payload)
+        .then(updatedService => {
+          alert("Service mis à jour avec succès !");
+          const index = this.services.findIndex(s => s.id_service === this.selectedServiceId);
+          if (index !== -1) {
+            this.$set(this.services, index, updatedService);
+          }
+        })
+        .catch(error => {
+          console.error("Erreur lors de la mise à jour du service :", error);
+          alert("Erreur lors de la mise à jour du service.");
+        });
     }
   },
   filters: {
@@ -474,11 +527,9 @@ export default {
   padding: 20px;
   margin-top: 70px;
 }
-
-h1{
+h1 {
   color: #b9b8b8;
 }
-
 .menu {
   display: flex;
   gap: 10px;
@@ -534,7 +585,7 @@ h1{
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 .service-card.pending {
-  background-color: #fff8b3; /* fond jaune pour les demandes en attente */
+  background-color: #fff8b3;
 }
 .status-label {
   color: #e67e22;

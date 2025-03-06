@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database/db');
+const sanitizeHtml = require('sanitize-html');
+
 
 /**
  * GET /prestataire/services
@@ -323,4 +325,39 @@ router.get('/emplacements/validated/:id', async (req, res) => {
   }
 });
 
+/**
+ * POST /prestataire/service/update
+ * Mettre à jour la présentation et l'image d'un service pour un prestataire.
+ */
+router.post('/service/update', async (req, res) => {
+  const { id_service, id_utilisateur, presentation_service, image_prestataire } = req.body;
+  if (!id_service || !id_utilisateur) {
+    return res.status(400).json({ error: "Paramètres manquants" });
+  }
+
+  // Supprimer toutes les balises HTML pour ne conserver que le texte
+  const cleanPresentation = sanitizeHtml(presentation_service, {
+    allowedTags: [],       // aucune balise n'est autorisée
+    allowedAttributes: {}  // aucune attribut n'est autorisé
+  });
+
+  try {
+    const result = await pool.query(
+      `UPDATE servicePrestataire
+       SET presentation_service = $1, image_prestataire = $2
+       WHERE id_service = $3 AND id_utilisateur = $4
+       RETURNING *`,
+      [cleanPresentation, image_prestataire, id_service, id_utilisateur]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Service non trouvé ou non modifiable" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du service :", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+});
+
 module.exports = router;
+

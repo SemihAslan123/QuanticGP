@@ -1,0 +1,231 @@
+/* frontend/src/styles/OrgaStyle/ReservationsTable.css */
+.reservations-section-orga {
+    background: #1a2e41;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+    margin-top: 60px;
+}
+
+h2, h3 {
+    font-size: 22px;
+    color: #ffffff;
+    font-family: "Goldman", sans-serif;
+    margin-bottom: 20px;
+}
+
+.reservations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.reservation-card {
+    background: rgba(19, 16, 46, 0.945);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.342);
+}
+
+.reservation-info {
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    margin: 5px 0;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #ffffff;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.reservation-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #ffffff;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.reservation-status.en\ attente {
+    background: rgb(228, 186, 0); /* Jaune du thème */
+}
+
+.reservation-status.réservé {
+    background: #e51e53; /* Rouge du thème */
+}
+
+.reservation-status.libre {
+    background: #4caf50; /* Vert pour "Libre" */
+}
+
+.actions-cell {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.status-select {
+    padding: 10px;
+    border: 1px solid #3f5264;
+    border-radius: 10px;
+    background: rgba(19, 16, 46, 0.945);
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.btn-delete,
+.btn-details {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.btn-delete {
+    background: #b9113ed3; /* Rouge foncé du thème */
+    color: #ffffff;
+}
+
+.btn-details {
+    background: #e51e53; /* Rouge du thème */
+    color: #ffffff;
+}
+
+.button-back-orga {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: rgb(228, 186, 0); /* Jaune du thème */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: "Goldman", sans-serif;
+}
+
+.no-data {
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+.stand-list-toggle {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.stand-list-btn {
+    background: rgb(228, 186, 0); /* Jaune du thème */
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: "Goldman", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.stand-list-btn:hover {
+    background: #d4a700; /* Jaune légèrement plus foncé au survol */
+}
+
+.stand-list-section {
+    margin-top: 20px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1a2e41;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.342);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3f5264;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    color: #ffffff;
+    font-family: "Goldman", sans-serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #d4d4d4;
+}
+
+.modal-body p {
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    margin: 10px 0;
+}
+
+.details-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.detail-icon {
+    margin-right: 10px;
+    color: #e51e53;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+    opacity: 0;
+}

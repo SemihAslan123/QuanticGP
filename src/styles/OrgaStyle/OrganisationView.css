@@ -1,0 +1,64 @@
+.dashboard-orga {
+    display: flex;
+    min-height: 100vh;
+    background-color: rgba(0, 22, 43, 255); /* Fond bleu foncé du thème */
+}
+
+.content-orga {
+    flex: 1;
+    padding: 30px;
+    margin-top: 60px;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 28px;
+    color: #ffffff; /* Texte blanc */
+    font-family: "Goldman", sans-serif; /* Police Goldman */
+    font-weight: 700;
+}
+
+.dashboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: #1a2e41;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-card svg {
+    font-size: 32px;
+    color: #e51e53; /* Rouge du thème pour les icônes */
+    margin-bottom: 15px;
+}
+
+.dashboard-card h3 {
+    font-size: 16px;
+    color: #d4d4d4; /* Gris clair pour les sous-titres */
+    font-family: "Host Grotesk", sans-serif;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff; /* Texte blanc */
+    font-family: "Goldman", sans-serif;
+}

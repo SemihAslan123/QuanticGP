@@ -1,0 +1,101 @@
+.list-prestataire-section-orga {
+    background: #1a2e41; /* Bleu foncé secondaire */
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+    margin-top: 60px;
+}
+
+h2 {
+    font-size: 22px;
+    color: #ffffff;
+    font-family: "Goldman", sans-serif;
+    margin-bottom: 20px;
+}
+
+.filter-container-orga {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.search-bar-orga {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #3f5264; /* Bordure gris foncé */
+    border-radius: 10px;
+    font-size: 14px;
+    background: rgba(19, 16, 46, 0.945); /* Fond sombre pour les inputs */
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.filter-select-orga {
+    padding: 12px;
+    border: 1px solid #3f5264;
+    border-radius: 10px;
+    font-size: 14px;
+    background: rgba(19, 16, 46, 0.945);
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.prestataires-grid-orga {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.prestataire-card-orga {
+    background: rgba(19, 16, 46, 0.945);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.342);
+}
+
+.prestataire-name-orga {
+    font-size: 18px;
+    color: #ffffff;
+    font-family: "Goldman", sans-serif;
+    margin-bottom: 8px;
+}
+
+.prestataire-id-orga,
+.prestataire-email-orga {
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.prestataire-service {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #ffffff;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.prestataire-service.prestataire {
+    background: #e51e53; /* Rouge du thème */
+}
+
+.prestataire-service.client {
+    background: rgb(228, 186, 0); /* Jaune du thème */
+}
+
+.prestataire-service.organisateur {
+    background: #b9113ed3; /* Rouge foncé du thème */
+}
+
+.service-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #3f5264;
+    border-radius: 10px;
+    font-size: 14px;
+    background: rgba(19, 16, 46, 0.945);
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}

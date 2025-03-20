@@ -1,0 +1,79 @@
+/* Conteneur principal */
+.statistics-orga {
+    background: #1a2e41;
+    padding: 25px;
+    margin-top: 60px;
+    border-radius: 15px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+}
+
+/* Titres */
+h2 {
+    font-family: "Goldman", sans-serif;
+    font-size: 22px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+/* Section aperçu des stats */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    background: rgba(19, 16, 46, 0.945);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-item h3 {
+    font-family: "Host Grotesk", sans-serif;
+    font-size: 14px;
+    color: #d4d4d4;
+    margin-bottom: 10px;
+}
+
+.stat-item p {
+    font-family: "Goldman", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Section graphiques */
+.stats-graphs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.chart-container {
+    background: rgba(19, 16, 46, 0.945);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;           /* Ajout pour centrage */
+    flex-direction: column;  /* Organisation verticale */
+    align-items: center;     /* Centrage horizontal */
+    justify-content: center; /* Centrage vertical */
+    height: auto;            /* Remplace la hauteur fixe */
+    overflow: hidden;        /* Empêche le dépassement */
+}
+
+.chart-title {
+    font-family: "Goldman", sans-serif;
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-align: center;      /* Assure que le titre reste centré */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .stats-graphs {
+        grid-template-columns: 1fr;
+    }
+}

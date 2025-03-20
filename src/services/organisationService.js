@@ -20,7 +20,7 @@ export default {
         return response.data;
     },
 
-    // Réservations
+    // Réservations de services
     async getReservations() {
         const response = await api.get('/organisation/stands');
         return response.data;
@@ -31,6 +31,25 @@ export default {
     },
     async deleteReservation(reservationId) {
         const response = await api.delete(`/organisation/stands/${reservationId}`);
+        return response.data;
+    },
+
+    // Réservations d'emplacements
+    async getStandReservations() {
+        const response = await api.get('/organisation/stand-reservations');
+        return response.data;
+    },
+    async updateStandStatus(standId, newStatus) {
+        const response = await api.patch(`/organisation/stand-reservations/${standId}`, { statut: newStatus });
+        return response.data;
+    },
+    async deleteStandReservation(standId) {
+        const response = await api.delete(`/organisation/stand-reservations/${standId}`);
+        return response.data;
+    },
+    // Tous les stands
+    async getAllStands() {
+        const response = await api.get('/organisation/all-stands');
         return response.data;
     },
 

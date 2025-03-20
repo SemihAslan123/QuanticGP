@@ -40,7 +40,6 @@ export default {
   },
 };
 </script>
-<style scoped src="../../styles/OrganisationPage.css">
-/* Styles pour la sidebar */
-</style>
+<style scoped src="../../styles/OrgaStyle/EventsList.css">
 
+</style>

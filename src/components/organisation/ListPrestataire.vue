@@ -66,7 +66,7 @@ export default {
 };
 </script>
 
-<style scoped src="../../styles/OrganisationPage.css">
-/* Styles pour la sidebar */
+<style scoped src="../../styles/OrgaStyle/ListPrestataire.css">
+
 </style>
 

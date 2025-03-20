@@ -1,40 +1,46 @@
 <!-- frontend/src/components/EventForm.vue -->
 <template>
-  <section class="event-form-orga">
-    <h2>{{ editing ? "Modifier l'activitée" : "Créer une activitée" }}</h2>
-    <form @submit.prevent="handleSubmit">
-      <div class="form-group-orga">
-        <label>Nom de l'activitée :</label>
-        <input type="text" v-model="form.courseName" required />
+  <section class="event-form-section">
+    <h2>{{ editing ? "Modifier l'activité" : "Créer une activité" }}</h2>
+    <form @submit.prevent="handleSubmit" class="event-form">
+      <div class="form-group">
+        <label>Nom de l'activité</label>
+        <input type="text" v-model="form.courseName" placeholder="Entrez le nom" required />
       </div>
-      <div class="form-group-orga">
-        <label>Date de l'activitée :</label>
+      <div class="form-group">
+        <label>Date de l'activité</label>
         <input type="date" v-model="form.eventDate" required />
       </div>
-      <div class="form-group-orga">
-        <label>Prix (en €) :</label>
-        <input type="number" v-model="form.eventPrice" required />
+      <div class="form-group">
+        <label>Prix (en €)</label>
+        <input type="number" v-model="form.eventPrice" placeholder="0.00" step="0.01" required />
       </div>
-      <div class="form-group-orga">
-        <label>Horaire Début :</label>
+      <div class="form-group">
+        <label>Horaire Début</label>
         <input type="time" v-model="form.horaireDebut" required />
       </div>
-      <div class="form-group-orga">
-        <label>Horaire Fin :</label>
+      <div class="form-group">
+        <label>Horaire Fin</label>
         <input type="time" v-model="form.horaireFin" required />
       </div>
-      <div class="form-group-orga">
-        <label>Description :</label>
-        <div ref="editorContainer" class="editor-container-orga"></div>
+      <div class="form-group">
+        <label>Description</label>
+        <div ref="editorContainer" class="editor-container"></div>
       </div>
-      <div class="form-group-orga">
-        <label>Image :</label>
-        <input type="file" @change="handleFileUpload" />
-        <img v-if="form.eventImage" :src="form.eventImage" alt="Image de l'événement" />
+      <div class="form-group">
+        <label>Image</label>
+        <input type="file" @change="handleFileUpload" class="file-input" />
+        <div v-if="form.eventImage" class="image-preview">
+          <img :src="form.eventImage" alt="Image de l'événement" />
+        </div>
       </div>
-      <button type="submit">{{ editing ? "Enregistrer" : "Créer" }}</button>
-      <div class="actions-orga">
-        <button v-if="!editing" type="button" @click="$emit('show-events')">Voir les activitées</button>
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">
+          {{ editing ? "Enregistrer" : "Créer" }}
+        </button>
+        <button v-if="!editing" type="button" @click="$emit('show-events')" class="secondary-btn">
+          Voir les activités
+        </button>
       </div>
     </form>
   </section>
@@ -78,7 +84,7 @@ export default {
       this.$nextTick(() => {
         this.quillEditor = new Quill(this.$refs.editorContainer, {
           theme: 'snow',
-          placeholder: 'Écrivez la description de l’activitée...',
+          placeholder: 'Écrivez la description de l’activité...',
           modules: {
             toolbar: [
               [{ header: '1' }, { header: '2' }, { font: [] }],
@@ -127,7 +133,7 @@ export default {
 };
 </script>
 
-<style scoped src="../../styles/OrganisationPage.css">
-/* Styles pour la sidebar */
-</style>
 
+<style scoped src="../../styles/OrgaStyle/EventForm.css">
+
+</style>

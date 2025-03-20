@@ -1,26 +1,57 @@
 <!-- frontend/src/views/OrganisationView.vue -->
 <template>
   <div class="dashboard-orga">
-    <!-- Sidebar -->
     <OrganisationSidebar :currentSection="currentSection" @update-section="updateSection" />
-    <!-- Main Content -->
     <main class="content-orga">
       <header>
         <h1>Gestion</h1>
       </header>
-      <!-- Sections selon currentSection -->
-      <div v-if="currentSection === 'dashboard'">
-        <h2>Bienvenue</h2>
+      <div v-if="currentSection === 'dashboard'" class="dashboard-section">
+        <div class="dashboard-card" @click="updateSection('events')">
+          <font-awesome-icon icon="calendar-alt" />
+          <h3>Événements</h3>
+          <p>{{ totalEvents }}</p>
+        </div>
+        <div class="dashboard-card">
+          <font-awesome-icon icon="users" />
+          <h3>Participants</h3>
+          <p>{{ totalParticipants }}</p>
+        </div>
+        <div class="dashboard-card">
+          <font-awesome-icon icon="ticket-alt" />
+          <h3>Billets Vendus</h3>
+          <p>{{ totalTickets }}</p>
+        </div>
+        <div class="dashboard-card">
+          <font-awesome-icon icon="concierge-bell" />
+          <h3>Services Prestataires</h3>
+          <p>{{ totalServices }}</p>
+        </div>
       </div>
       <EventForm v-if="currentSection === 'event'" :editing="false" @save-event="handleCreateEvent" @show-events="updateSection('events')" />
       <EventForm v-if="currentSection === 'modifyEvent'" :editing="true" :initialData="currentEventData" @save-event="handleUpdateEvent" />
       <EventsList v-if="currentSection === 'events'" :events="events" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent" @back-to-create="updateSection('event')" />
-      <ReservationsTable v-if="currentSection === 'reservations'" :reservations="reservations" @change-status="handleChangeStatus" @delete-reservation="handleDeleteReservation" @back="updateSection('dashboard')" />
-      <StatisticsChart v-if="currentSection === 'statistiques'"
-                       :totalEvents="totalEvents"
-                       :totalParticipants="totalParticipants"
-                       :totalTicketPrestataire="totalTicketPrestataire"
-                       :participantsData="participantsData" />
+      <ReservationsTable
+          v-if="currentSection === 'reservations'"
+          :reservations="reservations"
+          :stand-reservations="standReservations"
+          :all-stands="allStands"
+      @change-status="handleChangeStatus"
+      @delete-reservation="handleDeleteReservation"
+      @change-stand-status="handleChangeStandStatus"
+      @delete-stand-reservation="handleDeleteStandReservation"
+      @back="updateSection('dashboard')"
+      />
+      <StatisticsChart
+          v-if="currentSection === 'statistiques'"
+          :totalEvents="totalEvents"
+          :totalParticipants="totalParticipants"
+          :totalTicketPrestataire="totalTicketPrestataire"
+          :totalServices="totalServices"
+          :totalTickets="totalTickets"
+          :participantsData="participantsData"
+          :servicesByType="servicesByType"
+      />
       <ListPrestataire v-if="currentSection === 'listPrestataire'" :prestataires="prestataires" @change-service="handleChangeService" />
       <AssistancePrestataire v-if="currentSection === 'assistance'" />
     </main>
@@ -50,25 +81,31 @@ export default {
   },
   data() {
     return {
-      currentSection: 'event',
+      currentSection: 'dashboard',
       events: [],
       reservations: [],
+      standReservations: [],
+      allStands: [], // Changé de availableStands à allStands
       prestataires: [],
       totalEvents: 0,
       totalParticipants: 0,
       totalTicketPrestataire: 0,
+      totalServices: 0,
+      totalTickets: 0,
       participantsData: [],
+      servicesByType: [],
       currentEventData: {},
       editingEventId: null,
     };
   },
   mounted() {
-    if (this.currentSection === 'statistiques') {
+    if (this.currentSection === 'statistiques' || this.currentSection === 'dashboard') {
       this.loadStatistics();
     }
   },
   methods: {
     updateSection(section) {
+      console.log("Section mise à jour :", section);
       this.currentSection = section;
       if (section === 'events') {
         this.fetchEvents();
@@ -91,8 +128,14 @@ export default {
     },
     async loadReservations() {
       try {
-        const data = await organisationService.getReservations();
-        this.reservations = data;
+        const serviceData = await organisationService.getReservations();
+        this.reservations = serviceData;
+
+        const standData = await organisationService.getStandReservations();
+        this.standReservations = standData;
+
+        const allStandsData = await organisationService.getAllStands(); // Changé de getAvailableStands à getAllStands
+        this.allStands = allStandsData;
       } catch (error) {
         console.error("Erreur lors de la récupération des réservations :", error);
         alert("Erreur lors de la récupération des réservations.");
@@ -104,7 +147,10 @@ export default {
         this.totalEvents = data.totalEvents;
         this.totalParticipants = data.totalParticipants;
         this.totalTicketPrestataire = data.totalTicketPrestataire;
-        this.participantsData = data.participantsByEvent ? JSON.parse(JSON.stringify(data.participantsByEvent)) : [];
+        this.totalServices = data.totalServices;
+        this.totalTickets = data.totalTickets;
+        this.participantsData = data.participantsByEvent || [];
+        this.servicesByType = data.servicesByType || [];
       } catch (error) {
         console.error("Erreur lors de la récupération des statistiques :", error);
         alert("Erreur lors de la récupération des statistiques.");
@@ -153,20 +199,20 @@ export default {
       this.currentSection = 'modifyEvent';
     },
     async handleDeleteEvent(eventId) {
-      if (confirm("Êtes-vous sûr de vouloir supprimer cet activitée ?")) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet activité ?")) {
         try {
           await organisationService.deleteEvent(eventId);
-          alert("Activitée supprimé avec succès.");
+          alert("Activité supprimée avec succès.");
           await this.fetchEvents();
         } catch (error) {
           console.error("Erreur lors de la suppression :", error);
-          alert("Erreur lors de la suppression de l'activitée.");
+          alert("Erreur lors de la suppression de l'activité.");
         }
       }
     },
     async handleChangeStatus(reservationId, newStatus) {
       try {
-        await organisationService.updateReservationStatus(reservationId, newStatus);
+        await organisationService.updateReservationStatus(reservationId, newStatus.toUpperCase());
         alert("Statut mis à jour avec succès.");
         await this.loadReservations();
       } catch (error) {
@@ -186,6 +232,28 @@ export default {
         }
       }
     },
+    async handleChangeStandStatus(standId, newStatus) {
+      try {
+        await organisationService.updateStandStatus(standId, newStatus.toUpperCase());
+        alert("Statut de l'emplacement mis à jour avec succès.");
+        await this.loadReservations();
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut de l'emplacement :", error);
+        alert("Erreur lors de la mise à jour du statut de l'emplacement.");
+      }
+    },
+    async handleDeleteStandReservation(standId) {
+      if (confirm("Êtes-vous sûr de vouloir rejeter cette réservation d'emplacement ?")) {
+        try {
+          await organisationService.deleteStandReservation(standId);
+          alert("Réservation d'emplacement rejetée avec succès.");
+          await this.loadReservations();
+        } catch (error) {
+          console.error("Erreur lors du rejet de la réservation d'emplacement :", error);
+          alert("Erreur lors du rejet de la réservation d'emplacement.");
+        }
+      }
+    },
     async handleChangeService(prestataireId, newType) {
       try {
         await organisationService.updatePrestataire(prestataireId, newType);
@@ -200,6 +268,4 @@ export default {
 };
 </script>
 
-<style scoped src="../styles/OrganisationPage.css">
-/* Styles pour la sidebar */
-</style>
+<style scoped src="../styles/OrgaStyle/OrganisationView.css"></style>

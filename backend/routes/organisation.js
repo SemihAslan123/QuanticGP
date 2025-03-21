@@ -359,7 +359,7 @@ router.get('/statistics', async (req, res) => {
         const totalParticipantsResult = await pool.query(
             `SELECT COUNT(DISTINCT id_utilisateur) AS total_participants FROM liste_activite_client`
         );
-        const totalServicesResult = await pool.query('SELECT COUNT(*) AS total FROM servicePrestataire'); // Corrigé ici
+        const totalServicesResult = await pool.query('SELECT COUNT(*) AS total FROM servicePrestataire');
         const totalTicketsResult = await pool.query('SELECT COUNT(*) AS total FROM billet');
         const participantsByEventResult = await pool.query(
             `SELECT e.id AS event_id, e.name AS event_name, COUNT(lac.id_utilisateur) AS participants_count

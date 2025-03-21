@@ -38,7 +38,7 @@
         <div class="actions-cell">
           <select @change="$emit('change-status', reservation.id_reservation, $event.target.value)" class="status-select">
             <option value="EN ATTENTE" :selected="reservation.statut === 'EN ATTENTE'">En attente</option>
-            <option value="RÉSERVÉ" :selected="reservation.statut === 'RÉSERVÉ'">Réservé</option>
+            <option value="ACCEPTÉ" :selected="reservation.statut === 'ACCEPTÉ'">Accepter</option>
           </select>
           <button class="btn-delete" @click="$emit('delete-reservation', reservation.id_reservation)">Rejeter</button>
           <button class="btn-details" @click="toggleDetails(reservation)">Détails</button>

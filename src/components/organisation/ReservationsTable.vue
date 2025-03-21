@@ -112,7 +112,6 @@
         <option value="">Tous</option>
         <option value="EN ATTENTE">En attente</option>
         <option value="RÉSERVÉ">Réservé</option>
-        <option value="LIBRE">Libre</option>
       </select>
     </div>
     <div class="reservations-table">

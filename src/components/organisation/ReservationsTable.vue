@@ -85,6 +85,13 @@
             >
               <font-awesome-icon icon="trash" />
             </button>
+            <button
+                v-if="reservation.statut === 'ACCEPTÉ'"
+                class="btn-edit"
+                @click="openEditModal(reservation, 'service')"
+            >
+              <font-awesome-icon icon="edit" />
+            </button>
             <button class="btn-details" @click="toggleDetails(reservation)">
               <font-awesome-icon icon="eye" />
             </button>
@@ -177,6 +184,13 @@
                 @click="$emit('delete-stand-reservation', stand.id_emplacement)"
             >
               <font-awesome-icon icon="trash" />
+            </button>
+            <button
+                v-if="stand.statut === 'RÉSERVÉ'"
+                class="btn-edit"
+                @click="openEditModal(stand, 'stand')"
+            >
+              <font-awesome-icon icon="edit" />
             </button>
             <button class="btn-details" @click="toggleStandDetails(stand)">
               <font-awesome-icon icon="eye" />
@@ -325,6 +339,36 @@
         </div>
       </div>
     </transition>
+
+    <!-- Modal pour modifier le statut -->
+    <transition name="modal-fade">
+      <div v-if="editModalVisible" class="modal-overlay" @click.self="closeEditModal">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>Modifier le statut</h3>
+            <button class="close-btn" @click="closeEditModal">×</button>
+          </div>
+          <div class="modal-body">
+            <label for="edit-status-select">Nouveau statut :</label>
+            <select
+                id="edit-status-select"
+                v-model="newStatus"
+                class="status-select"
+            >
+              <option v-if="editItemType === 'service'" value="EN ATTENTE">En attente</option>
+              <option v-if="editItemType === 'service'" value="ACCEPTÉ">Accepté</option>
+              <option v-if="editItemType === 'stand'" value="EN ATTENTE">En attente</option>
+              <option v-if="editItemType === 'stand'" value="RÉSERVÉ">Réservé</option>
+              <option v-if="editItemType === 'stand'" value="LIBRE">Libre</option>
+            </select>
+            <div class="modal-actions">
+              <button class="btn-confirm" @click="confirmStatusChange">Confirmer</button>
+              <button class="btn-cancel" @click="closeEditModal">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -350,8 +394,8 @@ export default {
       selectedReservation: null,
       selectedStand: null,
       showStandList: false,
-      serviceStatusFilter: '', // Filtre pour les services
-      standStatusFilter: '',   // Filtre pour les emplacements
+      serviceStatusFilter: '',
+      standStatusFilter: '',
       sortKey: {
         services: '',
         stands: '',
@@ -362,6 +406,10 @@ export default {
         stands: 1,
         allStands: 1,
       },
+      editModalVisible: false,
+      editItem: null,
+      editItemType: null,
+      newStatus: '',
     };
   },
   computed: {
@@ -444,6 +492,26 @@ export default {
     },
     hideStandDetails() {
       this.selectedStand = null;
+    },
+    openEditModal(item, type) {
+      this.editItem = item;
+      this.editItemType = type;
+      this.newStatus = item.statut;
+      this.editModalVisible = true;
+    },
+    closeEditModal() {
+      this.editModalVisible = false;
+      this.editItem = null;
+      this.editItemType = null;
+      this.newStatus = '';
+    },
+    confirmStatusChange() {
+      if (this.editItemType === 'service') {
+        this.$emit('change-status', this.editItem.id_reservation, this.newStatus);
+      } else if (this.editItemType === 'stand') {
+        this.$emit('change-stand-status', this.editItem.id_emplacement, this.newStatus);
+      }
+      this.closeEditModal();
     },
   },
 };

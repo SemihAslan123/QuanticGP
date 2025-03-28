@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db');
+const pool = require('../db');
 const { v4: uuidv4 } = require('uuid');
-const util = require("util");
 
 /**
  * @swagger
@@ -54,7 +53,7 @@ const util = require("util");
  *                       description: Le type d'utilisateur (admin, user).
  *                     sessionId:
  *                       type: string
- *                       description: L'ID de la session de l'utilisateur généré après une connexion réussie.
+ *                       description: L'ID de la session généré après une connexion réussie.
  *       400:
  *         description: Email et mot de passe sont requis.
  *       401:
@@ -74,7 +73,6 @@ router.post('/', async (req, res) => {
         const result = await pool.query(query, [email]);
 
         if (result.rows.length === 0) {
-            // Message d'erreur lorsque l'utilisateur n'est pas trouvé
             return res.status(401).json({ error: 'Utilisateur non trouvé.' });
         }
 
@@ -95,7 +93,7 @@ router.post('/', async (req, res) => {
                 prenom: utilisateur.prenom_utilisateur,
                 mail: utilisateur.mail_utilisateur,
                 type: utilisateur.type_utilisateur,
-                sessionId, // Retourner le sessionId
+                sessionId,
             },
         });
     } catch (error) {

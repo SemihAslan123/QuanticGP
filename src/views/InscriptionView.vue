@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import inscriptionService from '@/services/inscriptionService';
+import inscriptionService from '@/../backend/services/inscription.service';
 
 export default {
   name: 'RegistrationView',
@@ -100,10 +100,9 @@ export default {
         console.log("Réponse de l’API : ", response);
         alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
         this.errorMessage = "";
-        await this.$router.push({name: "Login"}); // Redirection vers la page de connexion
+        this.$router.push({ name: "Login" }); // Redirection vers la page de connexion
       } catch (error) {
         console.error("Erreur lors de l'inscription : ", error.response?.data || error);
-        // Affiche le message d'erreur envoyé par le backend (ex: "L'email est déjà utilisé.")
         this.errorMessage = error.response?.data?.error || "Une erreur est survenue lors de l'inscription.";
       }
     }

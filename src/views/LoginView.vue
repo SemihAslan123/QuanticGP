@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import authService from '@/services/authService';
+import { login } from '@/../backend/services/auth.service';
 
 export default {
   name: 'LoginView',
@@ -61,7 +61,7 @@ export default {
     },
     async submitForm() {
       try {
-        const data = await authService.login(this.email, this.password);
+        const data = await login(this.email, this.password);
         if (data.success) {
           localStorage.setItem('user', JSON.stringify(data.user));
           this.isLoggedIn = true;
@@ -69,7 +69,6 @@ export default {
           this.errorMessage = '';
           window.location.reload();
         } else {
-          // Affichage du message d'erreur retourné par le backend (ex: "Utilisateur non trouvé.")
           this.errorMessage = data.error;
         }
       } catch (error) {

@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import userService from '@/services/profilService';
+import profilService from '@/../backend/services/profil.service';
 import Calendar from "@/components/CalendarVue.vue";
 
 export default {
@@ -86,14 +86,13 @@ export default {
     async loadData() {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) {
-        // Rediriger si pas connecté
         this.$router.push({ name: 'Login' });
         return;
       }
       try {
         const [billets, activites] = await Promise.all([
-          userService.fetchBillets(user.id),
-          userService.fetchActivites(user.id)
+          profilService.fetchBillets(user.id),
+          profilService.fetchActivites(user.id)
         ]);
         this.billets = billets;
         this.activites = activites;
@@ -107,7 +106,7 @@ export default {
     }
   },
   computed: {
-    // Fusionne billets et activites en ajoutant une propriété "planningDate"
+    // Fusionne billets et activités en ajoutant une propriété "planningDate"
     mergedPlanning() {
       const planningItems = [];
 
@@ -120,7 +119,7 @@ export default {
         });
       });
 
-      // Pour les billets, on utilise course_date (si présente) sinon la date de paiement
+      // Pour les billets, on utilise course_date (si présente) sinon une autre date
       this.billets.forEach(b => {
         const planningDate = b.course_date || b.date_paiement;
         planningItems.push({
@@ -145,7 +144,6 @@ export default {
         }
         groups[dateKey].push(item);
       });
-      // Conversion de l'objet en tableau trié par date
       return Object.keys(groups)
           .sort()
           .map(date => ({ date, items: groups[date] }));

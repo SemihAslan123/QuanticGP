@@ -248,7 +248,7 @@
 
 <script>
 import Editor from '@tinymce/tinymce-vue';
-import prestataireService from '@/services/prestataires';
+import prestataireService from '@/../backend//services/prestataires.service';
 
 export default {
   name: 'PrestataireView',
@@ -294,7 +294,7 @@ export default {
           'insertdatetime media table paste code help wordcount'
         ],
         toolbar:
-          'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+            'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
       }
     };
   },
@@ -483,7 +483,7 @@ export default {
         this.serviceImage = service.image_prestataire;
       }
     },
-    updateServicePresentation() {
+    async updateServicePresentation() {
       if (!this.selectedServiceId) {
         alert("Veuillez sélectionner un service.");
         return;
@@ -494,18 +494,17 @@ export default {
         presentation_service: this.servicePresentationContent,
         image_prestataire: this.serviceImage
       };
-      prestataireService.updateService(payload)
-        .then(updatedService => {
-          alert("Service mis à jour avec succès !");
-          const index = this.services.findIndex(s => s.id_service === this.selectedServiceId);
-          if (index !== -1) {
-            this.$set(this.services, index, updatedService);
-          }
-        })
-        .catch(error => {
-          console.error("Erreur lors de la mise à jour du service :", error);
-          alert("Erreur lors de la mise à jour du service.");
-        });
+      try {
+        const updatedService = await prestataireService.updateService(payload);
+        alert("Service mis à jour avec succès !");
+        const index = this.services.findIndex(s => s.id_service === this.selectedServiceId);
+        if (index !== -1) {
+          this.$set(this.services, index, updatedService);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du service :", error);
+        alert("Erreur lors de la mise à jour du service.");
+      }
     }
   },
   filters: {

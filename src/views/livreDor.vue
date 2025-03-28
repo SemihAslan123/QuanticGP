@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import livreDorService from '@/services/livreDorService';
+import livreDorService from '@/../backend/services/livreDor.service';
 
 export default {
   name: 'LivreDorView',
@@ -49,51 +49,43 @@ export default {
       note: '',
       isLoggedIn: false,
       user: null,
-      errorMessage: '', // Variable pour stocker le message d'erreur
+      errorMessage: '',
     };
   },
   async mounted() {
-    // Vérifie la connexion utilisateur via localStorage
+    // Vérifier la connexion utilisateur via localStorage
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       this.isLoggedIn = true;
       this.user = user;
     }
-
-    // Récupère les avis via le service
+    // Récupérer les avis via le service
     try {
       this.avis = await livreDorService.getAvis();
     } catch (error) {
       console.error('Erreur lors de la récupération des avis :', error);
+      this.errorMessage = "Erreur lors de la récupération des avis.";
     }
   },
   methods: {
     async soumettreAvis() {
-      // Vérifier que le commentaire et la note sont renseignés
       if (!this.nouvelAvis.trim() || !this.note) {
         this.errorMessage = "Veuillez écrire un avis et sélectionner une note.";
         return;
       }
-
-      // Réinitialise le message d'erreur s'il y en avait un
       this.errorMessage = "";
-
       try {
-        // Prépare le payload pour l'API
         const payload = {
           userId: this.user.id,
           commentaire: this.nouvelAvis,
           note: this.note,
         };
-
         const response = await livreDorService.submitAvis(payload);
-
         if (response.success) {
-          // Réinitialise le formulaire
           this.nouvelAvis = '';
           this.note = '';
-          // Rafraîchit la page pour afficher le nouvel avis
-          window.location.reload();
+          // Optionnel : mettre à jour la liste des avis sans recharger la page
+          this.avis = await livreDorService.getAvis();
         } else {
           this.errorMessage = "Erreur lors de l'envoi de votre avis.";
         }
@@ -102,8 +94,6 @@ export default {
         this.errorMessage = "Erreur lors de l'envoi de l'avis.";
       }
     },
-
-    // Formate la date en affichant jour, mois, année, heure et minute
     formatDate(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
       return new Date(date).toLocaleDateString('fr-FR', options);

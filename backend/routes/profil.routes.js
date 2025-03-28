@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
+const pool = require('../db'); // Chemin vers votre configuration de la base de données
 
 /**
  * @swagger
@@ -39,29 +39,22 @@ const pool = require('../database/db'); // Chemin vers votre configuration de la
 router.get('/:userId/billets', async (req, res) => {
     const { userId } = req.params;
 
-    // Vérifier que l'ID utilisateur est présent
     if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur manquant.' });
     }
 
     try {
-        // Requête pour récupérer toutes les informations des billets pour un utilisateur donné
         const queryBillets = `
-            SELECT * 
-            FROM billet
-            WHERE utilisateur_id = $1;
-        `;
+      SELECT * 
+      FROM billet
+      WHERE utilisateur_id = $1;
+    `;
         const values = [userId];
 
         const result = await pool.query(queryBillets, values);
 
-        // Si aucun billet n'est trouvé, on renvoie une liste vide
-        if (result.rows.length === 0) {
-            return res.status(200).json([]); // Liste vide, pas de billets
-        }
-
-        // Si des billets sont trouvés, on les renvoie sous forme de JSON
-        res.status(200).json(result.rows);
+        // Renvoie une liste vide si aucun billet n'est trouvé
+        res.status(200).json(result.rows || []);
     } catch (error) {
         console.error('Erreur lors de la récupération des billets :', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
@@ -73,7 +66,7 @@ router.get('/:userId/billets', async (req, res) => {
  * /profil/{userId}/activites:
  *   get:
  *     summary: Récupérer les activités de l'utilisateur
- *     description: Cette route permet de récupérer toutes les activités (événements) auxquelles un utilisateur est inscrit.
+ *     description: Cette route permet de récupérer toutes les activités auxquelles un utilisateur est inscrit.
  *     parameters:
  *       - name: userId
  *         in: path
@@ -83,7 +76,7 @@ router.get('/:userId/billets', async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Liste des activités de l'utilisateur trouvée avec succès.
+ *         description: Liste des activités trouvée avec succès.
  *         content:
  *           application/json:
  *             schema:
@@ -115,30 +108,21 @@ router.get('/:userId/billets', async (req, res) => {
 router.get('/:userId/activites', async (req, res) => {
     const { userId } = req.params;
 
-    // Vérifier que l'ID utilisateur est présent
     if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur manquant.' });
     }
 
     try {
-        // Requête pour récupérer toutes les activités auxquelles l'utilisateur est inscrit
         const queryActivites = `
-            SELECT e.id, e.name, e.date, e.heure_debut, e.heure_fin, e.prix, e.description, e.image
-            FROM events e
-            JOIN liste_activite_client lac ON lac.id_event = e.id
-            WHERE lac.id_utilisateur = $1;
-        `;
+      SELECT e.id, e.name, e.date, e.heure_debut, e.heure_fin, e.prix, e.description, e.image
+      FROM events e
+      JOIN liste_activite_client lac ON lac.id_event = e.id
+      WHERE lac.id_utilisateur = $1;
+    `;
         const values = [userId];
 
         const result = await pool.query(queryActivites, values);
-
-        // Si aucune activité n'est trouvée, on renvoie une liste vide
-        if (result.rows.length === 0) {
-            return res.status(200).json([]); // Liste vide, pas d'activités
-        }
-
-        // Si des activités sont trouvées, on les renvoie sous forme de JSON
-        res.status(200).json(result.rows);
+        res.status(200).json(result.rows || []);
     } catch (error) {
         console.error('Erreur lors de la récupération des activités :', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });

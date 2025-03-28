@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import billetService from '@/services/billetService';
+import { createBillet } from '@/../backend/services/billets.service';
 
 export default {
   name: 'PaiementView',
@@ -198,8 +198,8 @@ export default {
       };
 
       try {
-        // Appel de la méthode createBillet du service
-        const responseData = await billetService.createBillet(payload);
+        // Appel de la fonction createBillet du service
+        const responseData = await createBillet(payload);
         console.log('Réponse de l’API :', responseData);
 
         alert('Le paiement a été effectué avec succès!');

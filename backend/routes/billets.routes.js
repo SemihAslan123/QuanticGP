@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database/db'); // Chemin vers votre configuration de la base de données
+const pool = require('../db'); // Chemin vers votre configuration de la base de données
 
 /**
  * @swagger
@@ -101,34 +101,33 @@ router.post('/', async (req, res) => {
 
         // Vérification si l'utilisateur est connecté
         if (userId) {
-            // Si l'utilisateur est inscrit, on utilise son ID et acheteurId reste nul
             utilisateurId = userId;
         } else {
-            // Sinon, on insère l'acheteur non inscrit et on récupère son ID
+            // Insère l'acheteur non inscrit et récupère son ID
             const queryAcheteur = `
-                INSERT INTO acheteurnoninscrit (prenom, nom, email)
-                VALUES ($1, $2, $3) RETURNING id;
-            `;
+        INSERT INTO acheteurnoninscrit (prenom, nom, email)
+        VALUES ($1, $2, $3) RETURNING id;
+      `;
             const valuesAcheteur = [prenom, nom, email];
             const acheteurResult = await pool.query(queryAcheteur, valuesAcheteur);
             acheteurId = acheteurResult.rows[0].id;
         }
 
-        // On récupère le nom de toutes les courses et la date de la première course
+        // Récupération des informations des courses
         const courseNom = selectedCourses.map(course => course.nom).join(', ');
-        const courseDate = selectedCourses.length ? selectedCourses[0].date : null; // Doit être au format YYYY-MM-DD
+        const courseDate = selectedCourses.length ? selectedCourses[0].date : null;
 
-        // Insertion dans la table billet avec la date de la première course dans course_date
+        // Insertion dans la table billet
         const queryBillet = `
-            INSERT INTO billet (
-                acheteur_id, utilisateur_id, course_nom, course_date, hotel_nom, date_debut_parking,
-                date_fin_parking, date_debut_hotel, date_fin_hotel, is_vip, prix_total
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
-        `;
+      INSERT INTO billet (
+        acheteur_id, utilisateur_id, course_nom, course_date, hotel_nom, date_debut_parking,
+        date_fin_parking, date_debut_hotel, date_fin_hotel, is_vip, prix_total
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+    `;
         const valuesBillet = [
-            acheteurId || null,                      // Si l'utilisateur est connecté, acheteurId est null
-            utilisateurId || null,                     // Sinon, utilisateurId est null
+            acheteurId || null,
+            utilisateurId || null,
             courseNom,
             courseDate,
             selectedHotel ? selectedHotel.nom : null,
@@ -141,7 +140,6 @@ router.post('/', async (req, res) => {
         ];
 
         await pool.query(queryBillet, valuesBillet);
-
         res.status(201).json({ message: 'Billet enregistré avec succès' });
     } catch (error) {
         console.error('Erreur lors de l’insertion dans la base de données:', error);

@@ -66,7 +66,7 @@ import ReservationsTable from '@/components/organisation/ReservationsTable.vue';
 import StatisticsChart from '@/components/organisation/StatisticsChart.vue';
 import ListPrestataire from '@/components/organisation/ListPrestataire.vue';
 import AssistancePrestataire from '@/components/organisation/AssistancePrestataire.vue';
-import organisationService from '@/services/organisationService';
+import organisationService from '@/../backend/services/organisation.service';
 
 export default {
   name: 'OrganisationView',
@@ -85,11 +85,10 @@ export default {
       events: [],
       reservations: [],
       standReservations: [],
-      allStands: [], // Changé de availableStands à allStands
+      allStands: [],
       prestataires: [],
       totalEvents: 0,
       totalParticipants: 0,
-      totalTicketPrestataire: 0,
       totalServices: 0,
       totalTickets: 0,
       participantsData: [],
@@ -134,7 +133,7 @@ export default {
         const standData = await organisationService.getStandReservations();
         this.standReservations = standData;
 
-        const allStandsData = await organisationService.getAllStands(); // Changé de getAvailableStands à getAllStands
+        const allStandsData = await organisationService.getAllStands();
         this.allStands = allStandsData;
       } catch (error) {
         console.error("Erreur lors de la récupération des réservations :", error);
@@ -146,7 +145,6 @@ export default {
         const data = await organisationService.getStatistics();
         this.totalEvents = data.totalEvents;
         this.totalParticipants = data.totalParticipants;
-        this.totalTicketPrestataire = data.totalTicketPrestataire;
         this.totalServices = data.totalServices;
         this.totalTickets = data.totalTickets;
         this.participantsData = data.participantsByEvent || [];
@@ -199,14 +197,14 @@ export default {
       this.currentSection = 'modifyEvent';
     },
     async handleDeleteEvent(eventId) {
-      if (confirm("Êtes-vous sûr de vouloir supprimer cet activité ?")) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) {
         try {
           await organisationService.deleteEvent(eventId);
-          alert("Activité supprimée avec succès.");
+          alert("Événement supprimé avec succès.");
           await this.fetchEvents();
         } catch (error) {
           console.error("Erreur lors de la suppression :", error);
-          alert("Erreur lors de la suppression de l'activité.");
+          alert("Erreur lors de la suppression de l'événement.");
         }
       }
     },

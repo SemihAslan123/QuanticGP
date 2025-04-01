@@ -462,7 +462,7 @@ export default {
         this.toolTipStatut = emplacement.display_status;
         this.toolTipTextTitle = 'Informations du prestataire :';
         this.tooltipText = emplacement.description_service;
-        this.tooltipDetails = emplacement.description;
+        this.tooltipDetails = '';
         this.toolTipPrix = emplacement.prix_moyen ? '💵 Prix moyen : ' + emplacement.prix_moyen : '';
         this.toolTipCB = emplacement.carte_banquaire ? '💳 Carte banquaire : ' + emplacement.carte_banquaire : '';
       } else if (emplacement.display_status === 'LIBRE') {

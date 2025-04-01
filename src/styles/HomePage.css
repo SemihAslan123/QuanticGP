@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Pixelify+Sans:wght@400..700&family=Racing+Sans+One&family=Russo+One&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 
 body, html {
     margin: 0;
@@ -14,6 +15,18 @@ body, html {
   color: #c41846;
 }
 
+.f1test {
+  width: 100%;
+  position: relative;
+  margin-bottom: 50px;
+}
+
+.f1test2 {
+  width: 100%;
+  position: relative;
+  margin-bottom: 50px;
+}
+
 
 /* ========================= La carte ========================= */ 
 
@@ -23,6 +36,10 @@ body, html {
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
+}
+
+.icon {
+  margin-right: 10px;
 }
 
 
@@ -47,7 +64,111 @@ body, html {
   border-bottom-left-radius: 30px;
   box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.342);
 }
-  
+
+.QuanticGPCarteFH {
+  max-width: 350px;
+  margin-top: 30px;
+}
+
+.sousTitreCarteInteractive {
+  color: white;
+  font-size: 17px;
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 900;
+}
+
+.HRlegendeCarte {
+  max-width: 91%;
+  border-color: #e51e53;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.showhideall {
+  color: white;
+  font-size: 14px;
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 900;
+  display: inline-block;
+  padding-left: 20px;
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+.showhideall:hover {
+  text-decoration: underline;
+}
+
+.ligneLegendeEvenement {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 60px;
+  margin-top: 15px;
+}
+
+.ligneLegendeEvenement p {
+  display: flex; /* Flexbox pour le paragraphe */
+  justify-content: space-between; /* Aligne les enfants (texte + numéro) */
+  align-items: center;
+  width: 100%; /* Occupe toute la largeur du conteneur */
+  margin: 0; /* Supprime les marges par défaut */
+}
+
+.legendeTextAlignGauche {
+  display: flex; /* Pour contenir les icônes et le texte correctement */
+  align-items: center;
+  gap: 5px; /* Espace entre l'icône et le texte */
+}
+
+.legendeTextAlignDroite {
+  margin-left: auto; /* Force l'élément à se placer à droite */
+  text-align: right;
+}
+
+.base-path {
+  fill: #000000;
+  opacity: 0; /* par défaut, tous les emplacements sont invisibles */
+  transition: opacity 0.3s; 
+}
+
+.highlight {
+  animation: highlight-effect 3s infinite ease-in-out, dash 2s linear infinite; /* Deux animations */
+  opacity: 1;
+  fill: rgba(116, 0, 0, 0.3); 
+  stroke: #b65f5f; 
+  stroke-width: 5; 
+  stroke-dasharray: 10, 5; 
+  stroke-dashoffset: 0; 
+  transition: stroke 0.3s ease-in-out;
+}
+
+.highlight:hover {
+  cursor: pointer;
+  stroke: #b1b1b1;
+}
+
+@keyframes highlight-effect {
+  0% {
+    fill: #7400004b;
+  }
+  50% {
+    fill: #c9000036; 
+  }
+  100% {
+    fill: #7400004b;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 0; 
+  }
+  100% {
+    stroke-dashoffset: -30; 
+  }
+}
+
   
 /* ========================= Info-bulle =========================*/
 .tooltip {
@@ -69,15 +190,42 @@ body, html {
     margin-bottom: 5px; /* Espacement entre les lignes */
 }
 
+.toolTipHR {
+  max-width: 75%; 
+  margin-top: 0px; 
+  margin-bottom: 20px;
+  background-color: rgb(197, 197, 197);
+  height: 1px;
+  border: none;
+}
+
 .toolTipName {
-  margin-top: 20px;
   font-weight: 800;
   font-size: 18px;
+  margin-bottom: 10px;
+  display: inline-block;
 }
 
 .toolTipStatut {
   font-weight: 800;
   color: rgb(228, 186, 0);
+  display: inline;
+}
+
+.status-reserve {
+  color: rgb(155, 0, 0);
+}
+
+.status-libre {
+  color: green;
+}
+
+.small-font {
+  font-size: 16px;
+}
+
+.active-color-tooltip {
+  color: rgb(197, 197, 197);
 }
 
 .infosContainer {
@@ -100,9 +248,23 @@ body, html {
 }
 
 .toolTipNomPrestataire {
+  margin-top: 15px;
   font-weight: 900;
-  font-size: 22px;
+  font-size: 23px;
   color: rgb(255, 255, 255);
+}
+
+.background-nom-prestataire {
+  display: inline-block;
+  padding: 5px 15px; 
+  border-radius: 4px; 
+  background-color: #e51e5398;
+}
+
+.toolTipTypePrestataire {
+  font-weight: 900;
+  font-size: 18px;
+  color: rgb(197, 197, 197);
 }
 
 .toolTipPrix {
@@ -128,7 +290,6 @@ body, html {
 
 
 /* ========================= Section 1 =========================*/
-
 
 .video-background {
   position: absolute;
@@ -439,15 +600,193 @@ body, html {
 }
 
 
+/* ========================= SECTION 4 : LES ÉCURIES =========================*/
+
+
+.titreLesEcuries {
+  color: #ffffff;
+  font-family: "Goldman", sans-serif;
+  margin-bottom: 80px;
+  margin-top: 175px;
+  font-size: 75px;
+}
+
+.cartesPilotes1 {
+  left: 0px; 
+  transform: rotate(-3deg);
+  height: 100%;
+  width: auto;
+}
+
+.cartesPilotes2 {
+  right: 0px; 
+  transform: rotate(4deg);
+  height: 100%;
+  width: auto;
+}
+
+.carousel {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.image-container img {
+  width: 400px; 
+  height: 550px; 
+  object-fit: cover;
+  border-radius: 10px; 
+}
+
+.arrow.left {
+  margin-right: 150px;
+  height: 90px;
+  width: 65px;
+}
+
+.arrow.right {
+  margin-left: 150px;
+  height: 90px;
+  width: 65px;
+}
+
+.arrow:hover {
+  background-color: #e51e53;
+}
+
+.team-logo {
+  margin-bottom: 20px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  position: absolute; 
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+
+.fade-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
+.duo-container {
+  position: relative; 
+  width: 900px; 
+  height: 550px; 
+}
+
+.duo-container img {
+  position: absolute; 
+  top: 0;
+  transition: opacity 0.40s ease, transform 0.5s ease; 
+}
+
+.HRteamLogoCarousel {
+  border: none;
+  height: 3px; 
+  border-radius: 15px;
+  background-color: #1a2e41; 
+  width: 45%; 
+  margin: 10px 0;
+  margin-bottom: 75px;
+}
+
+.car-image {
+  border-radius: 30px;
+  height: 500px;
+  width: auto;
+  box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.767);
+}
+
+
+.car-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  margin-left: 150px;
+}
+
+.car-image-container {
+  flex: 0 0 500px;
+  position: relative;
+}
+
+.text-container {
+  flex: 1; /* Permet au texte de s’adapter dynamiquement */
+}
+
+
+.partieEcurieTitre {
+  color: #ffffff;
+  font-family: "Goldman", sans-serif;
+  margin-bottom: 0;
+}
+
+.sousTitrePartieEcurie {
+  color: white; 
+  font-size: 23px; 
+  font-family: "Goldman", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  margin-left: 5px;
+  margin-top: 0;
+}
+
+.contenuPartieEcurie {
+  color: white; 
+  font-size: 22px;
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 500;
+}
+
+.arrow_voiture {
+  position: absolute;
+  background-color: transparent;
+  font-size: 50px;
+  top: 50%; 
+  transform: translateY(-50%);
+}
+
+.arrow_left_voiture {
+  left: 10px;
+}
+
+.arrow_right_voiture {
+  right: 10px;
+}
+
+.arrow_voiture:hover {
+  color:#e51e53 ;
+  background-color: transparent;
+}
+
 /* ========================= Compte à rebours =========================*/
 
 
 .titreCompteRebours {
   position: absolute;
-  left: 55%;
+  bottom: 100%;
   font-family: "Goldman", sans-serif;
   color: white;
-}
+} 
 
 
 .countdown-container {
@@ -550,8 +889,8 @@ body, html {
     align-items: center;
     font-size: 2em;
   }
-  
-  /* Ajoutons des couleurs pour différencier les sections */
+
+
   #section1 {
     position: relative;
     background-color: rgba(0,22,43,255);
@@ -563,14 +902,31 @@ body, html {
     height: 60vh;
   }
 
+  #section2A {
+    margin-top: 130px;
+    margin-bottom: 180px;
+    height: 60vh;
+  }
+
+  #section2B {
+    margin-top: 620px;
+    height: 0;
+  }
+
   #section3 {
     background-color: rgba(0,22,43,255);
     display: flex;
     flex-direction: column;
+    height: 115vh;
+    align-items: center;
   }
 
   #section4 {
     background-color: rgba(0,22,43,255);
+    display: flex;
+    flex-direction: column;
+    height: 250vh;
+    justify-content: start;
   }
 
 
@@ -603,19 +959,24 @@ body, html {
 
 
   .buttonSwitchStands {
-    width: 90px;
-    height: 90px; 
+    padding: 8px;
     background-color: #8d3434; 
     border: none;
-    border-radius: 10px; 
+    border-radius: 3px; 
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer; 
     transition: background-color 0.3s, transform 0.2s; /* Animation pour l'effet de survol */
 
+    font-family: "Host Grotesk", sans-serif;
+    font-weight: 800;
+    padding-left: 20px;
+    padding-right: 20px;
+
     margin-left: 10%;
     margin-top: 10%;
+    user-select: none;
   }
 
   .buttonSwitchStands:hover {
@@ -631,4 +992,80 @@ body, html {
     width: 130px; /* Taille de l'icône */
     height: auto; /* Taille de l'icône */
     object-fit: contain; /* Assure que l'icône garde ses proportions */
+  }
+
+  .buttonSwitchAffichageStands {
+    font-family: "Host Grotesk", sans-serif;
+    font-weight: 700;
+    background-color: transparent;
+    font-size: 15px;
+    border-radius: 0;
+    border: 2px solid rgba(110, 13, 38, 0.87);
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .buttonSwitchAffichageStands:hover {
+    background-color: rgba(100, 12, 34, 0.87);
+  }
+
+  .buttonSwitchAffichageStands:active {
+    transform: scale(0.99);
+  }
+
+  .legendePartieEvent {
+    text-align: left;
+    margin-left: 50px;
+    margin-bottom: 30px
+  }
+
+  .buttonLegendeEvenement {
+    color: gray;
+    font-family: "Host Grotesk", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .buttonLegendeEvenement:hover {
+    color: rgb(114, 114, 114);
+  }
+
+  .buttonLegendeEvenement.active .legendeTexte {
+    color: rgb(230, 230, 230);
+    text-decoration: none; 
+  }
+
+  .buttonLegendeEvenement.active .icon,
+  .buttonLegendeEvenement.active .legendeTextAlignDroite {
+    color: rgb(219, 219, 219);
+    text-decoration: none; 
+  }
+
+
+  /* ========================= Bannière infini =========================*/
+
+
+  .scroll-banner {
+    position: relative; 
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px; /* Hauteur du bandeau */
+    overflow: hidden;
+    background-color: #f0f0f0;
+  }
+
+
+  .scroll-content {
+    display: flex;
+    height: 100%;
+    will-change: transform; /* Optimisation des performances */
+  }
+  
+  .scroll-content img {
+    height: 100%;
+    display: block;
+    /* Optionnel : Répétition horizontale si tu veux "infinir" avec une image plus courte */
   }

@@ -648,12 +648,26 @@ body, html {
   margin-right: 150px;
   height: 90px;
   width: 65px;
+  padding: 10px 20px;
+  background-color: #1a2e41;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .arrow.right {
   margin-left: 150px;
   height: 90px;
   width: 65px;
+  padding: 10px 20px;
+  background-color: #1a2e41;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .arrow:hover {
@@ -760,9 +774,11 @@ body, html {
 .arrow_voiture {
   position: absolute;
   background-color: transparent;
-  font-size: 50px;
+  font-size: 60px;
   top: 50%; 
   transform: translateY(-50%);
+  border: none;
+  color: white;
 }
 
 .arrow_left_voiture {
@@ -960,6 +976,7 @@ body, html {
 
   .buttonSwitchStands {
     padding: 8px;
+    color: white;
     background-color: #8d3434; 
     border: none;
     border-radius: 3px; 
@@ -996,6 +1013,7 @@ body, html {
 
   .buttonSwitchAffichageStands {
     font-family: "Host Grotesk", sans-serif;
+    color: white;
     font-weight: 700;
     background-color: transparent;
     font-size: 15px;

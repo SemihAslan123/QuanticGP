@@ -243,25 +243,29 @@
               @mousemove="moveTooltip"
             >
               <path
-                :style="styleStandsActive
-                  ? {
-                      display: 'inline',
-                      fill: emplacement.display_status === 'ACCEPTÉ'
-                        ? 'blue'
-                        : (emplacement.display_status === 'RÉSERVÉ' ? 'red' : 'transparent'),
-                      opacity: (emplacement.display_status === 'ACCEPTÉ' || emplacement.display_status === 'RÉSERVÉ') ? 0.3 : 0,
-                      cursor: 'pointer',
-                      transition: 'fill 0.5s ease, opacity 0.5s ease'
-                    }
-                  : {
-                      display: 'inline',
-                      fill: 'transparent',
-                      opacity: 1,
-                      cursor: 'pointer',
-                      transition: 'fill 0.5s ease, opacity 0.5s ease'
-                    }"
-                :d="emplacement.coordonnees_svg"
-              />
+              :style="styleStandsActive
+                ? {
+                    display: 'inline',
+                    fill: emplacement.display_status === 'ACCEPTÉ'
+                      ? 'blue'
+                      : emplacement.display_status === 'RÉSERVÉ'
+                      ? 'red'
+                      : emplacement.display_status === 'LIBRE'
+                      ? 'green'
+                      : 'transparent',
+                    opacity: ['ACCEPTÉ', 'RÉSERVÉ', 'LIBRE'].includes(emplacement.display_status) ? 0.3 : 0,
+                    cursor: 'pointer',
+                    transition: 'fill 0.5s ease, opacity 0.5s ease'
+                  }
+                : {
+                    display: 'inline',
+                    fill: 'transparent',
+                    opacity: 1,
+                    cursor: 'pointer',
+                    transition: 'fill 0.5s ease, opacity 0.5s ease'
+                  }"
+              :d="emplacement.coordonnees_svg"
+            />
             </g>
           </g>
 

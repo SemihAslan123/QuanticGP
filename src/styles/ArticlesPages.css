@@ -30,6 +30,13 @@ body, html {
     box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.295);
 }
 
+.imagesArticle2 {
+    max-height: 400px;
+    width: auto;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.295);
+}
+
 
 .titreArticle {
     font-family: "Goldman", sans-serif;
@@ -73,8 +80,8 @@ body, html {
 .blocTexte1 {
     color: rgb(240, 240, 240);
     font-family: "Host Grotesk", sans-serif;
-    font-size: 23px;
-    text-align: justify;
+    font-size: 22px;
+    text-align:justify;
 }
 
 .blocTexte1Container {
@@ -108,14 +115,14 @@ body, html {
 .blocTexte2 {
     color: rgb(240, 240, 240);
     font-family: "Host Grotesk", sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     text-align: justify;
 }
 
 .blocTexte3 {
     color: rgb(240, 240, 240);
     font-family: "Host Grotesk", sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     text-align: center;
 }
 
@@ -178,4 +185,62 @@ body, html {
     color: rgb(240, 240, 240);
     font-family: "Host Grotesk", sans-serif;
     font-size: 22px;
+}
+
+.titreBloc {
+    font-family: "Goldman", sans-serif;
+    font-size: 38px;
+    justify-content: space-between; 
+    align-items: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    display: flex;
+    color: white;
+    margin-top: 50px;
+}
+
+.sousTitreBloc {
+    font-family: "Goldman", sans-serif;
+    font-size: 34px;
+    justify-content: space-between; 
+    align-items: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    display: flex;
+    color: white;
+    margin-top: 50px;
+}
+
+.listeArticleTitre {
+    color: #c41846;
+    font-size: 25px;
+}
+
+.fas {
+    color: #c41846;
+}
+
+.photoHorizontal {
+    margin-right: 35px;
+    margin-top: 20px;
+}
+
+.listeObjets {
+    background-color: rgba(129, 129, 129, 0.247);
+    padding: 20px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.descriptionObjet {
+    color: #d4d4d4;
+    font-weight: 400;
+}
+
+.HREntreObjets {
+    max-width: 95%;
+    border: none;
+    height: 2px;
+    background: rgba(165, 165, 165, 0.247);
+    margin: 0;
 }

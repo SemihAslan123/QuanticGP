@@ -1,11 +1,5 @@
 <template>
   <div>
-    <!-- Boutons pour naviguer entre les événements -->
-    <div class="calendar-controls">
-      <button @click="goToPreviousEvent" :disabled="!hasPreviousEvent">⬅ Précédent</button>
-      <button @click="goToNextEvent" :disabled="!hasNextEvent">Suivant ➡</button>
-    </div>
-
     <!-- Affichage du calendrier avec ref -->
     <FullCalendar ref="fullCalendar" :options="calendarOptions" />
   </div>
@@ -15,7 +9,7 @@
 import FullCalendar from '@fullcalendar/vue';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import userService from '@/services/profilService';
+import profilService from '@/../backend/services/profil.service';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
@@ -27,13 +21,23 @@ export default {
     return {
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin],
-        initialView: 'dayGridMonth',
-        initialDate: new Date(),
+        // Désactivation de la barre d'outils (flèches, Today, etc.)
+        headerToolbar: false,
+        // Choix d'une vue adaptée
+        initialView: 'dayGrid',
+        // Date initiale fixée au 15 juillet 2025
+        initialDate: '2025-07-15',
+        // Affichage uniquement du 15 au 19 juillet 2025
+        visibleRange: {
+          start: '2025-07-15',
+          end: '2025-07-20' // date de fin exclusive
+        },
         selectable: true,
         editable: false,
         displayEventTime: false,
+        // Pour réduire la hauteur du calendrier par rapport à la largeur
+        aspectRatio: 3,
         events: [],
-        // Lors du survol d'une cellule, affiche les événements du jour
         dayCellDidMount(info) {
           const calendarApi = info.view.calendar;
           const eventsOfDay = calendarApi.getEvents().filter(event =>
@@ -52,14 +56,6 @@ export default {
       eventDates: []
     };
   },
-  computed: {
-    hasPreviousEvent() {
-      return this.getPreviousEventDate(new Date(this.calendarOptions.initialDate)) !== null;
-    },
-    hasNextEvent() {
-      return this.getNextEventDate(new Date(this.calendarOptions.initialDate)) !== null;
-    }
-  },
   created() {
     this.loadEvents();
   },
@@ -69,12 +65,11 @@ export default {
       if (!user || !user.id) return;
       try {
         const [billets, activites] = await Promise.all([
-          userService.fetchBillets(user.id),
-          userService.fetchActivites(user.id)
+          profilService.fetchBillets(user.id),
+          profilService.fetchActivites(user.id)
         ]);
         const formattedEvents = [];
         this.eventDates = [];
-        // Ajouter les billets
         billets.forEach(billet => {
           formattedEvents.push({
             id: `billet-${billet.id}`,
@@ -84,7 +79,6 @@ export default {
           });
           this.eventDates.push(new Date(billet.course_date).toISOString().split("T")[0]);
         });
-        // Ajouter les activités
         activites.forEach(activite => {
           formattedEvents.push({
             id: `activite-${activite.id}`,
@@ -95,34 +89,9 @@ export default {
           this.eventDates.push(new Date(activite.date).toISOString().split("T")[0]);
         });
         this.calendarOptions.events = formattedEvents;
-        // Supprime les doublons et trie les dates
         this.eventDates = [...new Set(this.eventDates)].sort();
       } catch (error) {
         console.error('Erreur lors du chargement des événements:', error);
-      }
-    },
-    getNextEventDate(currentDate) {
-      return this.eventDates.find(date => new Date(date) > currentDate) || null;
-    },
-    getPreviousEventDate(currentDate) {
-      return [...this.eventDates].reverse().find(date => new Date(date) < currentDate) || null;
-    },
-    goToNextEvent() {
-      const nextDate = this.getNextEventDate(new Date(this.calendarOptions.initialDate));
-      if (nextDate) {
-        this.calendarOptions.initialDate = nextDate;
-        this.$nextTick(() => {
-          this.$refs.fullCalendar.getApi().gotoDate(nextDate);
-        });
-      }
-    },
-    goToPreviousEvent() {
-      const prevDate = this.getPreviousEventDate(new Date(this.calendarOptions.initialDate));
-      if (prevDate) {
-        this.calendarOptions.initialDate = prevDate;
-        this.$nextTick(() => {
-          this.$refs.fullCalendar.getApi().gotoDate(prevDate);
-        });
       }
     }
   }
@@ -130,71 +99,27 @@ export default {
 </script>
 
 <style scoped>
-/* Style global du calendrier */
+/* Augmentation de la largeur et ajustement de l'affichage */
 .fc {
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 1000px;
+  width: 1200px; /* largeur augmentée */
   margin: 0 auto;
 }
 
-/* Barre de navigation */
-.calendar-controls {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.calendar-controls button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  margin: 0 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
-
-.calendar-controls button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.calendar-controls button:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-/* Toolbar (en-tête du calendrier) */
+/* Toolbar (en-tête du calendrier) - non utilisée ici puisque headerToolbar est désactivé */
 .fc-toolbar {
-  background-color: #fff;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
+  display: none;
 }
 
-/* Boutons de la toolbar */
-.fc-button {
-  background-color: #3498db !important;
-  border: none !important;
-  color: white !important;
-  border-radius: 5px !important;
-  padding: 6px 12px !important;
-  transition: background 0.3s;
-}
-
-.fc-button:hover {
-  background-color: #2980b9 !important;
-}
-
-/* Jours du calendrier */
+/* Styles pour le calendrier */
 .fc-daygrid-day {
   background-color: #fff !important;
   border: 1px solid #f0f0f0 !important;
 }
 
-/* Événements */
 .fc-event {
   border-radius: 5px;
   padding: 5px;
@@ -207,12 +132,10 @@ export default {
   max-width: 100%;
 }
 
-/* Week-ends en fond légèrement gris */
 .fc-day-sat, .fc-day-sun {
   background-color: #fafafa !important;
 }
 
-/* Animation au survol des événements */
 .fc-event:hover {
   transform: scale(1.05);
   transition: 0.2s ease-in-out;

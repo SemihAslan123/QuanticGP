@@ -16,6 +16,8 @@ import InscriptionView from "@/views/InscriptionView.vue";
 import livreDor from "@/views/livreDor.vue";
 import ClientActivite from "@/views/clientActivite.vue";
 import ClientPaiementActivites from "@/views/clientPaiementActivites.vue";
+import ServiceDetail from '@/components/ServiceDetail.vue';
+
 
 Vue.use(Router);
 
@@ -112,9 +114,14 @@ export default new Router({
       component: ClientActivite,
     },
     {
-     path: '/clientPaiementActivite',
-     name: 'ClientPaiementActivite',
-     component: ClientPaiementActivites,
-    }
+      path: '/clientPaiementActivite',
+      name: 'ClientPaiementActivite',
+      component: ClientPaiementActivites,
+    },
+    {
+      path: '/service/:id',
+      name: 'ServiceDetail',
+      component: ServiceDetail
+    },
   ],
 });

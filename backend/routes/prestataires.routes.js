@@ -10,9 +10,9 @@ const sanitizeHtml = require('sanitize-html');
 router.get('/services', async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite, statut
-       FROM servicePrestataire
-       WHERE statut = 'ACCEPTÉ'`
+            `SELECT id_service, nom_service, type_service, description_service, presentation_service, date_service, heure_service, id_emplacement, visibilite, statut
+             FROM servicePrestataire
+             WHERE statut = 'ACCEPTÉ'`
         );
         res.status(200).json(result.rows);
     } catch (error) {
@@ -20,6 +20,7 @@ router.get('/services', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
+
 
 /**
  * GET /prestataire/:id

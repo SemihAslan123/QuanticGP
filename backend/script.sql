@@ -75,7 +75,7 @@ EXECUTE FUNCTION update_emplacement_status_on_service_update();
 -- ===================================================================================
 -- DROP TABLES (inchangé)
 -- ===================================================================================
-
+DROP TABLE IF EXISTS reservation_service CASCADE;
 DROP TABLE IF EXISTS emplacements_prestataires CASCADE;
 DROP TABLE IF EXISTS liste_activite_client CASCADE;
 DROP TABLE IF EXISTS LivreOr CASCADE;
@@ -180,6 +180,16 @@ CREATE TABLE liste_activite_client (
                                        FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
                                        FOREIGN KEY (id_event) REFERENCES events(id) ON DELETE CASCADE
 );
+
+CREATE TABLE reservation_service (
+    id SERIAL PRIMARY KEY,
+    id_utilisateur INT NOT NULL, -- l'utilisateur qui réserve (client)
+    id_service INT NOT NULL,     -- le service prestataire réservé
+    date_reservation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+    FOREIGN KEY (id_service) REFERENCES servicePrestataire(id_service) ON DELETE CASCADE
+);
+
 
 -- ===================================================================================
 -- INSERTION DES DONNÉES

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import clientActiviteService from '@/../backend/services/clientActivite.service';
 
 export default {
   name: 'PaymentPage',
@@ -61,26 +61,19 @@ export default {
       }
     },
     async processPayment() {
-
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && user.id) {
-        const activities = this.cart.map(item => ({
-          id_event: item.id,
-        }));
-
+        // Préparer le tableau des activités à partir du panier
+        const activities = this.cart.map(item => ({ id_event: item.id }));
         try {
-          const response = await axios.post('http://localhost:3001/clientPaiementActivite', {
+          const response = await clientActiviteService.processPayment({
             userId: user.id,
             activities: activities,
           });
-
           this.clearCart();
-          console.log('Réponse de l’API :', response.data);
-
+          console.log('Réponse de l’API :', response);
           alert('Le paiement a été effectué avec succès!');
-
-          this.$router.push({ name: 'Home' });
-
+          this.$router.push({name: 'Home'});
         } catch (error) {
           console.error('Erreur lors de l\'inscription aux activités:', error);
           alert('Une erreur est survenue lors de l\'inscription aux activités.');

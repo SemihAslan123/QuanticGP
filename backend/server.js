@@ -8,7 +8,7 @@ const prestatairesRoutes = require('./routes/prestataires.routes');
 const organisationRoutes = require('./routes/organisation.routes');
 const livreDorRoutes = require('./routes/livreDor.routes');
 const inscriptionRoutes = require('./routes/inscription.routes');
-const clientActiviteRoutes = require('./routes/clientActivite.routes');
+const clientActiviteRoutes = require('./routes/clientActivite.routes'); // Route regroupant GET et paiement
 
 const app = express();
 

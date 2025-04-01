@@ -455,6 +455,7 @@ export default {
       // Si l'emplacement a un service associé et que son statut est "ACCEPTÉ",
       // on affiche les informations détaillées. Sinon, on affiche "Réservé".
       this.toolTipName = emplacement.nom_emplacement;
+
       if (emplacement.display_status === 'ACCEPTÉ') {
         this.toolTipNomPrestataire = emplacement.nom_prestataire;
         this.toolTipTypeService = emplacement.type_service;
@@ -464,16 +465,20 @@ export default {
         this.tooltipDetails = emplacement.description;
         this.toolTipPrix = emplacement.prix_moyen ? '💵 Prix moyen : ' + emplacement.prix_moyen : '';
         this.toolTipCB = emplacement.carte_banquaire ? '💳 Carte banquaire : ' + emplacement.carte_banquaire : '';
+      } else if (emplacement.display_status === 'LIBRE') {
+        this.toolTipStatut = emplacement.display_status;
+        this.tooltipText = "Cet emplacement est libre et peut être soumis à réservation."
       } else {
         this.toolTipNomPrestataire = '';
         this.toolTipTypeService = '';
         this.toolTipStatut = emplacement.display_status;
         this.toolTipTextTitle = '';
-        this.tooltipText = "Réservé";
+        this.tooltipText = "Emplacement réservé par un prestataire, en attente de validation par un administrateur.";
         this.tooltipDetails = '';
         this.toolTipPrix = '';
         this.toolTipCB = '';
       }
+
       this.tooltipVisible = true;
       this.toolTipHeight = 500;
     },

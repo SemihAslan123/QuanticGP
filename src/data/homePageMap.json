@@ -1,5 +1,5 @@
 {   
-   "emplacementsPrestataires":[
+   "emplacements_prestataires":[
         {
         "id": "Emplacement_1",
         "name": "Zone A - Emplacement n°1",
@@ -356,6 +356,9 @@
 
 
 
+
+
+
    
 
     "emplacementsPrincipaux":[
@@ -368,6 +371,7 @@
             "text": "• Parking public payant sur site \n • Salle de sport / piscine \n • Bar / lounge \n • Animaux domestiques autorisés",
             "details": "Durant l'événement, les réservations de l'hôtel \nRiviera Marriott se font directement sur notre site.",
             "image": "/assets/homePage/emplacementsImages/emplacementHotelA.jpg",
+            "highlight": false,
             "path": "m 320.55604,539.75048 -10.45292,194.80431 95.97676,6.3351 14.88748,-194.48755 z"
         },
         {
@@ -379,6 +383,7 @@
             "text": "• Service de taxi gratuit \n • Salle de sport / piscine \n • Bar / lounge \n • Animaux domestiques autorisés",
             "details": "Durant l'événement, les réservations de l'hôtel \nFairmont Monte Carlo se font directement sur notre site.",
             "image": "/assets/homePage/emplacementsImages/emplacementHotelB.jpg",
+            "highlight": false,
             "path": "m 1549.9388,884.49541 c 82.8724,-94.96735 81.9765,-93.62347 81.9765,-93.62347 l 60.9225,52.6352 -81.9766,93.62347 z"
         },
         {
@@ -390,6 +395,7 @@
             "text": "• Bar à cocktails \n • Service de restauration gastronomique \n • Photographies et souvenirs exclusifs \n • Zones de détente et de relaxation",
             "details": "La zone VIP offre une expérience exclusive avec \ndes services personnalisés, un confort raffiné et un \naccès privilégié aux moments forts de l'événement.",
             "image": "/assets/homePage/emplacementsImages/emplacementZoneVIP.jpg",
+            "highlight": false,
             "path": "m 818.33648,266.39094 -13.14533,30.40847 -1.90053,24.54851 5.54321,19.16368 27.55769,24.39013 44.66245,18.37179 39.59437,8.71076 46.87974,1.10865 72.37852,-7.44375 96.7686,-10.29453 26.6075,-11.08643 21.3809,-19.32205 10.1362,-27.87444 -9.8194,-111.02262 -74.5958,67.78557 -60.5002,31.35874 -50.36407,3.32593 -65.56828,-14.88749 -70.16123,-19.95556 z"
         },
         {
@@ -401,6 +407,7 @@
             "text": "• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu",
             "details": "Le plus grand gradin, situé au niveau de la ligne de \ndépart, offrant une vue imprenable sur la course.",
             "image": "/assets/homePage/emplacementsImages/emplacementGradinA.jpg",
+            "highlight": true,
             "path": "m 1201.4265,553.22959 19.7102,77.9449 170.2245,-38.52449 195.7582,-103.03061 87.352,-92.27959 -88.2479,-49.27551 -84.6643,89.59183 -129.4602,72.56939 z"
         },
         {
@@ -410,18 +417,21 @@
             "logo": "/assets/logo.png",
             "textTitle": "Services à disposition",
             "text": "• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu",
-            "details": "Gradin face à la chicane de la Piscine, offrant un aperçu \nsur l'un des passages les plus techniques du circuit.",
+            "details": "Gradin face à la chicane de la Piscine, offrant un aperçu sur l'un des passages les plus techniques du circuit.",
             "image": "/assets/homePage/emplacementsImages/emplacementGradinB.jpg",
+            "highlight": true,
             "path": "m 634.14346,827.68075 96.29352,10.45292 23.12311,-208.10802 -91.22543,-10.13616 19.63881,54.1651 -13.30371,118.78312 z"
         },
         {
             "id": "layer6",
             "zone": "GradinC",
             "name": "Gradin Nord : Riviera",
+            "logo": "/assets/logo.png",
             "textTitle": "Services à disposition",
             "text": "• Gradins spacieux et confortables \n • Position idéale pour observer la course \n • Accès PMR prévu",
             "details": "Gradin face à Sainte-Dévote, offrant une vue \nsur un des virages les plus iconiques du circuit.",
             "image": "/assets/homePage/emplacementsImages/emplacementGradinC.jpg",
+            "highlight": true,
             "path": "m 522.0122,420.33385 c 49.41378,26.92418 50.99755,29.77497 50.99755,29.77497 l 41.81166,-79.5055 85.8406,1.58378 -0.63351,-54.79861 -114.98206,-5.38484 z"
         },
         {
@@ -433,6 +443,7 @@
             "text": "• Karting deux places : parent/enfant \n • Mini-compétitions et courses amicales \n • Atelier de pilotage",
             "details": "Un circuit adapté aux enfants pour découvrir la \ncourse à leur façon.",
             "image": "/assets/homePage/emplacementsImages/emplacementKartingEnfant.jpg",
+            "highlight": false,
             "path": "m 277.73469,788.40816 c 5.82347,109.75 5.82347,109.75 5.82347,109.75 l 29.11735,137.07554 53.30714,-0.448 38.07653,-4.9275 26.4296,-70.77759 8.06326,-25.53367 -18.36633,-8.95918 -16.12653,-65.85 7.61531,-57.33878 -73.01735,-13.43878 -10.30306,-14.33469 z"
         },
         {
@@ -443,6 +454,7 @@
             "text": "• Plusieurs modes de courses \n • Simulation des G-Forces \n • Mode VR",
             "details": "Vivez l'expérience F1 24 avec un \nsimulateur ultra-réaliste, pour des \nsensations de course uniques.",
             "image": "/assets/homePage/emplacementsImages/emplacementSimulateur.jpg",
+            "highlight": false,
             "path": "m 349.85612,1104.6673 c 47.48368,-25.9816 47.48368,-25.9816 47.48368,-25.9816 l 54.65102,36.7327 67.19387,25.7576 -15.90255,45.6919 -40.09234,-10.975 -86.90409,-45.0199 z"
         },
         {
@@ -454,6 +466,7 @@
             "text": "• Stands de photo avec les F1 \n • Espace autographes \n • Café / Bar cocktails",
             "details": "Un espace immersif où les fans vivent \nla F1 de près, et rencontrent les \npilotes en exclusivité.",
             "image": "/assets/homePage/emplacementsImages/emplacementEspaceRencontre.jpg",
+            "highlight": false,
             "path": "m 748.80877,608.80307 c 7.60211,-58.28292 9.50264,-56.69915 9.50264,-56.69915 l 86.47411,10.76967 9.1859,-56.06563 -139.37219,-15.83775 -42.44517,58.28292 -4.43457,52.26457 78.87199,6.96861 z"
         },
         {
@@ -465,6 +478,7 @@
             "text": "• Salle des équipements de pilote \n • Mur de trophées et médailles \n • Cinéma de la F1 \n • Boutique souvenirs",
             "details": "Explorer l'histoire de la F1 à travers \ndes voitures mythiques et des \nexpériences immersives.",
             "image": "/assets/homePage/emplacementsImages/emplacementExposition.jpg",
+            "highlight": false,
             "path": "m 886.95919,595.11378 c 9.8551,-72.79337 9.8551,-72.79337 9.8551,-72.79337 l 93.62347,18.14235 86.45614,6.71938 87.128,4.03164 -5.1515,74.5852 -168.43264,-21.50204 z"
         },
         {
@@ -476,6 +490,7 @@
             "text": "Capacité de 10.000",
             "details": "Le parking est simple d'accès et compte \nplusieurs emplacements pour personnes \nen situation d'handicap.",
             "image": "/assets/homePage/emplacementsImages/emplacementParking.jpg",
+            "highlight": false,
             "path": "m 817.70298,1075.3832 0.31675,-203.51512 477.50817,-0.31676 0.3167,204.62368 z"
         }
     ]

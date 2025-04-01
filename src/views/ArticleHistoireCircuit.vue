@@ -12,7 +12,7 @@
 
         </p>
 
-        <p class="sousTitreArticlebis">🗞️ - Article (4 minutes de lecture)</p>
+        <p class="sousTitreArticlebis">🗞️ - Article (1 minute de lecture)</p>
 
         <hr class="hr1">
 

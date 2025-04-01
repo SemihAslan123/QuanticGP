@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from '../views/HomeView.vue';
+import Home from '../views/HomePage.vue';
 import Reservation from '../views/ReservationBilletView.vue';
 import FAQ from '../views/FAQView.vue';
 import Paiement from '../views/PaiementBilletView.vue';

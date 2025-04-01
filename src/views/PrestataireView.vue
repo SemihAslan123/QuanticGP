@@ -64,6 +64,7 @@
           </div>
 
           <!-- Onglet Présentation : modification d'un service validé -->
+          <!-- Onglet Présentation : modification d'un service validé -->
           <div v-if="activeTab === 'presentation'">
             <h2>Modifier la présentation d'un service validé</h2>
             <div class="form-group">
@@ -76,12 +77,20 @@
               </select>
             </div>
             <div v-if="selectedServiceId">
+              <!-- Bloc d'affichage de la présentation existante -->
+              <div class="form-group">
+                <label>Présentation actuelle :</label>
+                <div class="presentation-display">
+                  {{ currentServicePresentation }}
+                </div>
+              </div>
+              <!-- Zone de modification (éditeur TinyMCE vide) -->
               <div class="form-group">
                 <label for="presentationEditor">Modifier la présentation :</label>
                 <Editor
-                  api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
-                  v-model="servicePresentationContent"
-                  :init="editorInit"
+                    api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
+                    v-model="servicePresentationContent"
+                    :init="editorInit"
                 />
               </div>
               <div class="form-group">
@@ -92,6 +101,7 @@
             </div>
           </div>
 
+
           <!-- Onglet Gestion des Services -->
           <div v-if="activeTab === 'services'">
             <h2>Gestion des Services</h2>
@@ -100,10 +110,10 @@
             </div>
             <div v-else class="services-grid">
               <div
-                class="service-card"
-                :class="{ pending: service.statut === 'EN ATTENTE' }"
-                v-for="service in services"
-                :key="service.id_service"
+                  class="service-card"
+                  :class="{ pending: service.statut === 'EN ATTENTE' }"
+                  v-for="service in services"
+                  :key="service.id_service"
               >
                 <h3>{{ service.nom_service }}</h3>
                 <p><strong>Type :</strong> {{ service.type_service }}</p>
@@ -182,11 +192,11 @@
                 <div class="form-group">
                   <label for="nom_emplacement">Nom de l'emplacement</label>
                   <input
-                    id="nom_emplacement"
-                    v-model="searchEmplacement.nom_emplacement"
-                    @input="searchEmplacements"
-                    type="text"
-                    placeholder="Filtrer par nom"
+                      id="nom_emplacement"
+                      v-model="searchEmplacement.nom_emplacement"
+                      @input="searchEmplacements"
+                      type="text"
+                      placeholder="Filtrer par nom"
                   />
                 </div>
               </div>
@@ -262,6 +272,7 @@ export default {
       presentationContent: '',
       selectedServiceId: '',
       servicePresentationContent: '',
+      currentServicePresentation: '',  // <-- nouvelle variable
       serviceImage: '',
       newService: {
         id_emplacement: '',
@@ -479,8 +490,9 @@ export default {
     loadSelectedService() {
       const service = this.services.find(s => s.id_service === this.selectedServiceId);
       if (service) {
-        this.servicePresentationContent = service.presentation_service;
+        this.currentServicePresentation = service.presentation_service; // Affiche la présentation actuelle en texte brut
         this.serviceImage = service.image_prestataire;
+        this.servicePresentationContent = ''; // On laisse l'éditeur vide pour la modification
       }
     },
     async updateServicePresentation() {
@@ -497,6 +509,8 @@ export default {
       try {
         const updatedService = await prestataireService.updateService(payload);
         alert("Service mis à jour avec succès !");
+        window.location.reload();
+
         const index = this.services.findIndex(s => s.id_service === this.selectedServiceId);
         if (index !== -1) {
           this.$set(this.services, index, updatedService);
@@ -522,6 +536,16 @@ export default {
 </script>
 
 <style scoped>
+
+.presentation-display {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  margin-bottom: 15px;
+}
+
+
+
 .user-service-view {
   padding: 20px;
   margin-top: 70px;

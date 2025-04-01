@@ -84,9 +84,11 @@ router.get('/:id/services', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT id_service, nom_service, type_service, description_service, date_service, heure_service, id_emplacement, visibilite, statut
-       FROM servicePrestataire
-       WHERE id_utilisateur = $1`,
+            `SELECT id_service, nom_service, type_service, description_service,
+                    presentation_service, image_prestataire, date_service, heure_service,
+                    id_emplacement, visibilite, statut
+             FROM servicePrestataire
+             WHERE id_utilisateur = $1`,
             [id]
         );
         res.status(200).json(result.rows);
@@ -95,6 +97,7 @@ router.get('/:id/services', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
+
 
 /**
  * POST /prestataire/service/request

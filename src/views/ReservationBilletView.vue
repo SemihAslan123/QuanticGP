@@ -44,8 +44,8 @@
           type="date"
           id="startDate"
           v-model="startDate"
-          :min="'2025-06-15'"
-          :max="'2025-06-19'"
+          :min="'2025-07-15'"
+          :max="'2025-07-19'"
           @change="updateMaxEndDate"
         />
         <label v-if="startDate" for="endDate">Date de fin du parking :</label>
@@ -55,7 +55,7 @@
           id="endDate"
           v-model="endDate"
           :min="startDate"
-          :max="'2025-06-19'"
+          :max="'2025-07-19'"
           @change="calculateTotal"
         />
       </div>
@@ -101,8 +101,8 @@
           type="date"
           id="hotelStartDate"
           v-model="hotelStartDate"
-          :min="'2025-06-15'"
-          :max="'2025-06-19'"
+          :min="'2025-07-15'"
+          :max="'2025-07-19'"
           @change="updateMaxHotelEndDate"
         />
         <label v-if="hotelStartDate" for="hotelEndDate">Date de fin :</label>
@@ -112,7 +112,7 @@
           id="hotelEndDate"
           v-model="hotelEndDate"
           :min="hotelStartDate"
-          :max="'2025-06-19'"
+          :max="'2025-07-19'"
           @change="calculateTotal"
         />
       </div>

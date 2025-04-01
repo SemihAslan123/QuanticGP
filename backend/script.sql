@@ -185,14 +185,14 @@ CREATE TABLE liste_activite_client (
 -- INSERTION DES DONNÉES
 -- ===================================================================================
 
--- Insertion dans events
 INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
 VALUES
-    ('Karting enfant', '2025-01-10', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
-    ('Simulateur F1', '2025-01-10', '11:30', '12:30', 25.00, 'Expérience immersive dans un simulateur F1', '/assets/events/simulateur_f1.jpg'),
-    ('Rencontre avec Charles Leclerc', '2025-01-10', '09:00', '10:00', 15.00, 'Rencontre exclusive avec Charles Leclerc', '/assets/events/rencontre_leclerc.jpg'),
-    ('Rencontre avec Max Verstappen', '2025-01-10', '10:00', '11:00', 15.00, 'Rencontre exclusive avec Max Verstappen', '/assets/events/rencontre_verstappen.jpg'),
-    ('Exposition F1', '2025-01-10', '13:00', '18:00', 10.00, 'Exposition des voitures de F1', '/assets/events/exposition_f1.jpg');
+    ('Karting enfant', '2025-07-15', '10:00', '11:00', 40.00, 'Course de karting pour enfants', '/assets/events/karting_enfant.jpg'),
+    ('Simulateur F1', '2025-07-16', '11:30', '12:30', 25.00, 'Expérience immersive dans un simulateur F1', '/assets/events/simulateur_f1.jpg'),
+    ('Rencontre avec Charles Leclerc', '2025-07-17', '09:00', '10:00', 15.00, 'Rencontre exclusive avec Charles Leclerc', '/assets/events/rencontre_leclerc.jpg'),
+    ('Rencontre avec Max Verstappen', '2025-07-18', '10:00', '11:00', 15.00, 'Rencontre exclusive avec Max Verstappen', '/assets/events/rencontre_verstappen.jpg'),
+    ('Exposition F1', '2025-07-19', '13:00', '18:00', 10.00, 'Exposition des voitures de F1', '/assets/events/exposition_f1.jpg');
+
 
 -- Insertion dans Utilisateurs
 INSERT INTO Utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
@@ -271,27 +271,28 @@ VALUES
     (2, 1, '🥩 Grill’n’Go', 'Restauration',
      'Barbecue gourmet avec burgers et hot-dogs maison. Produits frais et locaux. Options végétariennes et sans viande disponibles.',
      'Service de restauration rapide',
-     NULL, '2024-11-20', '12:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Acceptée'),
+     NULL, '2025-07-15', '12:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Acceptée'),
 
     (3, 2, '🍕 PitStop Pizza', 'Restauration',
      'Pizza artisanale cuite dans un four mobile, offrant une pâte légère et des garnitures fraîches.',
      'Pizzas artisanales préparées sur place dans un four mobile. Choix varié de garnitures, avec options végétariennes. Idéal pour un repas rapide entre deux tours.',
-     NULL, '2024-11-21', '09:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+     NULL, '2025-07-16', '09:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
 
     (4, 3, '🌮 TurboTacos', 'Restauration',
      'Tacos innovants alliant tradition mexicaine et modernité, préparés avec soin pour une explosion de saveurs.',
      'Tacos frais et savoureux avec des ingrédients locaux. Recettes personnalisables selon vos goûts.',
-     NULL, '2024-11-20', '14:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Refusée'),
+     NULL, '2025-07-17', '14:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Refusée'),
 
     (5, 4, '🛍️ Racing Memorabilia', 'Merchandising',
      'Collection exclusive d’articles officiels de F1, idéale pour les passionnés de courses automobiles.',
      'Produits officiels des écuries de F1 : casquettes, posters et accessoires. Collection spéciale limitée.',
-     NULL, '2024-11-21', '10:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+     NULL, '2025-07-18', '10:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
 
     (6, 5, '👕 F1 Style', 'Merchandising',
      'Collection de vêtements tendance inspirés de l’univers de la F1, alliant confort et design moderne.',
      'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.',
-     NULL, '2024-11-22', '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
+     NULL, '2025-07-19', '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
+
 
 
 

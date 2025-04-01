@@ -9,7 +9,7 @@
       <!-- Liens cliquables -->
       <router-link to="/reservation" exact-active-class="active-link">BILLETS</router-link>
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
-      <router-link to="/livredor" exact-active-class="active-link">livre d'or</router-link>
+      <router-link to="/livredor" exact-active-class="active-link">LIVRE D'OR</router-link>
 
       <!-- Affiche l'onglet Organisation si l'utilisateur est un organisateur -->
       <router-link v-if="isLoggedIn && user?.type === 'organisateur'" to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>

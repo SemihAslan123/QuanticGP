@@ -8,6 +8,7 @@ body, html {
     padding: 0;
     width: 100%;
     background-color: rgba(0,22,43,255);
+    overflow-x: hidden;
   }
 
   

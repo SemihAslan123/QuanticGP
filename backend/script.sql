@@ -207,47 +207,50 @@ VALUES
     ('Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client'),
     ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client');
 
--- Insertion dans emplacements_prestataires
-INSERT INTO emplacements_prestataires (nom_emplacement, coordonnees_svg, description, statut)
+INSERT INTO emplacements_prestataires (utilisateur_id, nom_emplacement, coordonnees_svg, description, statut)
 VALUES
-    ('Zone A - Emplacement n°1', 'm 478.86837,453.3347 -6.49541,84.88826 26.20561,3.13572 6.49541,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone A - Emplacement n°2', 'm 470.58112,552.33368 -6.71938,84.4403 25.98163,3.13572 6.49541,-84.44031 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone A - Emplacement n°3', 'm 462.51786,648.19694 -6.27143,84.44031 25.75765,3.80765 6.49541,-84.21633 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone A - Emplacement n°4', 'm 453.55868,749.6597 1.11989,86.00816 25.53368,1.1199 1.34387,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone A - Emplacement n°5', 'm 452.2148,848.21072 10.975,86.00816 23.29388,-2.91173 -8.95919,-82.87245 -23.51786,0.67194 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°1', 'm 425.33725,1003.6526 19.26224,-17.24647 60.69847,59.35457 -18.36633,17.6944 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°2', 'm 501.26633,1075.774 c 0,-1.7919 10.975,-23.0699 10.975,-23.0699 l 77.9449,36.2847 -11.87092,21.502 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°3', 'm 597.80153,1091.2286 0.89592,25.5337 85.78419,-3.5837 -0.22398,-23.9658 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°4', 'm 661.41174,1145.4316 28.89337,28.6694 41.43622,-42.7801 -27.77347,-28.8933 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°5', 'm 594.8898,1157.9745 6.27143,40.0923 59.13061,-8.5112 -5.15153,-38.3005 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone B - Emplacement n°6', 'm 524.56021,1150.5832 -4.4796,38.0765 58.90664,6.4954 4.47959,-38.7485 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°1', 'm 778.58374,842.56824 29.14145,25.97391 38.32736,-46.87974 -29.45822,-24.07338 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°2', 'm 818.17811,783.65182 38.32735,12.03668 19.0053,-58.28291 -38.64411,-9.81941 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°3', 'm 833.6991,676.58863 4.43457,40.86139 59.23318,-8.86913 -4.11781,-36.74358 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°4', 'm 908.13652,672.47082 1.58378,38.64411 57.6494,-2.8508 -1.26702,-38.64411 z', 'Emplacement réservé aux prestataires et soumis à réservation', 'LIBRE'),
-    ('Zone C - Emplacement n°5', 'm 984.15772,671.83731 -4.43457,39.91113 58.91645,7.60211 4.7513,-38.6441 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°6', 'm 1058.5951,685.77453 -8.8691,38.32735 58.5997,13.62046 9.1859,-39.91112 -61.1337,-12.35345 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone C - Emplacement n°7', 'm 1128.2812,711.74844 22.1729,26.29066 -28.1912,119.09987 -25.3404,-27.55768 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°1', 'm 1162.4908,857.13897 25.6571,5.06808 15.2043,-91.54219 -23.7567,-2.53404 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°2', 'm 1176.7447,751.50119 60.817,5.85996 3.1675,-39.43599 -58.5996,-4.9097 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°3', 'm 1253.3994,719.82569 c 0,0 0.7919,40.22788 2.5341,40.22788 1.7421,0 61.1337,-3.80106 60.5002,-3.95944 -0.6335,-0.15837 -2.2173,-41.17814 -2.2173,-41.17814 l -59.7083,4.11781 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°4', 'm 1326.4115,711.59006 c 0,0 16.6296,35.63493 17.4215,35.95169 0.7919,0.31675 54.4819,-25.18202 54.4819,-25.18202 l -17.4216,-35.79332 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°5', 'm 1392.4549,680.23132 24.2317,31.99225 46.8798,-34.52629 -22.9648,-32.30901 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°6', 'm 1442.3438,712.6987 -12.5118,95.02649 42.6035,-1.58377 11.8783,-93.91785 -40.703,0.63351 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°7', 'm 1432.2076,823.24619 40.8614,-0.79189 -11.7199,94.07623 -44.1873,1.4254 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°8', 'm 1388.9706,931.41801 0.6335,55.27375 69.8445,-2.69242 -1.2671,-55.27374 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone D - Emplacement n°9', 'm 1304.397,933.47692 1.267,56.69914 71.2699,-3.00917 -1.5838,-56.85752 -72.2201,2.53404 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°1', 'm 1565.5615,914.31324 9.8194,48.78027 -70.7948,13.46209 -8.8691,-47.83 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°2', 'm 1509.971,871.55132 42.2868,-8.394 -2.8508,-95.0265 -40.5447,7.12699 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°3', 'm 1508.8623,763.06274 c 6.8103,-2.21728 43.3955,-8.55238 43.3955,-8.55238 l -1.9006,-94.23461 -42.1284,8.23563 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°4', 'm 1499.6764,615.77168 c 0,0 23.5983,36.11006 24.2318,36.42682 0.6335,0.31675 86.6325,-36.42682 86.1574,-38.16898 -0.4752,-1.74215 -20.9059,-35.63493 -22.0145,-35.63493 -1.1087,0 -88.3747,37.37709 -88.3747,37.37709 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°5', 'm 1602.4634,569.68383 c 0,0 23.5983,33.41765 24.2318,33.25927 0.6335,-0.15838 49.2554,-35.79331 49.2554,-35.79331 l -23.7566,-33.25927 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°6', 'm 1643.8,607.37767 c 0.6335,-0.31675 38.8024,-14.0956 38.8024,-14.0956 l 21.381,57.80779 -38.8025,14.57073 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°7', 'm 1666.7647,677.85565 15.6794,59.07481 40.0695,-10.6113 -15.6794,-58.44129 -38.8025,9.66103 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
-    ('Zone E - Emplacement n°8', 'm 1682.4441,750.7093 c 0,0 -2.8508,60.97533 -1.9006,60.97533 0.9503,0 41.0198,2.8508 41.0198,2.8508 l 2.3757,-62.08398 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE');
+    (2, 'Zone A - Emplacement n°1', 'm 478.86837,453.3347 -6.49541,84.88826 26.20561,3.13572 6.49541,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+    (3, 'Zone A - Emplacement n°2', 'm 470.58112,552.33368 -6.71938,84.4403 25.98163,3.13572 6.49541,-84.44031 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+    (4, 'Zone A - Emplacement n°3', 'm 462.51786,648.19694 -6.27143,84.44031 25.75765,3.80765 6.49541,-84.21633 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+    (5, 'Zone A - Emplacement n°4', 'm 453.55868,749.6597 1.11989,86.00816 25.53368,1.1199 1.34387,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
 
--- Insertion dans servicePrestataire
--- Notez ici l'ajout explicite de la colonne "statut" avec la valeur 'EN ATTENTE'
+    (6, 'Zone A - Emplacement n°5', 'm 452.2148,848.21072 10.975,86.00816 23.29388,-2.91173 -8.95919,-82.87245 -23.51786,0.67194 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+
+    (2, 'Zone B - Emplacement n°1', 'm 425.33725,1003.6526 19.26224,-17.24647 60.69847,59.35457 -18.36633,17.6944 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'EN ATTENTE'),
+    (3, 'Zone B - Emplacement n°2', 'm 501.26633,1075.774 c 0,-1.7919 10.975,-23.0699 10.975,-23.0699 l 77.9449,36.2847 -11.87092,21.502 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
+    (NULL, 'Zone B - Emplacement n°3', 'm 597.80153,1091.2286 0.89592,25.5337 85.78419,-3.5837 -0.22398,-23.9658 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone B - Emplacement n°4', 'm 661.41174,1145.4316 28.89337,28.6694 41.43622,-42.7801 -27.77347,-28.8933 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone B - Emplacement n°5', 'm 594.8898,1157.9745 6.27143,40.0923 59.13061,-8.5112 -5.15153,-38.3005 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone B - Emplacement n°6', 'm 524.56021,1150.5832 -4.4796,38.0765 58.90664,6.4954 4.47959,-38.7485 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+
+    (NULL, 'Zone C - Emplacement n°1', 'm 778.58374,842.56824 29.14145,25.97391 38.32736,-46.87974 -29.45822,-24.07338 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°2', 'm 818.17811,783.65182 38.32735,12.03668 19.0053,-58.28291 -38.64411,-9.81941 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°3', 'm 833.6991,676.58863 4.43457,40.86139 59.23318,-8.86913 -4.11781,-36.74358 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°4', 'm 908.13652,672.47082 1.58378,38.64411 57.6494,-2.8508 -1.26702,-38.64411 z', 'Emplacement réservé aux prestataires et soumis à réservation', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°5', 'm 984.15772,671.83731 -4.43457,39.91113 58.91645,7.60211 4.7513,-38.6441 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°6', 'm 1058.5951,685.77453 -8.8691,38.32735 58.5997,13.62046 9.1859,-39.91112 -61.1337,-12.35345 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone C - Emplacement n°7', 'm 1128.2812,711.74844 22.1729,26.29066 -28.1912,119.09987 -25.3404,-27.55768 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+
+    (NULL, 'Zone D - Emplacement n°1', 'm 1162.4908,857.13897 25.6571,5.06808 15.2043,-91.54219 -23.7567,-2.53404 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°2', 'm 1176.7447,751.50119 60.817,5.85996 3.1675,-39.43599 -58.5996,-4.9097 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°3', 'm 1253.3994,719.82569 c 0,0 0.7919,40.22788 2.5341,40.22788 1.7421,0 61.1337,-3.80106 60.5002,-3.95944 -0.6335,-0.15837 -2.2173,-41.17814 -2.2173,-41.17814 l -59.7083,4.11781 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°4', 'm 1326.4115,711.59006 c 0,0 16.6296,35.63493 17.4215,35.95169 0.7919,0.31675 54.4819,-25.18202 54.4819,-25.18202 l -17.4216,-35.79332 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°5', 'm 1392.4549,680.23132 24.2317,31.99225 46.8798,-34.52629 -22.9648,-32.30901 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°6', 'm 1442.3438,712.6987 -12.5118,95.02649 42.6035,-1.58377 11.8783,-93.91785 -40.703,0.63351 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°7', 'm 1432.2076,823.24619 40.8614,-0.79189 -11.7199,94.07623 -44.1873,1.4254 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°8', 'm 1388.9706,931.41801 0.6335,55.27375 69.8445,-2.69242 -1.2671,-55.27374 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone D - Emplacement n°9', 'm 1304.397,933.47692 1.267,56.69914 71.2699,-3.00917 -1.5838,-56.85752 -72.2201,2.53404 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+
+    (NULL, 'Zone E - Emplacement n°1', 'm 1565.5615,914.31324 9.8194,48.78027 -70.7948,13.46209 -8.8691,-47.83 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°2', 'm 1509.971,871.55132 42.2868,-8.394 -2.8508,-95.0265 -40.5447,7.12699 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°3', 'm 1508.8623,763.06274 c 6.8103,-2.21728 43.3955,-8.55238 43.3955,-8.55238 l -1.9006,-94.23461 -42.1284,8.23563 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°4', 'm 1499.6764,615.77168 c 0,0 23.5983,36.11006 24.2318,36.42682 0.6335,0.31675 86.6325,-36.42682 86.4819,-38.16898 -0.3168,-1.74215 -20.9059,-35.63493 -22.0145,-35.63493 -1.1087,0 -88.3747,37.37709 -88.3747,37.37709 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°5', 'm 1602.4634,569.68383 c 0,0 23.5983,33.41765 24.2318,33.25927 0.6335,-0.15838 49.2554,-35.79331 49.2554,-35.79331 l -23.7566,-33.25927 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°6', 'm 1643.8,607.37767 c 0.6335,-0.31675 38.8024,-14.0956 38.8024,-14.0956 l 21.381,57.80779 -38.8025,14.57073 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°7', 'm 1666.7647,677.85565 15.6794,59.07481 40.0695,-10.6113 -15.6794,-58.44129 -38.8025,9.66103 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE'),
+    (NULL, 'Zone E - Emplacement n°8', 'm 1682.4441,750.7093 c 0,0 -2.8508,60.97533 -1.9006,60.97533 0.9503,0 41.0198,2.8508 41.0198,2.8508 l 2.3757,-62.08398 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'LIBRE');
+
+
 INSERT INTO servicePrestataire (
     id_utilisateur,
     id_emplacement,
@@ -268,23 +271,29 @@ VALUES
     (2, 1, '🥩 Grill’n’Go', 'Restauration',
      'Barbecue gourmet avec burgers et hot-dogs maison. Produits frais et locaux. Options végétariennes et sans viande disponibles.',
      'Service de restauration rapide',
-     NULL, '2024-11-20', '12:00', true, 'CONFIRMÉ', 'EN ATTENTE', '0-10€', 'Acceptée'),
+     NULL, '2024-11-20', '12:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Acceptée'),
+
     (3, 2, '🍕 PitStop Pizza', 'Restauration',
-     '',
+     'Pizza artisanale cuite dans un four mobile, offrant une pâte légère et des garnitures fraîches.',
      'Pizzas artisanales préparées sur place dans un four mobile. Choix varié de garnitures, avec options végétariennes. Idéal pour un repas rapide entre deux tours.',
-     NULL, '2024-11-21', '09:00', false, 'CONFIRMÉ', 'EN ATTENTE', '10-20€', 'Acceptée'),
+     NULL, '2024-11-21', '09:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+
     (4, 3, '🌮 TurboTacos', 'Restauration',
-     '',
+     'Tacos innovants alliant tradition mexicaine et modernité, préparés avec soin pour une explosion de saveurs.',
      'Tacos frais et savoureux avec des ingrédients locaux. Recettes personnalisables selon vos goûts.',
-     NULL, '2024-11-20', '14:00', true, 'CONFIRMÉ', 'EN ATTENTE', '0-10€', 'Refusée'),
+     NULL, '2024-11-20', '14:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Refusée'),
+
     (5, 4, '🛍️ Racing Memorabilia', 'Merchandising',
-     '',
+     'Collection exclusive d’articles officiels de F1, idéale pour les passionnés de courses automobiles.',
      'Produits officiels des écuries de F1 : casquettes, posters et accessoires. Collection spéciale limitée.',
-     NULL, '2024-11-21', '10:00', false, 'CONFIRMÉ', 'EN ATTENTE', '10-20€', 'Acceptée'),
+     NULL, '2024-11-21', '10:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+
     (6, 5, '👕 F1 Style', 'Merchandising',
-     '',
+     'Collection de vêtements tendance inspirés de l’univers de la F1, alliant confort et design moderne.',
      'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.',
      NULL, '2024-11-22', '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
+
+
 
 -- Insertion dans LivreOr
 INSERT INTO LivreOr (id_utilisateur, commentaire, note)
@@ -314,15 +323,5 @@ VALUES
     (7, 4),
     (9, 1);
 
--- Exemple de mise à jour : marquer un emplacement comme "RÉSERVÉ" pour un utilisateur donné
-UPDATE emplacements_prestataires
-SET statut = 'RÉSERVÉ'
-WHERE utilisateur_id = 2;
-
--- Affichage de quelques données pour vérification
-SELECT * FROM emplacements_prestataires;
-SELECT * FROM servicePrestataire;
-
-update servicePrestataire
-set statut = 'ACCEPTÉ'
-where id_utilisateur = 2;
+select * from servicePrestataire;
+select * from emplacements_prestataires;

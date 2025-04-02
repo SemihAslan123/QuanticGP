@@ -1,16 +1,18 @@
+<!-- frontend/src/components/organisation/AssistancePrestataire.vue -->
 <template>
-  <section class="reservations-section-orga">
-    <h2>Gestion des demandes de prestataires</h2>
+  <section class="assistance-section-orga">
+    <!-- Section Assistance Prestataires -->
+    <h2>Demande d'assistance</h2>
     <div class="filter-bar">
       <label for="status-filter">Filtrer par statut :</label>
-      <select id="status-filter" v-model="statusFilter" class="status-select">
+      <select id="status-filter" v-model="statusFilter">
         <option value="">Tous</option>
         <option value="EN ATTENTE">En attente</option>
         <option value="ACCEPTÉ">Accepté</option>
         <option value="REFUSÉ">Refusé</option>
       </select>
     </div>
-    <div class="reservations-table">
+    <div class="assistance-table">
       <table>
         <thead>
         <tr>
@@ -18,20 +20,20 @@
             ID Demande
             <font-awesome-icon :icon="getSortIcon('id_demande', 'demandes')" />
           </th>
-          <th @click="sortDemandes('prenom_utilisateur')">
-            Prénom
-            <font-awesome-icon :icon="getSortIcon('prenom_utilisateur', 'demandes')" />
-          </th>
           <th @click="sortDemandes('nom_utilisateur')">
             Nom
             <font-awesome-icon :icon="getSortIcon('nom_utilisateur', 'demandes')" />
+          </th>
+          <th @click="sortDemandes('prenom_utilisateur')">
+            Prénom
+            <font-awesome-icon :icon="getSortIcon('prenom_utilisateur', 'demandes')" />
           </th>
           <th @click="sortDemandes('mail_utilisateur')">
             Email
             <font-awesome-icon :icon="getSortIcon('mail_utilisateur', 'demandes')" />
           </th>
           <th @click="sortDemandes('date_demande')">
-            Date Demande
+            Date
             <font-awesome-icon :icon="getSortIcon('date_demande', 'demandes')" />
           </th>
           <th @click="sortDemandes('statut_demande')">
@@ -44,13 +46,13 @@
         <tbody>
         <tr v-for="demande in filteredDemandes" :key="demande.id_demande">
           <td>{{ demande.id_demande }}</td>
-          <td>{{ demande.prenom_utilisateur }}</td>
-          <td>{{ demande.nom_utilisateur }}</td>
-          <td>{{ demande.mail_utilisateur }}</td>
-          <td>{{ new Date(demande.date_demande).toLocaleDateString('fr-FR') }}</td>
+          <td>{{ demande.nom_utilisateur || 'N/A' }}</td>
+          <td>{{ demande.prenom_utilisateur || 'N/A' }}</td>
+          <td>{{ demande.mail_utilisateur || 'N/A' }}</td>
+          <td>{{ demande.date_demande ? new Date(demande.date_demande).toLocaleDateString() : 'N/A' }}</td>
           <td>
-              <span :class="['reservation-status', demande.statut_demande.toLowerCase()]">
-                {{ demande.statut_demande }}
+              <span :class="['reservation-status', demande.statut_demande?.toLowerCase() || 'na']">
+                {{ demande.statut_demande || 'N/A' }}
               </span>
           </td>
           <td class="actions-cell">
@@ -60,8 +62,8 @@
                 class="status-select"
             >
               <option value="EN ATTENTE" :selected="demande.statut_demande === 'EN ATTENTE'">En attente</option>
-              <option value="ACCEPTÉ">Accepter</option>
-              <option value="REFUSÉ">Refuser</option>
+              <option value="ACCEPTÉ" :selected="demande.statut_demande === 'ACCEPTÉ'">Accepté</option>
+              <option value="REFUSÉ" :selected="demande.statut_demande === 'REFUSÉ'">Refusé</option>
             </select>
             <button
                 v-if="demande.statut_demande === 'EN ATTENTE'"
@@ -85,9 +87,11 @@
         </tbody>
       </table>
       <div v-if="filteredDemandes.length === 0" class="no-data">
-        <p>Aucune demande trouvée.</p>
+        <p>Aucune demande d'assistance trouvée.</p>
       </div>
     </div>
+
+    <button @click="$emit('back')" class="button-back-orga">Retour</button>
 
     <!-- Modal pour les détails des demandes -->
     <transition name="modal-fade">
@@ -105,23 +109,27 @@
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="user" class="detail-icon" />
-                <span>Nom: {{ selectedDemande.nom_utilisateur }}</span>
+                <span>Nom: {{ selectedDemande.nom_utilisateur || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="user" class="detail-icon" />
-                <span>Prénom: {{ selectedDemande.prenom_utilisateur }}</span>
+                <span>Prénom: {{ selectedDemande.prenom_utilisateur || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="envelope" class="detail-icon" />
-                <span>Email: {{ selectedDemande.mail_utilisateur }}</span>
+                <span>Email: {{ selectedDemande.mail_utilisateur || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="calendar-alt" class="detail-icon" />
-                <span>Date: {{ new Date(selectedDemande.date_demande).toLocaleDateString('fr-FR') }}</span>
+                <span>Date: {{ selectedDemande.date_demande ? new Date(selectedDemande.date_demande).toLocaleDateString() : 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="info-circle" class="detail-icon" />
-                <span>Statut: {{ selectedDemande.statut_demande }}</span>
+                <span>Statut: {{ selectedDemande.statut_demande || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <font-awesome-icon icon="comment" class="detail-icon" />
+                <span>Présentation: {{ selectedDemande.presentation || 'Non fournie' }}</span>
               </div>
             </div>
           </div>
@@ -139,7 +147,11 @@
           </div>
           <div class="modal-body">
             <label for="edit-status-select">Nouveau statut :</label>
-            <select id="edit-status-select" v-model="newStatus" class="status-select">
+            <select
+                id="edit-status-select"
+                v-model="newStatus"
+                class="status-select"
+            >
               <option value="EN ATTENTE">En attente</option>
               <option value="ACCEPTÉ">Accepté</option>
               <option value="REFUSÉ">Refusé</option>
@@ -157,12 +169,39 @@
 
 <script>
 import organisationService from '@/../backend/services/organisation.service';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faEye,
+  faEdit,
+  faTrash,
+  faSortUp,
+  faSortDown,
+  faSort,
+  faIdBadge,
+  faUser,
+  faEnvelope,
+  faCalendarAlt,
+  faInfoCircle,
+  faComment
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+library.add(faEye, faEdit, faTrash, faSortUp, faSortDown, faSort, faIdBadge, faUser, faEnvelope, faCalendarAlt, faInfoCircle, faComment);
 
 export default {
   name: 'AssistancePrestataire',
+  components: {
+    FontAwesomeIcon,
+  },
+  props: {
+    demandes: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
-      demandes: [],
+      selectedDemande: null,
       statusFilter: '',
       sortKey: {
         demandes: '',
@@ -170,57 +209,35 @@ export default {
       sortOrder: {
         demandes: 1,
       },
-      selectedDemande: null,
       editModalVisible: false,
       editItem: null,
       editItemType: null,
       newStatus: '',
+      localDemandes: [], // Pour stocker localement les données si pas passées via props
     };
-  },
-  async created() {
-    await this.fetchDemandes();
   },
   computed: {
     filteredDemandes() {
-      let filtered = [...this.demandes];
+      let filtered = [...(this.demandes.length ? this.demandes : this.localDemandes)];
       if (this.statusFilter) {
         filtered = filtered.filter(demande => demande.statut_demande === this.statusFilter);
       }
       return this.sortData(filtered, this.sortKey.demandes, this.sortOrder.demandes);
     },
   },
+  async created() {
+    if (!this.demandes.length) {
+      await this.fetchDemandes();
+    }
+  },
   methods: {
     async fetchDemandes() {
       try {
         const demandes = await organisationService.getDemandes();
-        this.demandes = demandes || [];
-        console.log("Demandes récupérées :", this.demandes);
+        this.localDemandes = demandes || [];
       } catch (error) {
-        console.error("Erreur lors de la récupération des demandes :", error);
-        alert("Erreur lors du chargement des demandes.");
-        this.demandes = [];
-      }
-    },
-    async changeStatus(id, newStatus) {
-      try {
-        await organisationService.traiterDemande(id, { action: newStatus });
-        alert(`Statut modifié en "${newStatus}" avec succès.`);
-        await this.fetchDemandes();
-      } catch (error) {
-        console.error("Erreur lors du changement de statut :", error);
-        alert("Une erreur est survenue lors du changement de statut.");
-      }
-    },
-    async deleteDemande(id) {
-      if (confirm("Voulez-vous vraiment supprimer cette demande ?")) {
-        try {
-          await organisationService.deleteDemande(id); // À implémenter dans le service si nécessaire
-          alert("Demande supprimée avec succès.");
-          await this.fetchDemandes();
-        } catch (error) {
-          console.error("Erreur lors de la suppression :", error);
-          alert("Une erreur est survenue lors de la suppression.");
-        }
+        console.error('Erreur lors de la récupération des demandes :', error);
+        this.localDemandes = [];
       }
     },
     sortData(data, key, order) {
@@ -229,11 +246,13 @@ export default {
         let valA = a[key] || '';
         let valB = b[key] || '';
         if (key === 'date_demande') {
-          valA = new Date(valA).getTime();
-          valB = new Date(valB).getTime();
+          valA = valA ? new Date(valA).getTime() : 0;
+          valB = valB ? new Date(valB).getTime() : 0;
+        } else if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+        } else if (typeof valB === 'string') {
+          valB = valB.toLowerCase();
         }
-        if (typeof valA === 'string') valA = valA.toLowerCase();
-        if (typeof valB === 'string') valB = valB.toLowerCase();
         if (valA < valB) return -1 * order;
         if (valA > valB) return 1 * order;
         return 0;
@@ -262,7 +281,7 @@ export default {
     openEditModal(item, type) {
       this.editItem = item;
       this.editItemType = type;
-      this.newStatus = item.statut_demande;
+      this.newStatus = item.statut_demande || '';
       this.editModalVisible = true;
     },
     closeEditModal() {
@@ -272,14 +291,39 @@ export default {
       this.newStatus = '';
     },
     async confirmStatusChange() {
+      if (this.editItem && this.editItemType === 'demande') {
+        try {
+          await organisationService.traiterDemande(this.editItem.id_demande, { action: this.newStatus });
+          this.updateLocalDemande(this.editItem.id_demande, this.newStatus);
+          this.closeEditModal();
+        } catch (error) {
+          console.error('Erreur lors de la mise à jour du statut :', error);
+        }
+      }
+    },
+    async changeStatus(id, newStatus) {
       try {
-        await organisationService.traiterDemande(this.editItem.id_demande, { action: this.newStatus });
-        alert(`Statut modifié en "${this.newStatus}" avec succès.`);
-        await this.fetchDemandes();
-        this.closeEditModal();
+        await organisationService.traiterDemande(id, { action: newStatus });
+        this.updateLocalDemande(id, newStatus);
       } catch (error) {
-        console.error("Erreur lors de la modification du statut :", error);
-        alert("Une erreur est survenue lors de la modification.");
+        console.error('Erreur lors de la mise à jour du statut :', error);
+      }
+    },
+    async deleteDemande(id) {
+      if (confirm('Voulez-vous vraiment supprimer cette demande ?')) {
+        try {
+          await organisationService.deleteDemande(id);
+          this.localDemandes = this.localDemandes.filter(demande => demande.id_demande !== id);
+        } catch (error) {
+          console.error('Erreur lors de la suppression :', error);
+        }
+      }
+    },
+    updateLocalDemande(id, newStatus) {
+      const demandeIndex = this.localDemandes.findIndex(d => d.id_demande === id);
+      if (demandeIndex !== -1) {
+        this.localDemandes[demandeIndex].statut_demande = newStatus;
+        this.localDemandes = [...this.localDemandes]; // Force la réactivité
       }
     },
   },

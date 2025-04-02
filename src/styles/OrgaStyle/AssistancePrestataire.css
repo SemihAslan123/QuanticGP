@@ -1,20 +1,283 @@
-.assistance-prestataire {
+/* src/styles/OrgaStyle/AssistancePrestataire.css */
+.assistance-container {
     background: #1a2e41;
     border-radius: 15px;
     padding: 25px;
     box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.247);
     margin-top: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-h2 {
+h1 {
     font-size: 22px;
     color: #ffffff;
     font-family: "Goldman", sans-serif;
     margin-bottom: 20px;
+    text-align: center;
 }
 
-p {
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.controls label {
     font-size: 14px;
     color: #d4d4d4;
     font-family: "Host Grotesk", sans-serif;
+}
+
+.controls select {
+    padding: 8px;
+    border: 1px solid #3f5264;
+    border-radius: 10px;
+    background: rgba(19, 16, 46, 0.945);
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.assistance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(19, 16, 46, 0.945);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.342);
+}
+
+.assistance-table th,
+.assistance-table td {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.assistance-table th {
+    background: #1a2e41;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.assistance-table th:hover {
+    background: #2a3e51;
+}
+
+.assistance-table th svg {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #e4ba00; /* Jaune du thème */
+}
+
+.assistance-table tr:nth-child(even) {
+    background: rgba(31, 41, 55, 0.5);
+}
+
+.assistance-table tr:hover {
+    background: #2a3e51;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.status-pending {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #ffffff;
+    background: rgb(228, 186, 0); /* Jaune pour "En attente" */
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.status-accepted {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #ffffff;
+    background: #4caf50; /* Vert pour "Accepté" */
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.status-rejected {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #ffffff;
+    background: #e51e53; /* Rouge pour "Refusé" */
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #d4d4d4;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.action-btn:hover {
+    color: #e51e53; /* Rouge du thème au survol */
+}
+
+.delete-btn {
+    background: #b9113ed3; /* Rouge foncé du thème */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.delete-btn:hover {
+    background: #e51e53; /* Rouge plus clair au survol */
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1a2e41;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.342);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3f5264;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    color: #ffffff;
+    font-family: "Goldman", sans-serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #d4d4d4;
+}
+
+.close-btn:hover {
+    color: #e51e53; /* Rouge du thème au survol */
+}
+
+.modal-body {
+    margin-top: 15px;
+}
+
+.modal-body label {
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.modal-body select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #3f5264;
+    border-radius: 10px;
+    background: rgba(19, 16, 46, 0.945);
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px solid #3f5264;
+}
+
+.btn-confirm {
+    background: #4caf50; /* Vert pour confirmer */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.btn-confirm:hover {
+    background: #45a049; /* Vert plus foncé au survol */
+}
+
+.cancel-btn {
+    background: #b9113ed3; /* Rouge foncé pour annuler */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.cancel-btn:hover {
+    background: #e51e53; /* Rouge plus clair au survol */
+}
+
+.details-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #d4d4d4;
+    font-family: "Host Grotesk", sans-serif;
+}
+
+.detail-icon {
+    margin-right: 10px;
+    color: #e51e53; /* Rouge du thème pour les icônes */
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+    opacity: 0;
 }

@@ -34,75 +34,70 @@ const pool = require("../db"); // Chemin vers votre configuration de la BDD
  *       500:
  *         description: Erreur interne du serveur.
  */
-router.post("/", async (req, res) => {
+
+router.post('/', async (req, res) => {
     const {
         prenomUtilisateur,
         nomUtilisateur,
         emailUtilisateur,
         motDePasse,
         typeUtilisateur,
+        presentation, // Nouveau champ
     } = req.body;
 
-    // Vérification des champs obligatoires
     if (!prenomUtilisateur || !nomUtilisateur || !emailUtilisateur || !motDePasse || !typeUtilisateur) {
-        return res.status(400).json({ error: "Tous les champs sont requis." });
+        return res.status(400).json({ error: 'Tous les champs de base sont requis.' });
     }
 
     try {
-        // Vérification si l'email est déjà utilisé
         const checkEmailQuery = `SELECT * FROM Utilisateurs WHERE mail_utilisateur = $1`;
         const checkEmailResult = await pool.query(checkEmailQuery, [emailUtilisateur]);
         if (checkEmailResult.rows.length > 0) {
-            return res.status(400).json({ error: "L'email est déjà utilisé." });
+            return res.status(400).json({ error: 'L\'email est déjà utilisé.' });
         }
 
-        // Gestion des demandes pour "prestataire" ou "organisateur"
-        if (typeUtilisateur === "prestataire" || typeUtilisateur === "organisateur") {
-            // Vérification d'une demande en attente existante
+        if (typeUtilisateur === 'prestataire' || typeUtilisateur === 'organisateur') {
             const checkPendingQuery = `SELECT * FROM demandes_prestataires WHERE mail_utilisateur = $1 AND statut_demande = 'EN ATTENTE'`;
             const checkPendingResult = await pool.query(checkPendingQuery, [emailUtilisateur]);
             if (checkPendingResult.rows.length > 0) {
-                return res.status(400).json({ error: "Une demande est déjà en attente pour cet email." });
+                return res.status(400).json({ error: 'Une demande est déjà en attente pour cet email.' });
             }
 
-            // Création de la demande
             const insertDemandeQuery = `
-                INSERT INTO demandes_prestataires (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_demande)
-                VALUES ($1, $2, $3, $4, $5) RETURNING id_demande;
-            `;
-            const demandeValues = [prenomUtilisateur, nomUtilisateur, emailUtilisateur, motDePasse, typeUtilisateur];
-            const demandeResult = await pool.query(insertDemandeQuery, demandeValues);
+        INSERT INTO demandes_prestataires (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_demande, presentation)
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_demande;
+      `;
+            const values = [prenomUtilisateur, nomUtilisateur, emailUtilisateur, motDePasse, typeUtilisateur, presentation || null];
+            const result = await pool.query(insertDemandeQuery, values);
 
-            // Création du compte utilisateur avec type "client" par défaut
             const insertUserQuery = `
-                INSERT INTO Utilisateurs (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
-                VALUES ($1, $2, $3, $4, 'client') RETURNING id_utilisateur;
-            `;
+        INSERT INTO Utilisateurs (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
+        VALUES ($1, $2, $3, $4, 'client') RETURNING id_utilisateur;
+      `;
             const userValues = [prenomUtilisateur, nomUtilisateur, emailUtilisateur, motDePasse];
             const userResult = await pool.query(insertUserQuery, userValues);
 
             return res.status(201).json({
-                message: `Demande de ${typeUtilisateur} enregistrée. Compte créé en tant que client en attente de validation.`,
-                demandeId: demandeResult.rows[0].id_demande,
-                userId: userResult.rows[0].id_utilisateur
+                message: `Demande de ${typeUtilisateur} enregistrée avec succès. Votre compte a été créé en tant que client en attendant la validation.`,
+                demandeId: result.rows[0].id_demande,
+                userId: userResult.rows[0].id_utilisateur,
             });
         }
 
-        // Inscription directe pour "client"
         const insertQuery = `
-            INSERT INTO Utilisateurs (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
-            VALUES ($1, $2, $3, $4, $5) RETURNING id_utilisateur;
-        `;
-        const values = [prenomUtilisateur, nomUtilisateur, emailUtilisateur, motDePasse, "client"];
+      INSERT INTO Utilisateurs (prenom_utilisateur, nom_utilisateur, mail_utilisateur, mot_de_passe, type_utilisateur)
+      VALUES ($1, $2, $3, $4, $5) RETURNING id_utilisateur;
+    `;
+        const values = [prenomUtilisateur, nomUtilisateur, emailUtilisateur, motDePasse, 'client'];
         const result = await pool.query(insertQuery, values);
 
         res.status(201).json({
-            message: "Inscription réussie en tant que client.",
-            userId: result.rows[0].id_utilisateur
+            message: 'Inscription réussie en tant que client.',
+            userId: result.rows[0].id_utilisateur,
         });
     } catch (error) {
-        console.error("Erreur lors de l'inscription : ", error);
-        res.status(500).json({ error: "Erreur interne du serveur." });
+        console.error('Erreur lors de l\'inscription : ', error);
+        res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 });
 

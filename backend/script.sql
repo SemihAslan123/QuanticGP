@@ -97,6 +97,7 @@ CREATE TABLE demandes_prestataires (
                                        mail_utilisateur VARCHAR(50) NOT NULL,
                                        mot_de_passe VARCHAR(50) NOT NULL,
                                        type_demande VARCHAR(50) CHECK (type_demande IN ('prestataire', 'organisateur')),
+                                       presentation VARCHAR(200),
                                        date_demande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                        statut_demande VARCHAR(20) DEFAULT 'EN ATTENTE' CHECK (statut_demande IN ('EN ATTENTE', 'ACCEPTÉ', 'REFUSÉ'))
 );

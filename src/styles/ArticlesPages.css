@@ -30,6 +30,18 @@ body, html {
     box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.295);
 }
 
+.imagesArticleCoulisses {
+    max-height: 500px;
+    width: auto;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0.295);
+}
+
+.nom_staff {
+    font-size: 40px;
+    font-family: "Goldman", sans-serif;
+}
+
 .imagesArticle2 {
     max-height: 400px;
     width: auto;

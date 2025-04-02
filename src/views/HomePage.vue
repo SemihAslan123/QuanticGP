@@ -82,13 +82,13 @@
       <router-link to="/articlecoulisses" tag="div" class="carteCoulisses">
         <p class="texteHistoireCircuit">Les coulisses de<br /> l'événement</p>
         <p class="sousTitreHistoireCircuitUn">
-          📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 3 min)</span>
+          📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 4 min)</span>
         </p>
       </router-link>
       <router-link to="/articlemonaco" tag="div" class="carteVieMonaco">
         <p class="texteHistoireCircuit">La vie à Monaco pendant l'événement<br /></p>
         <p class="sousTitreHistoireCircuitUn">
-          📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 3 min)</span>
+          📰 - Article <span class="sousTitreLectureEnUn">(Lecture en 1 min)</span>
         </p>
       </router-link>
       <router-link to="/articleguide" tag="div" class="carteGuidePratique">
@@ -242,7 +242,7 @@
               @mouseleave="hideTooltip"
               @mousemove="moveTooltip"
             >
-              <path
+            <path
               :style="styleStandsActive
                 ? {
                     display: 'inline',

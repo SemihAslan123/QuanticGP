@@ -1,48 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // Chemin vers votre configuration de la base de données
+const pool = require('../db');
 
 /**
- * @swagger
- * /profil/{userId}/billets:
- *   get:
- *     summary: Récupérer les billets d'un utilisateur
- *     description: Cette route permet de récupérer tous les billets d'un utilisateur en fonction de son ID.
- *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: L'ID de l'utilisateur dont on souhaite récupérer les billets
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Liste des billets trouvée avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   course_nom:
- *                     type: string
- *                   course_date:
- *                     type: string
- *       400:
- *         description: ID utilisateur manquant.
- *       500:
- *         description: Erreur interne du serveur.
+ * GET /profil/:userId/billets
+ * Récupérer les billets d'un utilisateur
  */
 router.get('/:userId/billets', async (req, res) => {
     const { userId } = req.params;
-
     if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur manquant.' });
     }
-
     try {
         const queryBillets = `
       SELECT * 
@@ -50,10 +18,7 @@ router.get('/:userId/billets', async (req, res) => {
       WHERE utilisateur_id = $1;
     `;
         const values = [userId];
-
         const result = await pool.query(queryBillets, values);
-
-        // Renvoie une liste vide si aucun billet n'est trouvé
         res.status(200).json(result.rows || []);
     } catch (error) {
         console.error('Erreur lors de la récupération des billets :', error);
@@ -62,56 +27,14 @@ router.get('/:userId/billets', async (req, res) => {
 });
 
 /**
- * @swagger
- * /profil/{userId}/activites:
- *   get:
- *     summary: Récupérer les activités de l'utilisateur
- *     description: Cette route permet de récupérer toutes les activités auxquelles un utilisateur est inscrit.
- *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: L'ID de l'utilisateur dont on souhaite récupérer les activités
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Liste des activités trouvée avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
- *                   date:
- *                     type: string
- *                   heure_debut:
- *                     type: string
- *                   heure_fin:
- *                     type: string
- *                   prix:
- *                     type: number
- *                   description:
- *                     type: string
- *                   image:
- *                     type: string
- *       400:
- *         description: ID utilisateur manquant.
- *       500:
- *         description: Erreur interne du serveur.
+ * GET /profil/:userId/activites
+ * Récupérer les activités auxquelles l'utilisateur est inscrit
  */
 router.get('/:userId/activites', async (req, res) => {
     const { userId } = req.params;
-
     if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur manquant.' });
     }
-
     try {
         const queryActivites = `
       SELECT e.id, e.name, e.date, e.heure_debut, e.heure_fin, e.prix, e.description, e.image
@@ -120,11 +43,37 @@ router.get('/:userId/activites', async (req, res) => {
       WHERE lac.id_utilisateur = $1;
     `;
         const values = [userId];
-
         const result = await pool.query(queryActivites, values);
         res.status(200).json(result.rows || []);
     } catch (error) {
         console.error('Erreur lors de la récupération des activités :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+});
+
+/**
+ * GET /profil/:userId/reservations
+ * Récupérer les réservations de service d'un utilisateur
+ */
+router.get('/:userId/reservations', async (req, res) => {
+    const { userId } = req.params;
+    if (!userId) {
+        return res.status(400).json({ error: 'ID utilisateur manquant.' });
+    }
+    try {
+        const queryReservations = `
+      SELECT rs.id, rs.date_reservation, rs.heure_commande,
+             sp.id_service, sp.nom_service, sp.type_service, sp.date_service, 
+             sp.heure_ouverture, sp.heure_fermeture, sp.heure_commencement
+      FROM reservation_service rs
+      JOIN servicePrestataire sp ON rs.id_service = sp.id_service
+      WHERE rs.id_utilisateur = $1;
+    `;
+        const values = [userId];
+        const result = await pool.query(queryReservations, values);
+        res.status(200).json(result.rows || []);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des réservations de service :', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });

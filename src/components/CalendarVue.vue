@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Affichage du calendrier avec ref -->
+    <!-- Affichage du calendrier -->
     <FullCalendar ref="fullCalendar" :options="calendarOptions" />
   </div>
 </template>
@@ -14,28 +14,21 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
 export default {
-  components: {
-    FullCalendar
-  },
+  components: { FullCalendar },
   data() {
     return {
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin],
-        // Désactivation de la barre d'outils (flèches, Today, etc.)
         headerToolbar: false,
-        // Choix d'une vue adaptée
         initialView: 'dayGrid',
-        // Date initiale fixée au 15 juillet 2025
         initialDate: '2025-07-15',
-        // Affichage uniquement du 15 au 19 juillet 2025
         visibleRange: {
           start: '2025-07-15',
-          end: '2025-07-20' // date de fin exclusive
+          end: '2025-07-20'
         },
         selectable: true,
         editable: false,
         displayEventTime: false,
-        // Pour réduire la hauteur du calendrier par rapport à la largeur
         aspectRatio: 3,
         events: [],
         dayCellDidMount(info) {
@@ -64,9 +57,10 @@ export default {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) return;
       try {
-        const [billets, activites] = await Promise.all([
+        const [billets, activites, reservations] = await Promise.all([
           profilService.fetchBillets(user.id),
-          profilService.fetchActivites(user.id)
+          profilService.fetchActivites(user.id),
+          profilService.fetchReservations(user.id)
         ]);
         const formattedEvents = [];
         this.eventDates = [];
@@ -88,6 +82,15 @@ export default {
           });
           this.eventDates.push(new Date(activite.date).toISOString().split("T")[0]);
         });
+        reservations.forEach(reservation => {
+          formattedEvents.push({
+            id: `reservation-${reservation.id}`,
+            title: `Réservation: ${reservation.nom_service}`,
+            start: reservation.date_service,
+            color: '#27ae60'
+          });
+          this.eventDates.push(new Date(reservation.date_service).toISOString().split("T")[0]);
+        });
         this.calendarOptions.events = formattedEvents;
         this.eventDates = [...new Set(this.eventDates)].sort();
       } catch (error) {
@@ -99,27 +102,21 @@ export default {
 </script>
 
 <style scoped>
-/* Augmentation de la largeur et ajustement de l'affichage */
 .fc {
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 1200px; /* largeur augmentée */
+  width: 1200px;
   margin: 0 auto;
 }
-
-/* Toolbar (en-tête du calendrier) - non utilisée ici puisque headerToolbar est désactivé */
 .fc-toolbar {
   display: none;
 }
-
-/* Styles pour le calendrier */
 .fc-daygrid-day {
   background-color: #fff !important;
   border: 1px solid #f0f0f0 !important;
 }
-
 .fc-event {
   border-radius: 5px;
   padding: 5px;
@@ -131,11 +128,9 @@ export default {
   text-overflow: ellipsis;
   max-width: 100%;
 }
-
 .fc-day-sat, .fc-day-sun {
   background-color: #fafafa !important;
 }
-
 .fc-event:hover {
   transform: scale(1.05);
   transition: 0.2s ease-in-out;

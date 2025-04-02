@@ -2,9 +2,6 @@ import { axiosAgent } from './axios.service';
 
 /**
  * Récupère les billets d'un utilisateur.
- *
- * @param {number} userId - L'ID de l'utilisateur.
- * @returns {Promise<Object[]>} - La liste des billets.
  */
 async function fetchBillets(userId) {
     try {
@@ -18,9 +15,6 @@ async function fetchBillets(userId) {
 
 /**
  * Récupère les activités auxquelles l'utilisateur est inscrit.
- *
- * @param {number} userId - L'ID de l'utilisateur.
- * @returns {Promise<Object[]>} - La liste des activités.
  */
 async function fetchActivites(userId) {
     try {
@@ -32,4 +26,17 @@ async function fetchActivites(userId) {
     }
 }
 
-export default { fetchBillets, fetchActivites };
+/**
+ * Récupère les réservations de service d'un utilisateur.
+ */
+async function fetchReservations(userId) {
+    try {
+        const response = await axiosAgent.get(`/profil/${userId}/reservations`);
+        return response.data;
+    } catch (error) {
+        console.error('Erreur fetchReservations :', error);
+        throw error;
+    }
+}
+
+export default { fetchBillets, fetchActivites, fetchReservations };

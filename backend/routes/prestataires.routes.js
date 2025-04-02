@@ -10,7 +10,8 @@ const sanitizeHtml = require('sanitize-html');
 router.get('/services', async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT id_service, nom_service, type_service, description_service, presentation_service, date_service, heure_service, id_emplacement, visibilite, statut
+            `SELECT id_service, nom_service, type_service, description_service, presentation_service, date_service, 
+                    heure_ouverture, heure_fermeture, heure_commencement, id_emplacement, visibilite, statut
              FROM servicePrestataire
              WHERE statut = 'ACCEPTÉ'`
         );
@@ -21,7 +22,6 @@ router.get('/services', async (req, res) => {
     }
 });
 
-
 /**
  * GET /prestataire/:id
  * Récupérer les informations du prestataire connecté
@@ -31,8 +31,8 @@ router.get('/:id', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur
-       FROM Utilisateurs 
-       WHERE id_utilisateur = $1 AND type_utilisateur = 'prestataire'`,
+             FROM Utilisateurs 
+             WHERE id_utilisateur = $1 AND type_utilisateur = 'prestataire'`,
             [id]
         );
         if (result.rows.length === 0) {
@@ -57,14 +57,14 @@ router.post('/update', async (req, res) => {
     try {
         const result = await pool.query(
             `UPDATE Utilisateurs
-       SET nom_utilisateur = $1, prenom_utilisateur = $2, mail_utilisateur = $3
-       WHERE id_utilisateur = $4 AND type_utilisateur = 'prestataire'
-       RETURNING 
-         id_utilisateur as id, 
-         nom_utilisateur as nom, 
-         prenom_utilisateur as prenom, 
-         mail_utilisateur as mail,
-         type_utilisateur as type`,
+             SET nom_utilisateur = $1, prenom_utilisateur = $2, mail_utilisateur = $3
+             WHERE id_utilisateur = $4 AND type_utilisateur = 'prestataire'
+             RETURNING 
+               id_utilisateur as id, 
+               nom_utilisateur as nom, 
+               prenom_utilisateur as prenom, 
+               mail_utilisateur as mail,
+               type_utilisateur as type`,
             [nom, prenom, mail, id_utilisateur]
         );
         if (result.rows.length === 0) {
@@ -86,7 +86,8 @@ router.get('/:id/services', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT id_service, nom_service, type_service, description_service,
-                    presentation_service, image_prestataire, date_service, heure_service,
+                    presentation_service, image_prestataire, date_service, 
+                    heure_ouverture, heure_fermeture, heure_commencement,
                     id_emplacement, visibilite, statut
              FROM servicePrestataire
              WHERE id_utilisateur = $1`,
@@ -98,7 +99,6 @@ router.get('/:id/services', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
-
 
 /**
  * POST /prestataire/service/request
@@ -113,10 +113,24 @@ router.post('/service/request', async (req, res) => {
         presentation_service,
         description_service,
         date_service,
-        heure_service
+        heure_ouverture,
+        heure_fermeture,
+        heure_commencement
     } = req.body;
-    if (!id_utilisateur || !nom_service || !type_service || !presentation_service || !date_service || !heure_service) {
+    if (!id_utilisateur || !nom_service || !type_service || !presentation_service || !date_service) {
         return res.status(400).json({ error: "Paramètres manquants pour la demande de service" });
+    }
+    // Vérification des heures requises selon le type de service
+    if (type_service === 'continu') {
+       if (!heure_ouverture || !heure_fermeture) {
+           return res.status(400).json({ error: "Pour un service continu, l'heure d'ouverture et de fermeture sont requises" });
+       }
+    } else if (type_service === 'ponctuel') {
+       if (!heure_commencement) {
+           return res.status(400).json({ error: "Pour un service ponctuel, l'heure de commencement est requise" });
+       }
+    } else {
+       return res.status(400).json({ error: "Type de service invalide" });
     }
     try {
         const empResult = await pool.query(
@@ -128,10 +142,22 @@ router.post('/service/request', async (req, res) => {
         }
         const result = await pool.query(
             `INSERT INTO servicePrestataire 
-       (id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service, date_service, heure_service, visibilite, statut)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, 'EN ATTENTE')
-       RETURNING *`,
-            [id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service || '', date_service, heure_service]
+             (id_utilisateur, id_emplacement, nom_service, type_service, presentation_service, description_service, date_service, 
+              heure_ouverture, heure_fermeture, heure_commencement, visibilite, statut)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true, 'EN ATTENTE')
+             RETURNING *`,
+            [
+              id_utilisateur,
+              id_emplacement,
+              nom_service,
+              type_service,
+              presentation_service,
+              description_service || '',
+              date_service,
+              type_service === 'continu' ? heure_ouverture : null,
+              type_service === 'continu' ? heure_fermeture : null,
+              type_service === 'ponctuel' ? heure_commencement : null
+            ]
         );
         await pool.query(
             `UPDATE emplacements_prestataires SET statut = 'UTILISÉ' WHERE id_emplacement = $1`,
@@ -204,6 +230,51 @@ router.delete('/service/:id', async (req, res) => {
 });
 
 /**
+ * POST /prestataire/service/reservation
+ * Créer une réservation pour un service par un client.
+ * Pour un service continu, le client précise l'heure de commande (heure_commande) qui doit être comprise entre l'heure d'ouverture et de fermeture.
+ * Pour un service ponctuel, l'heure de commande est fixée dans le service (heure_commencement) et on insère NULL pour heure_commande.
+ */
+router.post('/service/reservation', async (req, res) => {
+    const { id_utilisateur, id_service, heure_commande } = req.body;
+    if (!id_utilisateur || !id_service) {
+        return res.status(400).json({ error: "Paramètres manquants pour la réservation du service" });
+    }
+    try {
+        // Vérifier que le service est bien validé et disponible
+        const serviceResult = await pool.query(
+            `SELECT * FROM servicePrestataire WHERE id_service = $1 AND statut = 'ACCEPTÉ'`,
+            [id_service]
+        );
+        if (serviceResult.rows.length === 0) {
+            return res.status(404).json({ error: "Service non trouvé ou non disponible" });
+        }
+        const service = serviceResult.rows[0];
+        // Pour un service continu, s'assurer que l'heure de commande est renseignée
+        if (service.type_service === 'continu') {
+            if (!heure_commande) {
+                return res.status(400).json({ error: "Pour un service continu, l'heure de commande est requise" });
+            }
+            // Ici, vous pouvez ajouter une vérification pour s'assurer que l'heure_commande se situe bien entre heure_ouverture et heure_fermeture
+        }
+        // Insertion dans la table reservation_service
+        const result = await pool.query(
+            `INSERT INTO reservation_service (id_utilisateur, id_service, heure_commande)
+             VALUES ($1, $2, $3) RETURNING *`,
+            [
+              id_utilisateur,
+              id_service,
+              service.type_service === 'continu' ? heure_commande : null
+            ]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error("Erreur lors de la réservation du service :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+});
+
+/**
  * GET /prestataire/emplacements/available
  * Récupérer la liste des emplacements disponibles (statut = 'LIBRE')
  */
@@ -242,9 +313,9 @@ router.post('/emplacements/reservation', async (req, res) => {
     try {
         const result = await pool.query(
             `UPDATE emplacements_prestataires
-       SET utilisateur_id = $1, date_reservation = $2, description = $3, statut = 'EN ATTENTE'
-       WHERE id_emplacement = $4 AND statut = 'LIBRE'
-       RETURNING *`,
+             SET utilisateur_id = $1, date_reservation = $2, description = $3, statut = 'EN ATTENTE'
+             WHERE id_emplacement = $4 AND statut = 'LIBRE'
+             RETURNING *`,
             [id_utilisateur, date_reservation, description, id_emplacement]
         );
         if (result.rows.length === 0) {
@@ -266,7 +337,7 @@ router.get('/emplacements/myrequests/:id', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT * FROM emplacements_prestataires
-       WHERE utilisateur_id = $1 AND statut = 'EN ATTENTE'`,
+             WHERE utilisateur_id = $1 AND statut = 'EN ATTENTE'`,
             [id]
         );
         res.status(200).json(result.rows);
@@ -285,9 +356,9 @@ router.delete('/emplacements/reservation/:id', async (req, res) => {
     try {
         const result = await pool.query(
             `UPDATE emplacements_prestataires
-       SET utilisateur_id = NULL, date_reservation = NULL, description = NULL, statut = 'LIBRE'
-       WHERE id_emplacement = $1 AND statut = 'EN ATTENTE'
-       RETURNING *`,
+             SET utilisateur_id = NULL, date_reservation = NULL, description = NULL, statut = 'LIBRE'
+             WHERE id_emplacement = $1 AND statut = 'EN ATTENTE'
+             RETURNING *`,
             [id]
         );
         if (result.rowCount === 0) {
@@ -309,7 +380,7 @@ router.get('/emplacements/validated/:id', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT * FROM emplacements_prestataires
-       WHERE utilisateur_id = $1 AND statut = 'RÉSERVÉ'`,
+             WHERE utilisateur_id = $1 AND statut = 'RÉSERVÉ'`,
             [id]
         );
         res.status(200).json(result.rows);
@@ -337,9 +408,9 @@ router.post('/service/update', async (req, res) => {
     try {
         const result = await pool.query(
             `UPDATE servicePrestataire
-       SET presentation_service = $1, image_prestataire = $2
-       WHERE id_service = $3 AND id_utilisateur = $4
-       RETURNING *`,
+             SET presentation_service = $1, image_prestataire = $2
+             WHERE id_service = $3 AND id_utilisateur = $4
+             RETURNING *`,
             [cleanPresentation, image_prestataire, id_service, id_utilisateur]
         );
         if (result.rows.length === 0) {

@@ -127,25 +127,36 @@ CREATE TABLE emplacements_prestataires (
                                            FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id_utilisateur)
 );
 
+-- Table servicePrestataire modifiée
 CREATE TABLE servicePrestataire (
-                                    id_service SERIAL PRIMARY KEY,
-                                    id_utilisateur INT NOT NULL,
-                                    id_emplacement INT,
-                                    nom_service VARCHAR(50),
-                                    type_service VARCHAR(50),
-                                    presentation_service VARCHAR(255),
-                                    description_service VARCHAR(255),
-                                    image_prestataire TEXT,
-                                    date_service DATE,
-                                    heure_service TIME,
-                                    visibilite BOOLEAN,
-                                    statut_service_prestataire VARCHAR(50),
-    -- Ajout de la colonne "statut" avec une valeur par défaut
-                                    statut VARCHAR(10) DEFAULT 'EN ATTENTE' CHECK (statut IN ('EN ATTENTE','ACCEPTÉ')),
-                                    prix_moyen VARCHAR(15) CHECK (prix_moyen IN ('0-10€', '10-20€', '20€-30€', '30€+', 'Non spécifié')),
-                                    carte_banquaire VARCHAR(20) CHECK (carte_banquaire IN ('Acceptée', 'Refusée', 'Non spécifié')),
-                                    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
-                                    FOREIGN KEY (id_emplacement) REFERENCES emplacements_prestataires(id_emplacement) ON DELETE SET NULL
+    id_service SERIAL PRIMARY KEY,
+    id_utilisateur INT NOT NULL,
+    id_emplacement INT,
+    nom_service VARCHAR(50),
+    -- Le type de service est limité à 'continu' ou 'ponctuel'
+    type_service VARCHAR(50) NOT NULL CHECK (type_service IN ('continu', 'ponctuel')),
+    presentation_service VARCHAR(255),
+    description_service VARCHAR(255),
+    image_prestataire TEXT,
+    date_service DATE,
+    /* Pour un service continu, on renseigne les heures d'ouverture et de fermeture.
+       Pour un service ponctuel, seule l'heure de commencement est renseignée. */
+    heure_ouverture TIME,
+    heure_fermeture TIME,
+    heure_commencement TIME,
+    visibilite BOOLEAN,
+    statut_service_prestataire VARCHAR(50),
+    statut VARCHAR(10) DEFAULT 'EN ATTENTE' CHECK (statut IN ('EN ATTENTE','ACCEPTÉ')),
+    prix_moyen VARCHAR(15) CHECK (prix_moyen IN ('0-10€', '10-20€', '20€-30€', '30€+', 'Non spécifié')),
+    carte_banquaire VARCHAR(20) CHECK (carte_banquaire IN ('Acceptée', 'Refusée', 'Non spécifié')),
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
+    FOREIGN KEY (id_emplacement) REFERENCES emplacements_prestataires(id_emplacement) ON DELETE SET NULL,
+    -- Contrainte pour assurer la cohérence des horaires en fonction du type de service
+    CHECK (
+      (type_service = 'continu' AND heure_commencement IS NULL AND heure_ouverture IS NOT NULL AND heure_fermeture IS NOT NULL)
+      OR
+      (type_service = 'ponctuel' AND heure_commencement IS NOT NULL AND heure_ouverture IS NULL AND heure_fermeture IS NULL)
+    )
 );
 
 CREATE TABLE billet (
@@ -181,11 +192,15 @@ CREATE TABLE liste_activite_client (
                                        FOREIGN KEY (id_event) REFERENCES events(id) ON DELETE CASCADE
 );
 
+-- Table reservation_service modifiée
 CREATE TABLE reservation_service (
     id SERIAL PRIMARY KEY,
-    id_utilisateur INT NOT NULL, -- l'utilisateur qui réserve (client)
+    id_utilisateur INT NOT NULL, -- l'utilisateur (client) qui réserve
     id_service INT NOT NULL,     -- le service prestataire réservé
     date_reservation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    /* Pour un service continu, le client spécifiera l'heure de commande (entre l'heure d'ouverture et de fermeture).
+       Pour un service ponctuel, cette colonne restera NULL car l'heure est fixe dans le service. */
+    heure_commande TIME,
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur) ON DELETE CASCADE,
     FOREIGN KEY (id_service) REFERENCES servicePrestataire(id_service) ON DELETE CASCADE
 );
@@ -270,7 +285,9 @@ INSERT INTO servicePrestataire (
     description_service,
     image_prestataire,
     date_service,
-    heure_service,
+    heure_ouverture,
+    heure_fermeture,
+    heure_commencement,
     visibilite,
     statut_service_prestataire,
     statut,
@@ -278,30 +295,33 @@ INSERT INTO servicePrestataire (
     carte_banquaire
 )
 VALUES
-    (2, 1, '🥩 Grill’n’Go', 'Restauration',
+    -- Service continu (régime restauration) : heures d'ouverture et fermeture renseignées
+    (2, 1, '🥩 Grill’n’Go', 'continu',
      'Barbecue gourmet avec burgers et hot-dogs maison. Produits frais et locaux. Options végétariennes et sans viande disponibles.',
      'Service de restauration rapide',
-     NULL, '2025-07-15', '12:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Acceptée'),
+     NULL, '2025-07-15', '12:00', '14:00', NULL, true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Acceptée'),
 
-    (3, 2, '🍕 PitStop Pizza', 'Restauration',
+    (3, 2, '🍕 PitStop Pizza', 'continu',
      'Pizza artisanale cuite dans un four mobile, offrant une pâte légère et des garnitures fraîches.',
      'Pizzas artisanales préparées sur place dans un four mobile. Choix varié de garnitures, avec options végétariennes. Idéal pour un repas rapide entre deux tours.',
-     NULL, '2025-07-16', '09:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+     NULL, '2025-07-16', '09:00', '11:00', NULL, false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
 
-    (4, 3, '🌮 TurboTacos', 'Restauration',
+    (4, 3, '🌮 TurboTacos', 'continu',
      'Tacos innovants alliant tradition mexicaine et modernité, préparés avec soin pour une explosion de saveurs.',
      'Tacos frais et savoureux avec des ingrédients locaux. Recettes personnalisables selon vos goûts.',
-     NULL, '2025-07-17', '14:00', true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Refusée'),
+     NULL, '2025-07-17', '14:00', '16:00', NULL, true, 'CONFIRMÉ', 'ACCEPTÉ', '0-10€', 'Refusée'),
 
-    (5, 4, '🛍️ Racing Memorabilia', 'Merchandising',
+    -- Service ponctuel (régime merchandising) : seule l'heure de commencement est renseignée
+    (5, 4, '🛍️ Racing Memorabilia', 'ponctuel',
      'Collection exclusive d’articles officiels de F1, idéale pour les passionnés de courses automobiles.',
      'Produits officiels des écuries de F1 : casquettes, posters et accessoires. Collection spéciale limitée.',
-     NULL, '2025-07-18', '10:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
+     NULL, '2025-07-18', NULL, NULL, '10:00', false, 'CONFIRMÉ', 'ACCEPTÉ', '10-20€', 'Acceptée'),
 
-    (6, 5, '👕 F1 Style', 'Merchandising',
+    (6, 5, '👕 F1 Style', 'ponctuel',
      'Collection de vêtements tendance inspirés de l’univers de la F1, alliant confort et design moderne.',
      'Vêtements aux couleurs des équipes : t-shirts, vestes et casquettes. Gamme exclusive pour enfants et adultes. Qualité premium.',
-     NULL, '2025-07-19', '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
+     NULL, '2025-07-19', NULL, NULL, '11:00', true, 'CONFIRMÉ', 'EN ATTENTE', '20€-30€', 'Acceptée');
+
 
 
 
@@ -334,5 +354,3 @@ VALUES
     (7, 4),
     (9, 1);
 
-select * from servicePrestataire;
-select * from emplacements_prestataires;

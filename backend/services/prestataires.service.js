@@ -108,5 +108,14 @@ export default {
             console.error('Erreur updateService :', error);
             throw error;
         }
+    },
+    async reserveService(reservationData) {
+        try {
+            const response = await axiosAgent.post('/prestataire/service/reservation', reservationData);
+            return response.data;
+        } catch (error) {
+            console.error('Erreur reserveService :', error);
+            throw error;
+        }
     }
 };

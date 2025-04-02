@@ -16,8 +16,12 @@
             <p v-if="service.date_service">
               <strong>Date :</strong> {{ service.date_service | formatDate }}
             </p>
-            <p v-if="service.heure_service">
-              <strong>Heure :</strong> {{ service.heure_service }}
+            <!-- Affichage conditionnel des horaires -->
+            <p v-if="service.type_service === 'continu' && service.heure_ouverture && service.heure_fermeture">
+              <strong>Horaires :</strong> {{ service.heure_ouverture }} - {{ service.heure_fermeture }}
+            </p>
+            <p v-else-if="service.type_service === 'ponctuel' && service.heure_commencement">
+              <strong>Heure de commencement :</strong> {{ service.heure_commencement }}
             </p>
           </router-link>
         </div>
@@ -121,8 +125,12 @@
               <p v-if="service.date_service">
                 <strong>Date :</strong> {{ service.date_service | formatDate }}
               </p>
-              <p v-if="service.heure_service">
-                <strong>Heure :</strong> {{ service.heure_service }}
+              <!-- Affichage conditionnel des horaires -->
+              <p v-if="service.type_service === 'continu' && service.heure_ouverture && service.heure_fermeture">
+                <strong>Horaires :</strong> {{ service.heure_ouverture }} - {{ service.heure_fermeture }}
+              </p>
+              <p v-else-if="service.type_service === 'ponctuel' && service.heure_commencement">
+                <strong>Heure de commencement :</strong> {{ service.heure_commencement }}
               </p>
               <p v-if="service.statut === 'EN ATTENTE'" class="status-label">
                 <strong>Statut :</strong> En attente
@@ -146,6 +154,7 @@
               <div class="form-group">
                 <label for="emplacement">Emplacement validé</label>
                 <select id="emplacement" v-model="newService.id_emplacement" required>
+                  <option disabled value="">-- Sélectionner un emplacement --</option>
                   <option v-for="emp in validatedEmplacements" :key="emp.id_emplacement" :value="emp.id_emplacement">
                     {{ emp.nom_emplacement }}
                   </option>
@@ -157,7 +166,11 @@
               </div>
               <div class="form-group">
                 <label for="type_service">Type de Service</label>
-                <input id="type_service" v-model="newService.type_service" type="text" required />
+                <select id="type_service" v-model="newService.type_service" required>
+                  <option disabled value="">-- Choisir un type --</option>
+                  <option value="continu">Continu</option>
+                  <option value="ponctuel">Ponctuel</option>
+                </select>
               </div>
               <div class="form-group">
                 <label for="presentation_service">Présentation</label>
@@ -171,16 +184,29 @@
                 <label for="date_service">Date du Service</label>
                 <input id="date_service" v-model="newService.date_service" type="date" required />
               </div>
-              <div class="form-group">
-                <label for="heure_service">Heure du Service</label>
-                <input id="heure_service" v-model="newService.heure_service" type="time" required />
+              <!-- Affichage conditionnel des champs horaires -->
+              <div v-if="newService.type_service === 'continu'">
+                <div class="form-group">
+                  <label for="heure_ouverture">Heure d'ouverture</label>
+                  <input id="heure_ouverture" v-model="newService.heure_ouverture" type="time" required />
+                </div>
+                <div class="form-group">
+                  <label for="heure_fermeture">Heure de fermeture</label>
+                  <input id="heure_fermeture" v-model="newService.heure_fermeture" type="time" required />
+                </div>
+              </div>
+              <div v-else-if="newService.type_service === 'ponctuel'">
+                <div class="form-group">
+                  <label for="heure_commencement">Heure de commencement</label>
+                  <input id="heure_commencement" v-model="newService.heure_commencement" type="time" required />
+                </div>
               </div>
               <button type="submit">Envoyer la demande</button>
             </form>
           </div>
         </div>
 
-        <!-- Réservation d'Emplacement -->
+        <!-- Réservation d'Emplacement (inchangée) -->
         <div v-if="activeTab === 'reservation'">
           <h2>Réservation d'Emplacement</h2>
           <div v-if="reservationError" class="error-message">{{ reservationError }}</div>
@@ -244,7 +270,7 @@
       </div>
     </div>
 
-    <!-- Si l'utilisateur n'a pas accès -->
+    <!-- Accès refusé -->
     <div v-else class="access-denied">
       <p>Vous n'avez pas accès à ce service.</p>
     </div>
@@ -269,6 +295,7 @@ export default {
       servicePresentationContent: '',
       currentServicePresentation: '',
       serviceImage: '',
+      // Objet newService mis à jour avec les nouveaux champs horaires
       newService: {
         id_emplacement: '',
         nom_service: '',
@@ -276,7 +303,9 @@ export default {
         presentation_service: '',
         description_service: '',
         date_service: '',
-        heure_service: ''
+        heure_ouverture: '',
+        heure_fermeture: '',
+        heure_commencement: ''
       },
       validatedEmplacements: [],
       availableEmplacements: [],
@@ -394,9 +423,18 @@ export default {
     },
     async requestNewService() {
       try {
+        // Construction du payload en fonction du type de service
         const payload = {
-          ...this.newService,
-          id_utilisateur: this.user.id_utilisateur
+          id_utilisateur: this.user.id_utilisateur,
+          id_emplacement: this.newService.id_emplacement,
+          nom_service: this.newService.nom_service,
+          type_service: this.newService.type_service,
+          presentation_service: this.newService.presentation_service,
+          description_service: this.newService.description_service || '',
+          date_service: this.newService.date_service,
+          heure_ouverture: this.newService.type_service === 'continu' ? this.newService.heure_ouverture : null,
+          heure_fermeture: this.newService.type_service === 'continu' ? this.newService.heure_fermeture : null,
+          heure_commencement: this.newService.type_service === 'ponctuel' ? this.newService.heure_commencement : null
         };
         await prestataireService.requestService(payload);
         alert('Demande de service envoyée avec succès !');
@@ -408,7 +446,9 @@ export default {
           presentation_service: '',
           description_service: '',
           date_service: '',
-          heure_service: ''
+          heure_ouverture: '',
+          heure_fermeture: '',
+          heure_commencement: ''
         };
       } catch (error) {
         console.error('Erreur lors de la demande de service :', error);

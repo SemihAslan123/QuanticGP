@@ -66,4 +66,18 @@ export default {
         const response = await axiosAgent.get('/organisation/statistics');
         return response.data;
     },
+
+    //demande prestataire
+    async getDemandes() {
+        const response = await axiosAgent.get('/organisation/demandes-prestataires');
+        return response.data;
+    },
+    async traiterDemande(id, data) {
+        const response = await axiosAgent.post(`/organisation/demandes-prestataires/${id}`, data);
+        return response.data;
+    },
+    async deleteDemande(id) {
+        const response = await axiosAgent.delete(`/organisation/demandes-prestataires/${id}`);
+        return response.data;
+    },
 };

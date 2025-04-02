@@ -36,11 +36,11 @@
           :reservations="reservations"
           :stand-reservations="standReservations"
           :all-stands="allStands"
-      @change-status="handleChangeStatus"
-      @delete-reservation="handleDeleteReservation"
-      @change-stand-status="handleChangeStandStatus"
-      @delete-stand-reservation="handleDeleteStandReservation"
-      @back="updateSection('dashboard')"
+          @change-status="handleChangeStatus"
+          @delete-reservation="handleDeleteReservation"
+          @change-stand-status="handleChangeStandStatus"
+          @delete-stand-reservation="handleDeleteStandReservation"
+          @back="updateSection('dashboard')"
       />
       <StatisticsChart
           v-if="currentSection === 'statistiques'"
@@ -114,6 +114,8 @@ export default {
         this.loadStatistics();
       } else if (section === 'listPrestataire') {
         this.loadPrestataires();
+      } else if (section === 'assistance'){
+        this.loadDemandePrestataire();
       }
     },
     async fetchEvents() {
@@ -163,6 +165,17 @@ export default {
         alert("Erreur lors de la récupération des prestataires.");
       }
     },
+
+    async loadDemandePrestataire(){
+      try {
+        const data = await organisationService.getDemandes();
+        this.demandes = data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des demandes prestataires : ", error);
+        alert("Erreur lors de la récupération des demandes prestataires")
+      }
+    },
+
     async handleCreateEvent(eventData) {
       try {
         await organisationService.createEvent(eventData);

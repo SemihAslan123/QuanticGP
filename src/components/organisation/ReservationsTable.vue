@@ -15,78 +15,82 @@
       <table>
         <thead>
         <tr>
-          <th @click="sortServices('id_reservation')">
+          <th @click="sortServices('id_service')">
             ID Demande
-            <font-awesome-icon :icon="getSortIcon('id_reservation', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('id_service', 'services')" />
           </th>
-          <th @click="sortServices('id_utilisateur')">
+          <th @click="sortServices('prestataire_id')">
             ID Utilisateur
-            <font-awesome-icon :icon="getSortIcon('id_utilisateur', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('prestataire_id', 'services')" />
           </th>
-          <th @click="sortServices('nom_utilisateur')">
+          <th @click="sortServices('prestataire_nom')">
             Nom
-            <font-awesome-icon :icon="getSortIcon('nom_utilisateur', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('prestataire_nom', 'services')" />
           </th>
-          <th @click="sortServices('prenom_utilisateur')">
+          <th @click="sortServices('prestataire_prenom')">
             Prénom
-            <font-awesome-icon :icon="getSortIcon('prenom_utilisateur', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('prestataire_prenom', 'services')" />
           </th>
-          <th @click="sortServices('mail_utilisateur')">
+          <th @click="sortServices('prestataire_mail')">
             Email
-            <font-awesome-icon :icon="getSortIcon('mail_utilisateur', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('prestataire_mail', 'services')" />
           </th>
           <th @click="sortServices('id_stand')">
             ID Emplacement
             <font-awesome-icon :icon="getSortIcon('id_stand', 'services')" />
           </th>
-          <th @click="sortServices('date_reservation')">
+          <th @click="sortServices('date_service')">
             Date
-            <font-awesome-icon :icon="getSortIcon('date_reservation', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('date_service', 'services')" />
           </th>
-          <th @click="sortServices('heure_debut')">
-            Heure Début
-            <font-awesome-icon :icon="getSortIcon('heure_debut', 'services')" />
+          <th @click="sortServices('heure_ouverture')">
+            Horaire
+            <font-awesome-icon :icon="getSortIcon('heure_ouverture', 'services')" />
           </th>
-          <th @click="sortServices('statut')">
+          <th @click="sortServices('statut_service')">
             Statut
-            <font-awesome-icon :icon="getSortIcon('statut', 'services')" />
+            <font-awesome-icon :icon="getSortIcon('statut_service', 'services')" />
           </th>
           <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="reservation in filteredServices" :key="reservation.id_reservation">
-          <td>{{ reservation.id_reservation }}</td>
-          <td>{{ reservation.id_utilisateur }}</td>
-          <td>{{ reservation.nom_utilisateur }}</td>
-          <td>{{ reservation.prenom_utilisateur }}</td>
-          <td>{{ reservation.mail_utilisateur || 'N/A' }}</td>
+        <tr v-for="reservation in filteredServices" :key="reservation.id_service">
+          <td>{{ reservation.id_service }}</td>
+          <td>{{ reservation.prestataire_id }}</td>
+          <td>{{ reservation.prestataire_nom || 'N/A' }}</td>
+          <td>{{ reservation.prestataire_prenom || 'N/A' }}</td>
+          <td>{{ reservation.prestataire_mail || 'N/A' }}</td>
           <td>{{ reservation.id_stand || 'Non spécifié' }}</td>
-          <td>{{ new Date(reservation.date_reservation).toLocaleDateString() }}</td>
-          <td>{{ reservation.heure_debut }}</td>
+          <td>{{ reservation.date_service ? new Date(reservation.date_service).toLocaleDateString() : 'N/A' }}</td>
           <td>
-              <span :class="['reservation-status', reservation.statut.toLowerCase()]">
-                {{ reservation.statut }}
+            {{ reservation.type_service === 'continu'
+              ? `${reservation.heure_ouverture || 'N/A'} - ${reservation.heure_fermeture || 'N/A'}`
+              : reservation.heure_commencement || 'N/A' }}
+          </td>
+          <td>
+              <span :class="['reservation-status', reservation.statut_service?.toLowerCase() || 'na']">
+                {{ reservation.statut_service || 'N/A' }}
               </span>
           </td>
           <td class="actions-cell">
             <select
-                v-if="reservation.statut === 'EN ATTENTE'"
-                @change="$emit('change-status', reservation.id_reservation, $event.target.value)"
+                v-if="reservation.statut_service === 'EN ATTENTE'"
+                @change="$emit('change-status', reservation.id_service, $event.target.value)"
                 class="status-select"
             >
-              <option value="EN ATTENTE" :selected="reservation.statut === 'EN ATTENTE'">En attente</option>
-              <option value="ACCEPTÉ" :selected="reservation.statut === 'ACCEPTÉ'">Accepter</option>
+              <option value="EN ATTENTE" :selected="reservation.statut_service === 'EN ATTENTE'">En attente</option>
+              <option value="ACCEPTÉ" :selected="reservation.statut_service === 'ACCEPTÉ'">Accepter</option>
             </select>
             <button
-                v-if="reservation.statut === 'EN ATTENTE'"
+                v-if="reservation.statut_service === 'EN ATTENTE'"
                 class="btn-delete"
-                @click="$emit('delete-reservation', reservation.id_reservation)"
+                @click="$emit('delete-reservation', reservation.id_service)"
             >
               <font-awesome-icon icon="trash" />
             </button>
             <button
-                v-if="reservation.statut === 'ACCEPTÉ'"
+                v-if="reservation.statut_service === 'ACCEPTÉ'"
                 class="btn-edit"
                 @click="openEditModal(reservation, 'service')"
             >
@@ -163,8 +167,8 @@
           <td>{{ stand.mail_utilisateur || 'N/A' }}</td>
           <td>{{ stand.date_reservation ? new Date(stand.date_reservation).toLocaleDateString() : 'Non définie' }}</td>
           <td>
-              <span :class="['reservation-status', stand.statut.toLowerCase()]">
-                {{ stand.statut }}
+              <span :class="['reservation-status', stand.statut?.toLowerCase() || 'na']">
+                {{ stand.statut || 'N/A' }}
               </span>
           </td>
           <td class="actions-cell">
@@ -238,8 +242,8 @@
               <td>{{ stand.id_emplacement }}</td>
               <td>{{ stand.nom_emplacement }}</td>
               <td>
-                  <span :class="['reservation-status', stand.statut.toLowerCase()]">
-                    {{ stand.statut }}
+                  <span :class="['reservation-status', stand.statut?.toLowerCase() || 'na']">
+                    {{ stand.statut || 'N/A' }}
                   </span>
               </td>
               <td class="actions-cell">
@@ -275,15 +279,15 @@
             <div class="details-grid">
               <div class="detail-item">
                 <font-awesome-icon icon="clipboard" class="detail-icon" />
-                <span>Type: {{ selectedReservation.type_service }}</span>
+                <span>Type: {{ selectedReservation.type_service || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="money-bill" class="detail-icon" />
-                <span>Prix: {{ selectedReservation.prix_moyen }}</span>
+                <span>Prix: {{ selectedReservation.prix_moyen || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="credit-card" class="detail-icon" />
-                <span>Carte: {{ selectedReservation.carte_banquaire }}</span>
+                <span>Carte: {{ selectedReservation.carte_banquaire || 'N/A' }}</span>
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="eye" class="detail-icon" />
@@ -291,7 +295,7 @@
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="chart-line" class="detail-icon" />
-                <span>Statut: {{ selectedReservation.statut_service_prestataire }}</span>
+                <span>Statut: {{ selectedReservation.statut_service_prestataire || 'N/A' }}</span>
               </div>
             </div>
           </div>
@@ -315,11 +319,11 @@
               </div>
               <div class="detail-item">
                 <font-awesome-icon icon="info-circle" class="detail-icon" />
-                <span>Statut: {{ selectedStand.statut }}</span>
+                <span>Statut: {{ selectedStand.statut || 'N/A' }}</span>
               </div>
               <div class="detail-item" v-if="selectedStand.utilisateur_id">
                 <font-awesome-icon icon="user" class="detail-icon" />
-                <span>Réservé par: {{ selectedStand.prenom_utilisateur }} {{ selectedStand.nom_utilisateur }}</span>
+                <span>Réservé par: {{ selectedStand.prenom_utilisateur || 'N/A' }} {{ selectedStand.nom_utilisateur || 'N/A' }}</span>
               </div>
               <div class="detail-item" v-if="selectedStand.utilisateur_id">
                 <font-awesome-icon icon="envelope" class="detail-icon" />
@@ -415,7 +419,7 @@ export default {
     filteredServices() {
       let filtered = [...this.reservations];
       if (this.serviceStatusFilter) {
-        filtered = filtered.filter(res => res.statut === this.serviceStatusFilter);
+        filtered = filtered.filter(res => res.statut_service === this.serviceStatusFilter);
       }
       return this.sortData(filtered, this.sortKey.services, this.sortOrder.services);
     },
@@ -436,12 +440,14 @@ export default {
       return data.sort((a, b) => {
         let valA = a[key] || '';
         let valB = b[key] || '';
-        if (key === 'date_reservation') {
-          valA = new Date(valA).getTime();
-          valB = new Date(valB).getTime();
+        if (key === 'date_service' || key === 'date_reservation') {
+          valA = valA ? new Date(valA).getTime() : 0;
+          valB = valB ? new Date(valB).getTime() : 0;
+        } else if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+        } else if (typeof valB === 'string') {
+          valB = valB.toLowerCase();
         }
-        if (typeof valA === 'string') valA = valA.toLowerCase();
-        if (typeof valB === 'string') valB = valB.toLowerCase();
         if (valA < valB) return -1 * order;
         if (valA > valB) return 1 * order;
         return 0;
@@ -495,7 +501,7 @@ export default {
     openEditModal(item, type) {
       this.editItem = item;
       this.editItemType = type;
-      this.newStatus = item.statut;
+      this.newStatus = item.statut_service || item.statut || '';
       this.editModalVisible = true;
     },
     closeEditModal() {
@@ -506,7 +512,7 @@ export default {
     },
     confirmStatusChange() {
       if (this.editItemType === 'service') {
-        this.$emit('change-status', this.editItem.id_reservation, this.newStatus);
+        this.$emit('change-status', this.editItem.id_service, this.newStatus);
       } else if (this.editItemType === 'stand') {
         this.$emit('change-stand-status', this.editItem.id_emplacement, this.newStatus);
       }

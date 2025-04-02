@@ -78,8 +78,8 @@ export default {
       nomUtilisateur: "",
       emailUtilisateur: "",
       motDePasse: "",
-      typeUtilisateur: "client", // Valeur par défaut
-      errorMessage: "", // Pour afficher les erreurs d'inscription
+      typeUtilisateur: "client",
+      errorMessage: "",
     };
   },
   methods: {
@@ -94,13 +94,15 @@ export default {
         motDePasse: this.motDePasse,
         typeUtilisateur: this.typeUtilisateur,
       };
-      console.log("Données envoyées :", userData);
       try {
-        const response = await inscriptionService.register(userData);
-        console.log("Réponse de l’API : ", response);
-        alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        await inscriptionService.register(userData);
+        if (userData.typeUtilisateur === "prestataire" || userData.typeUtilisateur === "organisateur") {
+          alert(`Votre demande pour devenir ${userData.typeUtilisateur} a été envoyée. Votre compte est créé en tant que client en attendant la validation.`);
+        } else {
+          alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        }
         this.errorMessage = "";
-        this.$router.push({ name: "Login" }); // Redirection vers la page de connexion
+        this.$router.push({ name: "Login" });
       } catch (error) {
         console.error("Erreur lors de l'inscription : ", error.response?.data || error);
         this.errorMessage = error.response?.data?.error || "Une erreur est survenue lors de l'inscription.";

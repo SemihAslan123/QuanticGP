@@ -75,6 +75,7 @@ EXECUTE FUNCTION update_emplacement_status_on_service_update();
 -- ===================================================================================
 -- DROP TABLES (inchangé)
 -- ===================================================================================
+DROP TABLE IF EXISTS  demandes_prestataires CASCADE;
 DROP TABLE IF EXISTS reservation_service CASCADE;
 DROP TABLE IF EXISTS emplacements_prestataires CASCADE;
 DROP TABLE IF EXISTS liste_activite_client CASCADE;
@@ -88,6 +89,17 @@ DROP TABLE IF EXISTS events CASCADE;
 -- ===================================================================================
 -- CREATION DES TABLES
 -- ===================================================================================
+
+CREATE TABLE demandes_prestataires (
+                                       id_demande SERIAL PRIMARY KEY,
+                                       prenom_utilisateur VARCHAR(50) NOT NULL,
+                                       nom_utilisateur VARCHAR(50) NOT NULL,
+                                       mail_utilisateur VARCHAR(50) NOT NULL,
+                                       mot_de_passe VARCHAR(50) NOT NULL,
+                                       type_demande VARCHAR(50) CHECK (type_demande IN ('prestataire', 'organisateur')),
+                                       date_demande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                       statut_demande VARCHAR(20) DEFAULT 'EN ATTENTE' CHECK (statut_demande IN ('EN ATTENTE', 'ACCEPTÉ', 'REFUSÉ'))
+);
 
 CREATE TABLE events (
                         id SERIAL PRIMARY KEY,
@@ -234,12 +246,12 @@ VALUES
 
 INSERT INTO emplacements_prestataires (utilisateur_id, nom_emplacement, coordonnees_svg, description, statut)
 VALUES
-    (2, 'Zone A - Emplacement n°1', 'm 478.86837,453.3347 -6.49541,84.88826 26.20561,3.13572 6.49541,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
-    (3, 'Zone A - Emplacement n°2', 'm 470.58112,552.33368 -6.71938,84.4403 25.98163,3.13572 6.49541,-84.44031 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
-    (4, 'Zone A - Emplacement n°3', 'm 462.51786,648.19694 -6.27143,84.44031 25.75765,3.80765 6.49541,-84.21633 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
-    (5, 'Zone A - Emplacement n°4', 'm 453.55868,749.6597 1.11989,86.00816 25.53368,1.1199 1.34387,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+    (2, 'Zone A - Emplacement n°1', 'm 478.86837,453.3347 -6.49541,84.88826 26.20561,3.13572 6.49541,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
+    (3, 'Zone A - Emplacement n°2', 'm 470.58112,552.33368 -6.71938,84.4403 25.98163,3.13572 6.49541,-84.44031 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
+    (4, 'Zone A - Emplacement n°3', 'm 462.51786,648.19694 -6.27143,84.44031 25.75765,3.80765 6.49541,-84.21633 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
+    (5, 'Zone A - Emplacement n°4', 'm 453.55868,749.6597 1.11989,86.00816 25.53368,1.1199 1.34387,-84.66429 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
 
-    (6, 'Zone A - Emplacement n°5', 'm 452.2148,848.21072 10.975,86.00816 23.29388,-2.91173 -8.95919,-82.87245 -23.51786,0.67194 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'UTILISÉ'),
+    (6, 'Zone A - Emplacement n°5', 'm 452.2148,848.21072 10.975,86.00816 23.29388,-2.91173 -8.95919,-82.87245 -23.51786,0.67194 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),
 
     (2, 'Zone B - Emplacement n°1', 'm 425.33725,1003.6526 19.26224,-17.24647 60.69847,59.35457 -18.36633,17.6944 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'EN ATTENTE'),
     (3, 'Zone B - Emplacement n°2', 'm 501.26633,1075.774 c 0,-1.7919 10.975,-23.0699 10.975,-23.0699 l 77.9449,36.2847 -11.87092,21.502 z', 'Emplacement réservé aux prestataires et soumis à réservation.', 'RÉSERVÉ'),

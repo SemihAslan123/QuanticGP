@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
     try {
         const query =
             `INSERT INTO events (name, date, heure_debut, heure_fin, prix, description, image)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`;
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`;
         const values = [courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage];
         const result = await pool.query(query, values);
         res.status(201).json({ message: "Événement ajouté avec succès", event: result.rows[0] });
@@ -42,34 +42,56 @@ router.get('/events', async (req, res) => {
 
 /**
  * GET /organisation/stands
- * Récupérer toutes les réservations de services prestataires
+ * Récupérer toutes les réservations de services prestataires (propositions et réservations clients)
  */
 router.get('/stands', async (req, res) => {
     try {
         const query = `
-      SELECT
-        sp.id_service AS id_reservation,
-        sp.id_utilisateur,
-        u.nom_utilisateur,
-        u.prenom_utilisateur,
-        u.mail_utilisateur,
-        sp.id_emplacement AS id_stand,
-        sp.date_service AS date_reservation,
-        sp.heure_service AS heure_debut,
-        sp.statut,
-        sp.nom_service,
-        sp.type_service,
-        sp.presentation_service,
-        sp.description_service,
-        sp.image_prestataire,
-        sp.prix_moyen,
-        sp.carte_banquaire,
-        sp.visibilite,
-        sp.statut_service_prestataire
-      FROM servicePrestataire sp
-      JOIN Utilisateurs u ON sp.id_utilisateur = u.id_utilisateur
-      ORDER BY sp.date_service DESC;
-    `;
+            SELECT
+                sp.id_service AS id_service,
+                sp.id_utilisateur AS prestataire_id,
+                u.nom_utilisateur AS prestataire_nom,
+                u.prenom_utilisateur AS prestataire_prenom,
+                u.mail_utilisateur AS prestataire_mail,
+                sp.id_emplacement AS id_stand,
+                ep.nom_emplacement AS nom_stand,
+                sp.date_service AS date_service,
+                sp.type_service,
+                CASE
+                    WHEN sp.type_service = 'continu' THEN sp.heure_ouverture
+                    ELSE NULL
+                    END AS heure_ouverture,
+                CASE
+                    WHEN sp.type_service = 'continu' THEN sp.heure_fermeture
+                    ELSE NULL
+                    END AS heure_fermeture,
+                CASE
+                    WHEN sp.type_service = 'ponctuel' THEN sp.heure_commencement
+                    ELSE NULL
+                    END AS heure_commencement,
+                sp.statut AS statut_service,
+                sp.nom_service,
+                sp.presentation_service,
+                sp.description_service,
+                sp.image_prestataire,
+                sp.prix_moyen,
+                sp.carte_banquaire,
+                sp.visibilite,
+                sp.statut_service_prestataire,
+                rs.id AS id_reservation_client,
+                rs.id_utilisateur AS client_id,
+                uc.nom_utilisateur AS client_nom,
+                uc.prenom_utilisateur AS client_prenom,
+                uc.mail_utilisateur AS client_mail,
+                rs.date_reservation,
+                rs.heure_commande
+            FROM servicePrestataire sp
+                     JOIN Utilisateurs u ON sp.id_utilisateur = u.id_utilisateur
+                     LEFT JOIN emplacements_prestataires ep ON sp.id_emplacement = ep.id_emplacement
+                     LEFT JOIN reservation_service rs ON sp.id_service = rs.id_service
+                     LEFT JOIN Utilisateurs uc ON rs.id_utilisateur = uc.id_utilisateur
+            ORDER BY sp.date_service DESC, rs.date_reservation DESC;
+        `;
         const result = await pool.query(query);
         res.status(200).json(result.rows);
     } catch (error) {
@@ -78,22 +100,6 @@ router.get('/stands', async (req, res) => {
     }
 });
 
-/**
- * PATCH /organisation/stands/:id
- * Changer le statut d'une réservation
- */
-router.patch('/stands/:id', async (req, res) => {
-    const { id } = req.params;
-    const { statut } = req.body;
-    try {
-        const query = 'UPDATE servicePrestataire SET statut = $1 WHERE id_service = $2';
-        await pool.query(query, [statut, id]);
-        res.status(200).json({ message: 'Statut mis à jour avec succès.' });
-    } catch (error) {
-        console.error('Erreur lors de la mise à jour du statut :', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
-    }
-});
 
 /**
  * DELETE /organisation/stands/:id
@@ -121,8 +127,8 @@ router.put('/events/:id', async (req, res) => {
     try {
         const query =
             `UPDATE events
-       SET name = $1, date = $2, heure_debut = $3, heure_fin = $4, prix = $5, description = $6, image = $7
-       WHERE id = $8`;
+             SET name = $1, date = $2, heure_debut = $3, heure_fin = $4, prix = $5, description = $6, image = $7
+             WHERE id = $8`;
         const values = [courseName, eventDate, horaireDebut, horaireFin, eventPrice, eventDescription, eventImage, id];
         await pool.query(query, values);
         res.status(200).json({ message: 'Événement mis à jour avec succès.' });
@@ -162,8 +168,8 @@ router.get('/statistics', async (req, res) => {
         const totalTicketsResult = await pool.query('SELECT COUNT(*) AS total FROM billet');
         const participantsByEventResult = await pool.query(
             `SELECT e.id AS event_id, e.name AS event_name, COUNT(lac.id_utilisateur) AS participants_count
-       FROM events e LEFT JOIN liste_activite_client lac ON e.id = lac.id_event
-       GROUP BY e.id, e.name ORDER BY e.id`
+             FROM events e LEFT JOIN liste_activite_client lac ON e.id = lac.id_event
+             GROUP BY e.id, e.name ORDER BY e.id`
         );
         const servicesByTypeResult = await pool.query(
             `SELECT type_service, COUNT(*) AS service_count FROM servicePrestataire GROUP BY type_service`
@@ -191,7 +197,7 @@ router.get('/prestataires', async (req, res) => {
     try {
         const query =
             `SELECT id_utilisateur, nom_utilisateur, prenom_utilisateur, mail_utilisateur, type_utilisateur
-       FROM utilisateurs`;
+             FROM utilisateurs`;
         const { rows: prestataires } = await pool.query(query);
         res.status(200).json(prestataires);
     } catch (error) {
@@ -230,24 +236,24 @@ router.patch('/prestataires/:id', async (req, res) => {
 router.get('/stand-reservations', async (req, res) => {
     try {
         const query = `
-      SELECT 
-        ep.id_emplacement,
-        ep.nom_emplacement,
-        ep.utilisateur_id,
-        u.nom_utilisateur,
-        u.prenom_utilisateur,
-        u.mail_utilisateur,
-        ep.date_reservation,
-        ep.statut
-      FROM 
-        emplacements_prestataires ep
-      LEFT JOIN 
-        Utilisateurs u ON ep.utilisateur_id = u.id_utilisateur
-      WHERE 
-        ep.statut IN ('EN ATTENTE', 'RÉSERVÉ')
-      ORDER BY 
-        ep.date_reservation DESC;
-    `;
+            SELECT
+                ep.id_emplacement,
+                ep.nom_emplacement,
+                ep.utilisateur_id,
+                u.nom_utilisateur,
+                u.prenom_utilisateur,
+                u.mail_utilisateur,
+                ep.date_reservation,
+                ep.statut
+            FROM
+                emplacements_prestataires ep
+                    LEFT JOIN
+                Utilisateurs u ON ep.utilisateur_id = u.id_utilisateur
+            WHERE
+                ep.statut IN ('EN ATTENTE', 'RÉSERVÉ')
+            ORDER BY
+                ep.date_reservation DESC;
+        `;
         const result = await pool.query(query);
         res.status(200).json(result.rows);
     } catch (error) {
@@ -281,10 +287,10 @@ router.delete('/stand-reservations/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const query = `
-      UPDATE emplacements_prestataires 
-      SET statut = 'LIBRE', utilisateur_id = NULL, date_reservation = NULL 
-      WHERE id_emplacement = $1
-    `;
+            UPDATE emplacements_prestataires
+            SET statut = 'LIBRE', utilisateur_id = NULL, date_reservation = NULL
+            WHERE id_emplacement = $1
+        `;
         await pool.query(query, [id]);
         res.status(200).json({ message: 'Réservation d’emplacement rejetée avec succès.' });
     } catch (error) {
@@ -300,27 +306,105 @@ router.delete('/stand-reservations/:id', async (req, res) => {
 router.get('/all-stands', async (req, res) => {
     try {
         const query = `
-      SELECT
-        ep.id_emplacement,
-        ep.nom_emplacement,
-        ep.utilisateur_id,
-        u.nom_utilisateur,
-        u.prenom_utilisateur,
-        u.mail_utilisateur,
-        ep.date_reservation,
-        ep.statut
-      FROM
-        emplacements_prestataires ep
-      LEFT JOIN
-        Utilisateurs u ON ep.utilisateur_id = u.id_utilisateur
-      ORDER BY
-        ep.id_emplacement ASC;
-    `;
+            SELECT
+                ep.id_emplacement,
+                ep.nom_emplacement,
+                ep.utilisateur_id,
+                u.nom_utilisateur,
+                u.prenom_utilisateur,
+                u.mail_utilisateur,
+                ep.date_reservation,
+                ep.statut
+            FROM
+                emplacements_prestataires ep
+                    LEFT JOIN
+                Utilisateurs u ON ep.utilisateur_id = u.id_utilisateur
+            ORDER BY
+                ep.id_emplacement ASC;
+        `;
         const result = await pool.query(query);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error("Erreur lors de la récupération des stands :", error);
         res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+});
+
+router.get("/demandes-prestataires", async (req, res) => {
+    try {
+        const query = `SELECT * FROM demandes_prestataires`;
+        const result = await pool.query(query);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des demandes : ", error);
+        res.status(500).json({ error: "Erreur interne du serveur." });
+    }
+});
+
+
+
+router.post("/demandes-prestataires/:id", async (req, res) => {
+    const { id } = req.params;
+    const { action } = req.body;
+
+    if (!["ACCEPTÉ", "REFUSÉ", "EN ATTENTE"].includes(action)) {
+        return res.status(400).json({ error: "Action invalide." });
+    }
+
+    try {
+        // Récupérer la demande
+        const demandeQuery = `SELECT * FROM demandes_prestataires WHERE id_demande = $1`;
+        const demandeResult = await pool.query(demandeQuery, [id]);
+        if (demandeResult.rows.length === 0) {
+            return res.status(404).json({ error: "Demande non trouvée." });
+        }
+
+        const demande = demandeResult.rows[0];
+
+        if (action === "ACCEPTÉ") {
+            // Mettre à jour le type_utilisateur dans Utilisateurs
+            const updateUserQuery = `
+                UPDATE Utilisateurs
+                SET type_utilisateur = $1
+                WHERE mail_utilisateur = $2
+                    RETURNING id_utilisateur;
+            `;
+            const updateResult = await pool.query(updateUserQuery, [demande.type_demande, demande.mail_utilisateur]);
+            if (updateResult.rows.length === 0) {
+                return res.status(404).json({ error: "Utilisateur non trouvé pour cet email." });
+            }
+
+            // Mettre à jour le statut de la demande
+            await pool.query(
+                `UPDATE demandes_prestataires SET statut_demande = 'ACCEPTÉ' WHERE id_demande = $1`,
+                [id]
+            );
+
+            res.status(200).json({
+                message: `Demande acceptée. Type d'utilisateur mis à jour en "${demande.type_demande}".`,
+                userId: updateResult.rows[0].id_utilisateur
+            });
+        } else if (action === "REFUSÉ") {
+            // Mettre à jour le statut de la demande (ou la supprimer, selon vos préférences)
+            await pool.query(
+                `UPDATE demandes_prestataires SET statut_demande = 'REFUSÉ' WHERE id_demande = $1`,
+                [id]
+            );
+            // Optionnel : Supprimer la demande refusée
+            // await pool.query(`DELETE FROM demandes_prestataires WHERE id_demande = $1`, [id]);
+
+            res.status(200).json({ message: "Demande refusée." });
+        } else {
+            // Remettre en attente (peu probable, mais possible)
+            await pool.query(
+                `UPDATE demandes_prestataires SET statut_demande = 'EN ATTENTE' WHERE id_demande = $1`,
+                [id]
+            );
+            res.status(200).json({ message: "Demande remise en attente." });
+        }
+    } catch (error) {
+        console.error("Erreur lors du traitement de la demande : ", error);
+        res.status(500).json({ error: "Erreur interne du serveur." });
     }
 });
 

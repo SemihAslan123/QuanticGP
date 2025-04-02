@@ -14,93 +14,93 @@
     <div class="reservations-table">
       <table>
         <thead>
-        <tr>
-          <th @click="sortServices('id_service')">
-            ID Demande
-            <font-awesome-icon :icon="getSortIcon('id_service', 'services')" />
-          </th>
-          <th @click="sortServices('prestataire_id')">
-            ID Utilisateur
-            <font-awesome-icon :icon="getSortIcon('prestataire_id', 'services')" />
-          </th>
-          <th @click="sortServices('prestataire_nom')">
-            Nom
-            <font-awesome-icon :icon="getSortIcon('prestataire_nom', 'services')" />
-          </th>
-          <th @click="sortServices('prestataire_prenom')">
-            Prénom
-            <font-awesome-icon :icon="getSortIcon('prestataire_prenom', 'services')" />
-          </th>
-          <th @click="sortServices('prestataire_mail')">
-            Email
-            <font-awesome-icon :icon="getSortIcon('prestataire_mail', 'services')" />
-          </th>
-          <th @click="sortServices('id_stand')">
-            ID Emplacement
-            <font-awesome-icon :icon="getSortIcon('id_stand', 'services')" />
-          </th>
-          <th @click="sortServices('date_service')">
-            Date
-            <font-awesome-icon :icon="getSortIcon('date_service', 'services')" />
-          </th>
-          <th @click="sortServices('heure_ouverture')">
-            Horaire
-            <font-awesome-icon :icon="getSortIcon('heure_ouverture', 'services')" />
-          </th>
-          <th @click="sortServices('statut_service')">
-            Statut
-            <font-awesome-icon :icon="getSortIcon('statut_service', 'services')" />
-          </th>
-          <th>Actions</th>
-        </tr>
+          <tr>
+            <th @click="sortServices('id_service')">
+              ID Demande
+              <font-awesome-icon :icon="getSortIcon('id_service', 'services')" />
+            </th>
+            <th @click="sortServices('prestataire_id')">
+              ID Utilisateur
+              <font-awesome-icon :icon="getSortIcon('prestataire_id', 'services')" />
+            </th>
+            <th @click="sortServices('prestataire_nom')">
+              Nom
+              <font-awesome-icon :icon="getSortIcon('prestataire_nom', 'services')" />
+            </th>
+            <th @click="sortServices('prestataire_prenom')">
+              Prénom
+              <font-awesome-icon :icon="getSortIcon('prestataire_prenom', 'services')" />
+            </th>
+            <th @click="sortServices('prestataire_mail')">
+              Email
+              <font-awesome-icon :icon="getSortIcon('prestataire_mail', 'services')" />
+            </th>
+            <th @click="sortServices('id_stand')">
+              ID Emplacement
+              <font-awesome-icon :icon="getSortIcon('id_stand', 'services')" />
+            </th>
+            <th @click="sortServices('date_service')">
+              Date
+              <font-awesome-icon :icon="getSortIcon('date_service', 'services')" />
+            </th>
+            <th @click="sortServices('heure_ouverture')">
+              Horaire
+              <font-awesome-icon :icon="getSortIcon('heure_ouverture', 'services')" />
+            </th>
+            <th @click="sortServices('statut_service')">
+              Statut
+              <font-awesome-icon :icon="getSortIcon('statut_service', 'services')" />
+            </th>
+            <th>Actions</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="reservation in filteredServices" :key="reservation.id_service">
-          <td>{{ reservation.id_service }}</td>
-          <td>{{ reservation.prestataire_id }}</td>
-          <td>{{ reservation.prestataire_nom || 'N/A' }}</td>
-          <td>{{ reservation.prestataire_prenom || 'N/A' }}</td>
-          <td>{{ reservation.prestataire_mail || 'N/A' }}</td>
-          <td>{{ reservation.id_stand || 'Non spécifié' }}</td>
-          <td>{{ reservation.date_service ? new Date(reservation.date_service).toLocaleDateString() : 'N/A' }}</td>
-          <td>
-            {{ reservation.type_service === 'continu'
-              ? `${reservation.heure_ouverture || 'N/A'} - ${reservation.heure_fermeture || 'N/A'}`
-              : reservation.heure_commencement || 'N/A' }}
-          </td>
-          <td>
+          <tr v-for="reservation in filteredServices" :key="reservation.id_service">
+            <td>{{ reservation.id_service }}</td>
+            <td>{{ reservation.prestataire_id }}</td>
+            <td>{{ reservation.prestataire_nom || 'N/A' }}</td>
+            <td>{{ reservation.prestataire_prenom || 'N/A' }}</td>
+            <td>{{ reservation.prestataire_mail || 'N/A' }}</td>
+            <td>{{ reservation.id_stand || 'Non spécifié' }}</td>
+            <td>{{ reservation.date_service ? new Date(reservation.date_service).toLocaleDateString() : 'N/A' }}</td>
+            <td>
+              {{ reservation.type_service === 'continu'
+                ? `${reservation.heure_ouverture || 'N/A'} - ${reservation.heure_fermeture || 'N/A'}`
+                : reservation.heure_commencement || 'N/A' }}
+            </td>
+            <td>
               <span :class="['reservation-status', reservation.statut_service?.toLowerCase() || 'na']">
                 {{ reservation.statut_service || 'N/A' }}
               </span>
-          </td>
-          <td class="actions-cell">
-            <select
+            </td>
+            <td class="actions-cell">
+              <select
                 v-if="reservation.statut_service === 'EN ATTENTE'"
                 @change="$emit('change-status', reservation.id_service, $event.target.value)"
                 class="status-select"
-            >
-              <option value="EN ATTENTE" :selected="reservation.statut_service === 'EN ATTENTE'">En attente</option>
-              <option value="ACCEPTÉ" :selected="reservation.statut_service === 'ACCEPTÉ'">Accepter</option>
-            </select>
-            <button
+              >
+                <option value="EN ATTENTE" :selected="reservation.statut_service === 'EN ATTENTE'">En attente</option>
+                <option value="ACCEPTÉ" :selected="reservation.statut_service === 'ACCEPTÉ'">Accepter</option>
+              </select>
+              <button
                 v-if="reservation.statut_service === 'EN ATTENTE'"
                 class="btn-delete"
                 @click="$emit('delete-reservation', reservation.id_service)"
-            >
-              <font-awesome-icon icon="trash" />
-            </button>
-            <button
+              >
+                <font-awesome-icon icon="trash" />
+              </button>
+              <button
                 v-if="reservation.statut_service === 'ACCEPTÉ'"
                 class="btn-edit"
                 @click="openEditModal(reservation, 'service')"
-            >
-              <font-awesome-icon icon="edit" />
-            </button>
-            <button class="btn-details" @click="toggleDetails(reservation)">
-              <font-awesome-icon icon="eye" />
-            </button>
-          </td>
-        </tr>
+              >
+                <font-awesome-icon icon="edit" />
+              </button>
+              <button class="btn-details" @click="toggleDetails(reservation)">
+                <font-awesome-icon icon="eye" />
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <div v-if="filteredServices.length === 0" class="no-data">
@@ -121,85 +121,85 @@
     <div class="reservations-table">
       <table>
         <thead>
-        <tr>
-          <th @click="sortStands('id_emplacement')">
-            ID Emplacement
-            <font-awesome-icon :icon="getSortIcon('id_emplacement', 'stands')" />
-          </th>
-          <th @click="sortStands('nom_emplacement')">
-            Nom Emplacement
-            <font-awesome-icon :icon="getSortIcon('nom_emplacement', 'stands')" />
-          </th>
-          <th @click="sortStands('utilisateur_id')">
-            ID Utilisateur
-            <font-awesome-icon :icon="getSortIcon('utilisateur_id', 'stands')" />
-          </th>
-          <th @click="sortStands('nom_utilisateur')">
-            Nom
-            <font-awesome-icon :icon="getSortIcon('nom_utilisateur', 'stands')" />
-          </th>
-          <th @click="sortStands('prenom_utilisateur')">
-            Prénom
-            <font-awesome-icon :icon="getSortIcon('prenom_utilisateur', 'stands')" />
-          </th>
-          <th @click="sortStands('mail_utilisateur')">
-            Email
-            <font-awesome-icon :icon="getSortIcon('mail_utilisateur', 'stands')" />
-          </th>
-          <th @click="sortStands('date_reservation')">
-            Date Réservation
-            <font-awesome-icon :icon="getSortIcon('date_reservation', 'stands')" />
-          </th>
-          <th @click="sortStands('statut')">
-            Statut
-            <font-awesome-icon :icon="getSortIcon('statut', 'stands')" />
-          </th>
-          <th>Actions</th>
-        </tr>
+          <tr>
+            <th @click="sortStands('id_emplacement')">
+              ID Emplacement
+              <font-awesome-icon :icon="getSortIcon('id_emplacement', 'stands')" />
+            </th>
+            <th @click="sortStands('nom_emplacement')">
+              Nom Emplacement
+              <font-awesome-icon :icon="getSortIcon('nom_emplacement', 'stands')" />
+            </th>
+            <th @click="sortStands('utilisateur_id')">
+              ID Utilisateur
+              <font-awesome-icon :icon="getSortIcon('utilisateur_id', 'stands')" />
+            </th>
+            <th @click="sortStands('nom_utilisateur')">
+              Nom
+              <font-awesome-icon :icon="getSortIcon('nom_utilisateur', 'stands')" />
+            </th>
+            <th @click="sortStands('prenom_utilisateur')">
+              Prénom
+              <font-awesome-icon :icon="getSortIcon('prenom_utilisateur', 'stands')" />
+            </th>
+            <th @click="sortStands('mail_utilisateur')">
+              Email
+              <font-awesome-icon :icon="getSortIcon('mail_utilisateur', 'stands')" />
+            </th>
+            <th @click="sortStands('date_reservation')">
+              Date Réservation
+              <font-awesome-icon :icon="getSortIcon('date_reservation', 'stands')" />
+            </th>
+            <th @click="sortStands('statut')">
+              Statut
+              <font-awesome-icon :icon="getSortIcon('statut', 'stands')" />
+            </th>
+            <th>Actions</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="stand in filteredStands" :key="stand.id_emplacement">
-          <td>{{ stand.id_emplacement }}</td>
-          <td>{{ stand.nom_emplacement }}</td>
-          <td>{{ stand.utilisateur_id || 'Non attribué' }}</td>
-          <td>{{ stand.nom_utilisateur || 'N/A' }}</td>
-          <td>{{ stand.prenom_utilisateur || 'N/A' }}</td>
-          <td>{{ stand.mail_utilisateur || 'N/A' }}</td>
-          <td>{{ stand.date_reservation ? new Date(stand.date_reservation).toLocaleDateString() : 'Non définie' }}</td>
-          <td>
+          <tr v-for="stand in filteredStands" :key="stand.id_emplacement">
+            <td>{{ stand.id_emplacement }}</td>
+            <td>{{ stand.nom_emplacement }}</td>
+            <td>{{ stand.utilisateur_id || 'Non attribué' }}</td>
+            <td>{{ stand.nom_utilisateur || 'N/A' }}</td>
+            <td>{{ stand.prenom_utilisateur || 'N/A' }}</td>
+            <td>{{ stand.mail_utilisateur || 'N/A' }}</td>
+            <td>{{ stand.date_reservation ? new Date(stand.date_reservation).toLocaleDateString() : 'Non définie' }}</td>
+            <td>
               <span :class="['reservation-status', stand.statut?.toLowerCase() || 'na']">
                 {{ stand.statut || 'N/A' }}
               </span>
-          </td>
-          <td class="actions-cell">
-            <select
+            </td>
+            <td class="actions-cell">
+              <select
                 v-if="stand.statut === 'EN ATTENTE'"
                 @change="$emit('change-stand-status', stand.id_emplacement, $event.target.value)"
                 class="status-select"
-            >
-              <option value="EN ATTENTE" :selected="stand.statut === 'EN ATTENTE'">En attente</option>
-              <option value="RÉSERVÉ" :selected="stand.statut === 'RÉSERVÉ'">Réservé</option>
-              <option value="LIBRE" :selected="stand.statut === 'LIBRE'">Libre</option>
-            </select>
-            <button
+              >
+                <option value="EN ATTENTE" :selected="stand.statut === 'EN ATTENTE'">En attente</option>
+                <option value="RÉSERVÉ" :selected="stand.statut === 'RÉSERVÉ'">Réservé</option>
+                <option value="LIBRE" :selected="stand.statut === 'LIBRE'">Libre</option>
+              </select>
+              <button
                 v-if="stand.statut === 'EN ATTENTE'"
                 class="btn-delete"
                 @click="$emit('delete-stand-reservation', stand.id_emplacement)"
-            >
-              <font-awesome-icon icon="trash" />
-            </button>
-            <button
+              >
+                <font-awesome-icon icon="trash" />
+              </button>
+              <button
                 v-if="stand.statut === 'RÉSERVÉ'"
                 class="btn-edit"
                 @click="openEditModal(stand, 'stand')"
-            >
-              <font-awesome-icon icon="edit" />
-            </button>
-            <button class="btn-details" @click="toggleStandDetails(stand)">
-              <font-awesome-icon icon="eye" />
-            </button>
-          </td>
-        </tr>
+              >
+                <font-awesome-icon icon="edit" />
+              </button>
+              <button class="btn-details" @click="toggleStandDetails(stand)">
+                <font-awesome-icon icon="eye" />
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
       <div v-if="filteredStands.length === 0" class="no-data">
@@ -221,37 +221,37 @@
         <div v-if="allStands && allStands.length > 0" class="reservations-table">
           <table>
             <thead>
-            <tr>
-              <th @click="sortAllStands('id_emplacement')">
-                ID Emplacement
-                <font-awesome-icon :icon="getSortIcon('id_emplacement', 'allStands')" />
-              </th>
-              <th @click="sortAllStands('nom_emplacement')">
-                Nom Emplacement
-                <font-awesome-icon :icon="getSortIcon('nom_emplacement', 'allStands')" />
-              </th>
-              <th @click="sortAllStands('statut')">
-                Statut
-                <font-awesome-icon :icon="getSortIcon('statut', 'allStands')" />
-              </th>
-              <th>Actions</th>
-            </tr>
+              <tr>
+                <th @click="sortAllStands('id_emplacement')">
+                  ID Emplacement
+                  <font-awesome-icon :icon="getSortIcon('id_emplacement', 'allStands')" />
+                </th>
+                <th @click="sortAllStands('nom_emplacement')">
+                  Nom Emplacement
+                  <font-awesome-icon :icon="getSortIcon('nom_emplacement', 'allStands')" />
+                </th>
+                <th @click="sortAllStands('statut')">
+                  Statut
+                  <font-awesome-icon :icon="getSortIcon('statut', 'allStands')" />
+                </th>
+                <th>Actions</th>
+              </tr>
             </thead>
             <tbody>
-            <tr v-for="stand in sortedAllStands" :key="stand.id_emplacement">
-              <td>{{ stand.id_emplacement }}</td>
-              <td>{{ stand.nom_emplacement }}</td>
-              <td>
+              <tr v-for="stand in sortedAllStands" :key="stand.id_emplacement">
+                <td>{{ stand.id_emplacement }}</td>
+                <td>{{ stand.nom_emplacement }}</td>
+                <td>
                   <span :class="['reservation-status', stand.statut?.toLowerCase() || 'na']">
                     {{ stand.statut || 'N/A' }}
                   </span>
-              </td>
-              <td class="actions-cell">
-                <button class="btn-details" @click="toggleStandDetails(stand)">
-                  <font-awesome-icon icon="eye" />
-                </button>
-              </td>
-            </tr>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-details" @click="toggleStandDetails(stand)">
+                    <font-awesome-icon icon="eye" />
+                  </button>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -272,9 +272,15 @@
             <button class="close-btn" @click="hideDetails">×</button>
           </div>
           <div class="modal-body">
-            <p class="service-description">{{ selectedReservation.description_service || 'Service prestataire' }}</p>
+            <p class="service-description">
+              {{ selectedReservation.description_service || 'Service prestataire' }}
+            </p>
+            <p class="service-presentation">
+              {{ selectedReservation.presentation_service || 'Aucune présentation disponible' }}
+            </p>
             <p class="event-description">
-              <strong>Description de l'événement :</strong> {{ selectedReservation.description_evenement || 'Aucune description disponible' }}
+              <strong>Description de l'événement :</strong>
+              {{ selectedReservation.description_evenement || 'Aucune description disponible' }}
             </p>
             <div class="details-grid">
               <div class="detail-item">
@@ -353,11 +359,7 @@
           </div>
           <div class="modal-body">
             <label for="edit-status-select">Nouveau statut :</label>
-            <select
-                id="edit-status-select"
-                v-model="newStatus"
-                class="status-select"
-            >
+            <select id="edit-status-select" v-model="newStatus" class="status-select">
               <option v-if="editItemType === 'service'" value="EN ATTENTE">En attente</option>
               <option v-if="editItemType === 'service'" value="ACCEPTÉ">Accepté</option>
               <option v-if="editItemType === 'stand'" value="EN ATTENTE">En attente</option>

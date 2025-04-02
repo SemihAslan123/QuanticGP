@@ -25,7 +25,8 @@ export default {
         return response.data;
     },
     async updateReservationStatus(reservationId, newStatus) {
-        const response = await axiosAgent.patch(`/organisation/stands/${reservationId}`, { statut: newStatus });
+        // On appelle le nouvel endpoint pour les réservations de service
+        const response = await axiosAgent.patch(`/organisation/service-reservations/${reservationId}`, { statut: newStatus });
         return response.data;
     },
     async deleteReservation(reservationId) {
@@ -67,7 +68,7 @@ export default {
         return response.data;
     },
 
-    //demande prestataire
+    // Demande prestataire
     async getDemandes() {
         const response = await axiosAgent.get('/organisation/demandes-prestataires');
         return response.data;

@@ -408,4 +408,23 @@ router.post("/demandes-prestataires/:id", async (req, res) => {
     }
 });
 
+/**
+ * PATCH /organisation/service-reservations/:id
+ * Changer le statut d'une réservation de service prestataire
+ */
+router.patch('/service-reservations/:id', async (req, res) => {
+    const { id } = req.params;
+    const { statut } = req.body;
+    try {
+        const query = 'UPDATE servicePrestataire SET statut = $1 WHERE id_service = $2';
+        await pool.query(query, [statut, id]);
+        res.status(200).json({ message: 'Statut de la réservation de service mis à jour avec succès.' });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du statut de service :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+});
+
+
+
 module.exports = router;

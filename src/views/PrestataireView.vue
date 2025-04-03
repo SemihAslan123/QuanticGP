@@ -1,7 +1,7 @@
 <template>
   <div class="user-service-view">
     <!-- Vue Client -->
-    <div v-if="userType === 'client'" class="client-view">
+    <div v-if="userType === 'client' || userType === 'organisateur'" class="client-view">
       <h1>Liste des Services</h1>
       <div v-if="services.length === 0" class="no-items">
         <p>Aucun service disponible pour le moment.</p>
@@ -93,9 +93,9 @@
             <div class="form-group">
               <label for="presentationEditor">Modifier la présentation :</label>
               <Editor
-                api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
-                v-model="servicePresentationContent"
-                :init="editorInit"
+                  api-key="ke9ggt8j9i58rkp94ch8nhhmj8du8185lsjcw53yojch7fsp"
+                  v-model="servicePresentationContent"
+                  :init="editorInit"
               />
             </div>
             <div class="form-group">
@@ -114,10 +114,10 @@
           </div>
           <div v-else class="services-grid">
             <div
-              class="service-card"
-              :class="{ pending: service.statut === 'EN ATTENTE' }"
-              v-for="service in services"
-              :key="service.id_service"
+                class="service-card"
+                :class="{ pending: service.statut === 'EN ATTENTE' }"
+                v-for="service in services"
+                :key="service.id_service"
             >
               <h3>{{ service.nom_service }}</h3>
               <p><strong>Type :</strong> {{ service.type_service }}</p>
@@ -184,12 +184,12 @@
                 <label for="date_service">Date du Service</label>
                 <!-- Limitation de la date entre le 15 et le 19 juillet 2025 -->
                 <input
-                  id="date_service"
-                  v-model="newService.date_service"
-                  type="date"
-                  required
-                  min="2025-07-15"
-                  max="2025-07-19"
+                    id="date_service"
+                    v-model="newService.date_service"
+                    type="date"
+                    required
+                    min="2025-07-15"
+                    max="2025-07-19"
                 />
               </div>
               <!-- Affichage conditionnel des champs horaires -->
@@ -225,11 +225,11 @@
               <div class="form-group">
                 <label for="nom_emplacement">Nom de l'emplacement</label>
                 <input
-                  id="nom_emplacement"
-                  v-model="searchEmplacement.nom_emplacement"
-                  @input="searchEmplacements"
-                  type="text"
-                  placeholder="Filtrer par nom"
+                    id="nom_emplacement"
+                    v-model="searchEmplacement.nom_emplacement"
+                    @input="searchEmplacements"
+                    type="text"
+                    placeholder="Filtrer par nom"
                 />
               </div>
             </div>
@@ -253,12 +253,12 @@
                 <label for="date_reservation">Date de réservation</label>
                 <!-- Limitation de la date entre le 15 et le 19 juillet 2025 -->
                 <input
-                  id="date_reservation"
-                  v-model="reservationData.date_reservation"
-                  type="date"
-                  required
-                  min="2025-07-15"
-                  max="2025-07-19"
+                    id="date_reservation"
+                    v-model="reservationData.date_reservation"
+                    type="date"
+                    required
+                    min="2025-07-15"
+                    max="2025-07-19"
                 />
               </div>
               <div class="form-group">
@@ -345,7 +345,7 @@ export default {
           'insertdatetime media table paste code help wordcount'
         ],
         toolbar:
-          'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+            'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
       }
     };
   },
@@ -359,7 +359,7 @@ export default {
     if (storedUser) {
       this.user = storedUser;
       this.userType = storedUser.type_utilisateur || storedUser.type;
-      if (this.userType === 'client') {
+      if (this.userType === 'client' || this.userType === 'organisateur') {
         this.fetchClientServices();
       } else if (this.userType === 'prestataire') {
         if (!this.user.id_utilisateur && this.user.id) {

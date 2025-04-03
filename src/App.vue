@@ -6,24 +6,37 @@
         <img src="../public/assets/logo.png" alt="Logo" class="logoNavBar">
       </router-link>
 
-      <!-- Liens cliquables -->
+      <!-- Liens cliquables toujours visibles -->
       <router-link to="/reservation" exact-active-class="active-link">BILLETS</router-link>
       <router-link to="/faq" exact-active-class="active-link">FAQ</router-link>
       <router-link to="/livredor" exact-active-class="active-link">LIVRE D'OR</router-link>
 
-      <!-- Affiche l'onglet Organisation si l'utilisateur est un organisateur -->
-      <router-link v-if="isLoggedIn && user?.type === 'organisateur'" to="/organisation" exact-active-class="active-link">ORGANISATION</router-link>
+      <!-- Onglet Organisation réservé à l'organisateur -->
+      <router-link
+        v-if="isLoggedIn && user?.type === 'organisateur'"
+        to="/organisation"
+        exact-active-class="active-link">
+        ORGANISATION
+      </router-link>
 
+      <!-- Onglet Prestataire visible pour tous -->
       <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
 
-      <!-- Affiche l'onglet Activités si l'utilisateur est un client -->
-      <router-link v-if="isLoggedIn && user?.type === 'client' || user?.type === 'organisateur'" to="/clientactivite" exact-active-class="active-link">ACTIVITÉS</router-link>
+      <!-- Onglet Activités visible pour client et organisateur -->
+      <router-link
+        v-if="isLoggedIn"
+        to="/clientactivite"
+        exact-active-class="active-link">
+        ACTIVITÉS
+      </router-link>
 
-      <!-- Affiche "Connexion" si l'utilisateur n'est pas connecté -->
-      <router-link v-if="!isLoggedIn" to="/login" class="login-link" exact-active-class="active-link">CONNEXION</router-link>
-
-      <!-- Affiche "Profil" si l'utilisateur est connecté -->
-      <router-link v-if="isLoggedIn" to="/profil" class="login-link" exact-active-class="active-link">PROFIL</router-link>
+      <!-- Liens Connexion / Profil -->
+      <router-link v-if="!isLoggedIn" to="/login" class="login-link" exact-active-class="active-link">
+        CONNEXION
+      </router-link>
+      <router-link v-if="isLoggedIn" to="/profil" class="login-link" exact-active-class="active-link">
+        PROFIL
+      </router-link>
     </nav>
 
     <div class="content">
@@ -36,18 +49,17 @@
 import { onMounted, onUnmounted, ref } from "vue";
 
 const isLoggedIn = ref(false);
-const user = ref(null);  // Stocke les données utilisateur
+const user = ref(null);
 
 onMounted(() => {
   const storedUser = JSON.parse(localStorage.getItem('user'));
   if (storedUser) {
     isLoggedIn.value = true;
-    user.value = storedUser;  // Assigne les données utilisateur
+    user.value = storedUser;
   }
 
   // Gestion du défilement pour changer la couleur de la barre de navigation
   const navbar = document.querySelector('.navbar');
-
   const handleScroll = () => {
     if (window.scrollY === 0) {
       navbar.classList.add('transparent');

@@ -74,7 +74,7 @@ CREATE TABLE servicePrestataire (
     nom_service VARCHAR(50),
     -- Le type de service est limité à 'continu' ou 'ponctuel'
     type_service VARCHAR(50) NOT NULL CHECK (type_service IN ('continu', 'ponctuel')),
-    presentation_service VARCHAR(255),
+    presentation_service VARCHAR(2550),
     description_service VARCHAR(255),
     image_prestataire TEXT,
     date_service DATE,

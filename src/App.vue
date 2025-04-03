@@ -20,7 +20,9 @@
       </router-link>
 
       <!-- Onglet Prestataire visible pour tous -->
-      <router-link to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
+      <router-link
+          v-if="isLoggedIn && user?.type === 'organisateur'"
+          to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
 
       <!-- Onglet Activités visible pour client et organisateur -->
       <router-link

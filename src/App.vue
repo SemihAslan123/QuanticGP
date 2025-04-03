@@ -101,7 +101,7 @@ onMounted(() => {
   position: absolute;
   max-width: 90px;
   height: auto;
-  left: 6%;
+  left: 2%;
   top: 23%;
 }
 
@@ -164,7 +164,7 @@ onMounted(() => {
 }
 
 .user-type {
-  margin: 0 40px;
+  margin: 0;
   font-size: 16px;
   color: #ffffff;
 }

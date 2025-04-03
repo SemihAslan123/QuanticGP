@@ -3,8 +3,50 @@ const router = express.Router();
 const pool = require('../db');
 
 /**
- * GET /livredor
- * Récupérer tous les avis avec les informations des utilisateurs
+ * @swagger
+ * /api/livreDor:
+ *   get:
+ *     summary: Récupérer tous les avis
+ *     description: Cette route permet de récupérer tous les avis du livre d'or avec les informations associées des utilisateurs qui ont laissé ces avis.
+ *     responses:
+ *       200:
+ *         description: Liste des avis récupérée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id_avis:
+ *                     type: integer
+ *                     example: 1
+ *                   commentaire:
+ *                     type: string
+ *                     example: "Excellent service, je recommande!"
+ *                   date_avis:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-07-15T12:00:00Z"
+ *                   note:
+ *                     type: integer
+ *                     example: 5
+ *                   nom_utilisateur:
+ *                     type: string
+ *                     example: "Dupont"
+ *                   prenom_utilisateur:
+ *                     type: string
+ *                     example: "Jean"
+ *       500:
+ *         description: Erreur interne du serveur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erreur interne du serveur"
  */
 router.get('/', async (req, res) => {
     try {
@@ -30,8 +72,86 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * POST /livredor
- * Ajouter un nouvel avis
+ * @swagger
+ * /api/livreDor:
+ *   post:
+ *     summary: Ajouter un nouvel avis
+ *     description: Cette route permet d'ajouter un nouvel avis dans le livre d'or. La note doit être comprise entre 1 et 5.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - commentaire
+ *               - note
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: Identifiant de l'utilisateur qui laisse l'avis.
+ *                 example: 2
+ *               commentaire:
+ *                 type: string
+ *                 description: Contenu de l'avis.
+ *                 example: "Excellent service, je recommande vivement."
+ *               note:
+ *                 type: integer
+ *                 description: Note attribuée (entre 1 et 5).
+ *                 example: 5
+ *     responses:
+ *       201:
+ *         description: Avis ajouté avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 id:
+ *                   type: integer
+ *                   description: Identifiant de l'avis créé.
+ *                   example: 1
+ *                 id_utilisateur:
+ *                   type: integer
+ *                   description: Identifiant de l'utilisateur qui a laissé l'avis.
+ *                   example: 2
+ *                 commentaire:
+ *                   type: string
+ *                   description: Contenu de l'avis.
+ *                   example: "Excellent service, je recommande vivement."
+ *                 note:
+ *                   type: integer
+ *                   description: Note attribuée.
+ *                   example: 5
+ *                 date_avis:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Date à laquelle l'avis a été laissé.
+ *                   example: "2025-07-15T12:00:00Z"
+ *       400:
+ *         description: Paramètres manquants ou invalides.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Paramètres manquants ou invalides"
+ *       500:
+ *         description: Erreur interne du serveur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erreur interne du serveur"
  */
 router.post('/', async (req, res) => {
     const { userId, commentaire, note } = req.body;

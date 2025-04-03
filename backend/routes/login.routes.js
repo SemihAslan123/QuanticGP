@@ -5,26 +5,33 @@ const { v4: uuidv4 } = require('uuid');
 
 /**
  * @swagger
- * /login:
+ * /api/login:
  *   post:
  *     summary: Authentification de l'utilisateur
- *     description: Cette route permet de connecter un utilisateur en vérifiant son email et mot de passe.
+ *     description: >
+ *       Permet de connecter un utilisateur en vérifiant son email et son mot de passe.
+ *       Si les informations sont correctes, un identifiant de session unique est généré.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
  *                 description: L'email de l'utilisateur.
+ *                 example: "jean.dupont@example.com"
  *               password:
  *                 type: string
  *                 description: Le mot de passe de l'utilisateur.
+ *                 example: "password123"
  *     responses:
  *       200:
- *         description: Connexion réussie. Retourne les informations de l'utilisateur.
+ *         description: Connexion réussie. Retourne les informations de l'utilisateur et l'ID de session.
  *         content:
  *           application/json:
  *             schema:
@@ -33,33 +40,65 @@ const { v4: uuidv4 } = require('uuid');
  *                 success:
  *                   type: boolean
  *                   description: Indique si la connexion a réussi.
+ *                   example: true
  *                 user:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: integer
  *                       description: L'ID de l'utilisateur.
+ *                       example: 2
  *                     nom:
  *                       type: string
  *                       description: Le nom de l'utilisateur.
+ *                       example: "Dupont"
  *                     prenom:
  *                       type: string
  *                       description: Le prénom de l'utilisateur.
+ *                       example: "Jean"
  *                     mail:
  *                       type: string
  *                       description: L'email de l'utilisateur.
+ *                       example: "utilisateur@example.com"
  *                     type:
  *                       type: string
- *                       description: Le type d'utilisateur (admin, user).
+ *                       description: >
+ *                       Le type d'utilisateur (ex : admin, client, partenaire)
+ *                       example: "client"
  *                     sessionId:
  *                       type: string
- *                       description: L'ID de la session généré après une connexion réussie.
+ *                       description: L'ID de session généré après une connexion réussie.
+ *                       example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
  *       400:
  *         description: Email et mot de passe sont requis.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Email et mot de passe sont obligatoires."
  *       401:
- *         description: L'email ou mot de passe est incorrect.
+ *         description: L'email ou le mot de passe est incorrect.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Utilisateur non trouvé ou mot de passe incorrect."
  *       500:
  *         description: Erreur du serveur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erreur du serveur"
  */
 router.post('/', async (req, res) => {
     const { email, password } = req.body;

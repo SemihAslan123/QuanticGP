@@ -182,7 +182,15 @@
               </div>
               <div class="form-group">
                 <label for="date_service">Date du Service</label>
-                <input id="date_service" v-model="newService.date_service" type="date" required />
+                <!-- Limitation de la date entre le 15 et le 19 juillet 2025 -->
+                <input
+                  id="date_service"
+                  v-model="newService.date_service"
+                  type="date"
+                  required
+                  min="2025-07-15"
+                  max="2025-07-19"
+                />
               </div>
               <!-- Affichage conditionnel des champs horaires -->
               <div v-if="newService.type_service === 'continu'">
@@ -206,7 +214,7 @@
           </div>
         </div>
 
-        <!-- Réservation d'Emplacement (inchangée) -->
+        <!-- Réservation d'Emplacement -->
         <div v-if="activeTab === 'reservation'">
           <h2>Réservation d'Emplacement</h2>
           <div v-if="reservationError" class="error-message">{{ reservationError }}</div>
@@ -243,7 +251,15 @@
               <p><strong>Emplacement sélectionné :</strong> {{ selectedEmplacement.nom_emplacement }}</p>
               <div class="form-group">
                 <label for="date_reservation">Date de réservation</label>
-                <input id="date_reservation" v-model="reservationData.date_reservation" type="date" required />
+                <!-- Limitation de la date entre le 15 et le 19 juillet 2025 -->
+                <input
+                  id="date_reservation"
+                  v-model="reservationData.date_reservation"
+                  type="date"
+                  required
+                  min="2025-07-15"
+                  max="2025-07-19"
+                />
               </div>
               <div class="form-group">
                 <label for="reservation_description">Description</label>

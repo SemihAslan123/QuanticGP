@@ -13,22 +13,25 @@
 
       <!-- Onglet Organisation réservé à l'organisateur -->
       <router-link
-        v-if="isLoggedIn && user?.type === 'organisateur'"
-        to="/organisation"
-        exact-active-class="active-link">
+          v-if="isLoggedIn && user?.type === 'organisateur'"
+          to="/organisation"
+          exact-active-class="active-link">
         ORGANISATION
       </router-link>
 
       <!-- Onglet Prestataire visible pour tous -->
       <router-link
-          v-if="isLoggedIn && user?.type === 'organisateur'"
-          to="/prestataire" exact-active-class="active-link">PRESTATAIRE</router-link>
+          v-if="isLoggedIn"
+          to="/prestataire"
+          exact-active-class="active-link">
+        PRESTATAIRE
+      </router-link>
 
       <!-- Onglet Activités visible pour client et organisateur -->
       <router-link
-        v-if="isLoggedIn"
-        to="/clientactivite"
-        exact-active-class="active-link">
+          v-if="isLoggedIn"
+          to="/clientactivite"
+          exact-active-class="active-link">
         ACTIVITÉS
       </router-link>
 
@@ -39,6 +42,12 @@
       <router-link v-if="isLoggedIn" to="/profil" class="login-link" exact-active-class="active-link">
         PROFIL
       </router-link>
+
+      <!-- Bouton Déconnexion et affichage du type d'utilisateur -->
+      <button v-if="isLoggedIn" @click="logout" class="logout-button">DÉCONNEXION</button>
+      <span v-if="isLoggedIn" class="user-type">
+        Connecté en tant que: {{ user?.type }}
+      </span>
     </nav>
 
     <div class="content">
@@ -52,6 +61,11 @@ import { onMounted, onUnmounted, ref } from "vue";
 
 const isLoggedIn = ref(false);
 const user = ref(null);
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/';
+}
 
 onMounted(() => {
   const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -87,7 +101,7 @@ onMounted(() => {
   position: absolute;
   max-width: 90px;
   height: auto;
-  left: 10%;
+  left: 6%;
   top: 23%;
 }
 
@@ -131,5 +145,27 @@ onMounted(() => {
 
 .navbar a.active-link {
   color: #e51e53;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #c8d1d9;
+  cursor: pointer;
+  margin: 0 40px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.logout-button:hover {
+  color: #e51e53;
+  transform: scale(1.1);
+}
+
+.user-type {
+  margin: 0 40px;
+  font-size: 16px;
+  color: #ffffff;
 }
 </style>

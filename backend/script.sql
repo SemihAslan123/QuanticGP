@@ -1,77 +1,3 @@
--- 1. TRIGGERS (inchangés)
-CREATE OR REPLACE FUNCTION set_emplacement_reserve()
-    RETURNS trigger AS $$
-BEGIN
-    IF NEW.id_emplacement IS NOT NULL THEN
-        UPDATE emplacements_prestataires
-        SET statut = 'RÉSERVÉ'
-        WHERE id_emplacement = NEW.id_emplacement;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_set_emplacement_reserve
-    AFTER INSERT ON servicePrestataire
-    FOR EACH ROW
-    WHEN (NEW.id_emplacement IS NOT NULL)
-EXECUTE FUNCTION set_emplacement_reserve();
-
-
-CREATE OR REPLACE FUNCTION reset_emplacement_status()
-    RETURNS trigger AS $$
-BEGIN
-    IF OLD.id_emplacement IS NOT NULL THEN
-        IF NOT EXISTS (
-            SELECT 1 FROM servicePrestataire WHERE id_emplacement = OLD.id_emplacement
-        ) THEN
-            UPDATE emplacements_prestataires
-            SET statut = 'LIBRE'
-            WHERE id_emplacement = OLD.id_emplacement;
-        END IF;
-    END IF;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_reset_emplacement_status
-    AFTER DELETE ON servicePrestataire
-    FOR EACH ROW
-    WHEN (OLD.id_emplacement IS NOT NULL)
-EXECUTE FUNCTION reset_emplacement_status();
-
-
-CREATE OR REPLACE FUNCTION update_emplacement_status_on_service_update()
-    RETURNS trigger AS $$
-BEGIN
-    IF NEW.id_emplacement <> OLD.id_emplacement THEN
-        IF OLD.id_emplacement IS NOT NULL THEN
-            IF NOT EXISTS (
-                SELECT 1 FROM servicePrestataire
-                WHERE id_emplacement = OLD.id_emplacement
-                  AND id_service <> OLD.id_service
-            ) THEN
-                UPDATE emplacements_prestataires
-                SET statut = 'LIBRE'
-                WHERE id_emplacement = OLD.id_emplacement;
-            END IF;
-        END IF;
-
-        IF NEW.id_emplacement IS NOT NULL THEN
-            UPDATE emplacements_prestataires
-            SET statut = 'RÉSERVÉ'
-            WHERE id_emplacement = NEW.id_emplacement;
-        END IF;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_update_emplacement_status
-    AFTER UPDATE OF id_emplacement ON servicePrestataire
-    FOR EACH ROW
-EXECUTE FUNCTION update_emplacement_status_on_service_update();
-
 -- ===================================================================================
 -- DROP TABLES (inchangé)
 -- ===================================================================================
@@ -367,3 +293,79 @@ VALUES
     (7, 4),
     (9, 1);
 
+
+
+
+-- 1. TRIGGERS (inchangés)
+CREATE OR REPLACE FUNCTION set_emplacement_reserve()
+    RETURNS trigger AS $$
+BEGIN
+    IF NEW.id_emplacement IS NOT NULL THEN
+        UPDATE emplacements_prestataires
+        SET statut = 'RÉSERVÉ'
+        WHERE id_emplacement = NEW.id_emplacement;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_set_emplacement_reserve
+    AFTER INSERT ON servicePrestataire
+    FOR EACH ROW
+    WHEN (NEW.id_emplacement IS NOT NULL)
+EXECUTE FUNCTION set_emplacement_reserve();
+
+
+CREATE OR REPLACE FUNCTION reset_emplacement_status()
+    RETURNS trigger AS $$
+BEGIN
+    IF OLD.id_emplacement IS NOT NULL THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM servicePrestataire WHERE id_emplacement = OLD.id_emplacement
+        ) THEN
+            UPDATE emplacements_prestataires
+            SET statut = 'LIBRE'
+            WHERE id_emplacement = OLD.id_emplacement;
+        END IF;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_reset_emplacement_status
+    AFTER DELETE ON servicePrestataire
+    FOR EACH ROW
+    WHEN (OLD.id_emplacement IS NOT NULL)
+EXECUTE FUNCTION reset_emplacement_status();
+
+
+CREATE OR REPLACE FUNCTION update_emplacement_status_on_service_update()
+    RETURNS trigger AS $$
+BEGIN
+    IF NEW.id_emplacement <> OLD.id_emplacement THEN
+        IF OLD.id_emplacement IS NOT NULL THEN
+            IF NOT EXISTS (
+                SELECT 1 FROM servicePrestataire
+                WHERE id_emplacement = OLD.id_emplacement
+                  AND id_service <> OLD.id_service
+            ) THEN
+                UPDATE emplacements_prestataires
+                SET statut = 'LIBRE'
+                WHERE id_emplacement = OLD.id_emplacement;
+            END IF;
+        END IF;
+
+        IF NEW.id_emplacement IS NOT NULL THEN
+            UPDATE emplacements_prestataires
+            SET statut = 'RÉSERVÉ'
+            WHERE id_emplacement = NEW.id_emplacement;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_update_emplacement_status
+    AFTER UPDATE OF id_emplacement ON servicePrestataire
+    FOR EACH ROW
+EXECUTE FUNCTION update_emplacement_status_on_service_update();

@@ -169,7 +169,8 @@ VALUES
     ('Morel', 'Julien', 'julien.morel@example.com', 'password123', 'prestataire'),
     ('Fabre', 'Lucie', 'lucie.fabre@example.com', 'password123', 'client'),
     ('Simon', 'Thomas', 'thomas.simon@example.com', 'password123', 'client'),
-    ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client');
+    ('Petit', 'Alice', 'alice.petit@example.com', 'password123', 'client'),
+    ('Grand', 'Paul', 'paul.grand@example.com', 'password123', 'client');
 
 INSERT INTO emplacements_prestataires (utilisateur_id, nom_emplacement, coordonnees_svg, description, statut)
 VALUES
